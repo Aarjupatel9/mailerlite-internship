@@ -1,0 +1,59 @@
+li {
+  margin-bottom: 50px;
+}
+
+.conatainer {
+  display: flex;
+  /* overflow-y: scroll; */
+  white-space: nowrap;
+}
+.main_area {
+  padding-top: 10px;
+  flex: 80;
+  background-color: lightgray;
+  /* display: inline-block; */
+}
+.side_bar {
+  flex: 20;
+  /* display: inline-block; */
+  overflow-y: scroll;
+  white-space: nowrap;
+}
+
+.title_name {
+  margin: 20px 20px 20px 20px;
+}
+
+.camp_heading {
+  margin: 20px 20px 20px 20px;
+  display: flex;
+}
+.profile_plan {
+  flex: 1;
+}
+.profile_info {
+  float: right;
+  flex: 1;
+}
+/* .profile_container{
+  display: flex;
+  float: right;
+} */
+/* .profile_info_name{
+  float: right;
+}
+.profile_info_email{
+  float: right;
+} */
+
+.work_area {
+  width: 100%;
+  height: 100%;
+}
+
+.type_container {
+  border: 1px solid lightgreen;
+}
+.type_container hr {
+  border: 1px solid lightgreen;
+}
