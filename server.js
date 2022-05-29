@@ -3,25 +3,35 @@ const path = require("path");
 const mysql = require("mysql");
 const request = require("request");
 const { name } = require("ejs");
-const res = require("express/lib/response");
+const response = require("express/lib/response");
 const cookieParser = require("cookie-parser");
 // const session = require("express-session");
 var nodemailer = require("nodemailer");
 const session_storage = require("node-sessionstorage");
 const { NULL } = require("mysql/lib/protocol/constants/types");
 
+var con = require("./module/mysqlconn");
+con.connect(function (err) {
+  if (err) throw err;
+});
+
+var bodyParser = require("body-parser");
+// Create application/x-www-form-urlencoded parser
+var urlencodedparser = bodyParser.urlencoded({ extended: false });  
+
 port = process.env.port || 8080;
 const app = express();
-const srcpath = path.join(__dirname, "src");
-const errorfilespath = path.join(__dirname, "errorfiles");
-const editor = path.join(__dirname, "text-editor");
+const SRCPATH = path.join(__dirname, "src");
+const ERRORFILEPATH = path.join(__dirname, "errorfiles");
+const EDITORFILEPATH = path.join(__dirname, "text-editor");
 
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
 
-function send_email_of_campaigns(data) {
+function sendEmailOfCampaigns(data) {
   console.log("send email  function inside");
   //fetch the subscribers email from database
+<<<<<<< HEAD
   var con = mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -53,41 +63,81 @@ function send_email_of_campaigns(data) {
                 pass: "ovuecqzzniieiynd",
               },
             });
+=======
+  var name, email, c_name;
+  var table_name = "s_b_of_" + data.email;
+  console.log("table name is : ", table_name);
+>>>>>>> bfd1c17e0658cf2a884a6d7b6dda21c8dc5ff1d3
 
-            var mailOptions = {
-              from: "travelagency3111@gmail.com",
-              to: `${email}`,
-              subject: `${data.subject}`,
-              text: `${data.email_body}`,
-            };
+  con.query(
+    "SELECT * FROM `" + table_name + "`",
+    function (err, result, fields) {
+      if (err) {
+        throw err;
+      } else {
+        let i = 0;
+        for (let i = 0; i < result.length; i++) {
+          email = result[i].email;
+          console.log("subscriber's email id is : ", email);
 
-            transporter.sendMail(mailOptions, function (error, info) {
-              if (error) {
-                console.log(error);
-              } else {
-                console.log("Email sent: " + info.response);
-              }
-            });
-          }
+          //sending email to subscribers
+          var transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+              user: "travelagency3111@gmail.com",
+              pass: "ovuecqzzniieiynd",
+            },
+          });
+
+          var mailOptions = {
+            from: "travelagency3111@gmail.com",
+            to: `${email}`,
+            subject: `${data.subject}`,
+            text: `${data.email_body}`,
+          };
+
+          transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+              console.log(error);
+            } else {
+              console.log("Email sent: " + info.response);
+            }
+          });
         }
       }
-    );
-  });
+    }
+  );
 }
 
 app.get("/text-editor", (req, res) => {
-  res.sendFile(`${editor}/editor.html`);
+  res.sendFile(`${EDITORFILEPATH}/editor.html`);
 });
 
 app.get("/", (req, res) => {
-  res.render("home/home");
-  // res.sendFile(`${srcpath}/home.html`);
+  var name, email, c_name;
+  con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
+    if (err) {
+      throw err;
+    } else {
+      name = result[0].firstname + " " + result[0].lastname;
+      email = result[0].email;
+      c_name = result[0].companyname;
+      const data = {
+        name: `${name}`,
+        email: `${email}`,
+        c_name: `${c_name}`,
+      };
+      // console.log(data);
+      res.render("home/home", { data });
+    }
+  });
 });
 app.get("/dashboard", (req, res) => {
-  res.sendFile(`${srcpath}/dashboard.html`);
+  res.sendFile(`${SRCPATH}/dashboard.html`);
 });
 
 app.get("/campaigns/outbox", (req, res) => {
+<<<<<<< HEAD
   var con = mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -95,31 +145,28 @@ app.get("/campaigns/outbox", (req, res) => {
     database: "test_db",
   });
   // var con = require("./module/mysqlconn");
+=======
+>>>>>>> bfd1c17e0658cf2a884a6d7b6dda21c8dc5ff1d3
   var name, email, c_name;
-  con.connect(function (err) {
-    if (err) throw err;
-    con.query(
-      "SELECT * FROM subscriber_details",
-      function (err, result, fields) {
-        if (err) {
-          throw err;
-        } else {
-          name = result[0].firstname + " " + result[0].lastname;
-          email = result[0].email;
-          c_name = result[0].companyname;
-          const data = {
-            name: `${name}`,
-            email: `${email}`,
-            c_name: `${c_name}`,
-          };
-          // console.log(data);
-          res.render("campaigns/outbox", { data });
-        }
-      }
-    );
+  con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
+    if (err) {
+      throw err;
+    } else {
+      name = result[0].firstname + " " + result[0].lastname;
+      email = result[0].email;
+      c_name = result[0].companyname;
+      const data = {
+        name: `${name}`,
+        email: `${email}`,
+        c_name: `${c_name}`,
+      };
+      // console.log(data);
+      res.render("campaigns/outbox", { data });
+    }
   });
 });
 
+<<<<<<< HEAD
 app.get("/campaigns/create", (req, res) => {
   var con = mysql.createConnection({
     host: "localhost",
@@ -128,31 +175,29 @@ app.get("/campaigns/create", (req, res) => {
     database: "test_db",
   });
   // var con = require("./module/mysqlconn");
+=======
+app.post("/campaigns/create", (req, res) => {
+>>>>>>> bfd1c17e0658cf2a884a6d7b6dda21c8dc5ff1d3
   var name, email, c_name;
-  con.connect(function (err) {
-    if (err) throw err;
-    con.query(
-      "SELECT * FROM subscriber_details",
-      function (err, result, fields) {
-        if (err) {
-          throw err;
-        } else {
-          name = result[0].firstname + " " + result[0].lastname;
-          email = result[0].email;
-          c_name = result[0].companyname;
-          const data = {
-            name: `${name}`,
-            email: `${email}`,
-            c_name: `${c_name}`,
-          };
-          // console.log(data);
-          res.render("campaigns/create", { data });
-        }
-      }
-    );
+  con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
+    if (err) {
+      throw err;
+    } else {
+      name = result[0].firstname + " " + result[0].lastname;
+      email = result[0].email;
+      c_name = result[0].companyname;
+      const data = {
+        name: `${name}`,
+        email: `${email}`,
+        c_name: `${c_name}`,
+      };
+      // console.log(data);
+      res.render("campaigns/create", { data });
+    }
   });
 });
 
+<<<<<<< HEAD
 app.get("/campaigns/user/edit/", (req, res) => {
   console.log(req.query);
   var con = mysql.createConnection({
@@ -162,39 +207,36 @@ app.get("/campaigns/user/edit/", (req, res) => {
     database: "test_db",
   });
   // var con = require("./module/mysqlconn");
+=======
+app.post("/campaigns/user/edit/", urlencodedparser , (req, res) => {
+>>>>>>> bfd1c17e0658cf2a884a6d7b6dda21c8dc5ff1d3
   var name, email, c_name;
-  con.connect(function (err) {
-    if (err) throw err;
-    con.query(
-      "SELECT * FROM subscriber_details",
-      function (err, result, fields) {
-        if (err) {
-          throw err;
-        } else {
-          name = result[0].firstname + " " + result[0].lastname;
-          email = result[0].email;
-          c_name = result[0].companyname;
-          const data = {
-            name: `${name}`,
-            email: `${email}`,
-            c_name: `${c_name}`,
-            campaign_name: `${req.query.campaigns_name}`,
-            campaign_type: `${req.query.type}`,
-          };
-          console.log(data);
-          // req.session["data"] = data;
-          session_storage.setItem("data", data);
-          console.log(
-            "set sesssion storege before edit page",
-            session_storage.getItem("data")
-          );
-          res.render("campaigns/user/edit/edit", { data });
-        }
-      }
-    );
+  con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
+    if (err) {
+      throw err;
+    } else {
+      name = result[0].firstname + " " + result[0].lastname;
+      email = result[0].email;
+      c_name = result[0].companyname;
+      const data = {
+        name: `${name}`,
+        email: `${email}`,
+        c_name: `${c_name}`,
+        campaign_name: `${req.body.campaigns_name}`,
+        campaign_type: `${req.body.type}`,
+      };
+      // console.log(data);
+      session_storage.setItem("data", data);
+      console.log(
+        "set sesssion storege before edit page",
+        session_storage.getItem("data")
+      );
+      res.render("campaigns/user/edit/edit", { data });
+    }
   });
 });
 
+<<<<<<< HEAD
 app.get("/campaigns/user/content", (req, res) => {
   console.log(req.query);
   var con = mysql.createConnection({
@@ -205,103 +247,101 @@ app.get("/campaigns/user/content", (req, res) => {
     port: 3306,
   });
   // var con = require("./module/mysqlconn");
+=======
+app.post("/campaigns/user/content",urlencodedparser, (req, res) => {
+  console.log(req.body);
+>>>>>>> bfd1c17e0658cf2a884a6d7b6dda21c8dc5ff1d3
   var name, email, c_name;
-  con.connect(function (err) {
-    if (err) throw err;
-    con.query(
-      "SELECT * FROM subscriber_details",
-      function (err, result, fields) {
-        if (err) {
-          throw err;
-        } else {
-          name = result[0].firstname + " " + result[0].lastname;
-          email = result[0].email;
-          c_name = result[0].companyname;
-          const new_data = {
-            name: `${name}`,
-            email: `${email}`,
-            c_name: `${c_name}`,
-            campaign_name: `${req.query.campaigns_name}`,
-            email_subject: `${req.query.subject}`,
-          };
-          var data = session_storage.getItem("data");
-          data["subject"] = req.query.subject;
-          session_storage.setItem("data", data);
-          // var subject = req.query.subject;
-          // console.log(subject);
-          // req.session[data] = data;
-          console.log("in content handler data is ", data);
-          console.log(
-            "in content handler session storage is  ",
-            session_storage.getItem("data")
-          );
-          res.render("campaigns/user/edit/content", { data });
-        }
-      }
-    );
+  con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
+    if (err) {
+      throw err;
+    } else {
+      name = result[0].firstname + " " + result[0].lastname;
+      email = result[0].email;
+      c_name = result[0].companyname;
+      const new_data = {
+        name: `${name}`,
+        email: `${email}`,
+        c_name: `${c_name}`,
+        campaign_name: `${req.body.campaigns_name}`,
+        email_subject: `${req.body.subject}`,
+      };
+      var data = session_storage.getItem("data");
+      data["subject"] = req.body.subject;
+      session_storage.setItem("data", data);
+
+      console.log("in content handler data is ", data);
+      console.log(
+        "in content handler session storage is  ",
+        session_storage.getItem("data")
+      );
+      res.render("campaigns/user/edit/content", { data });
+    }
   });
 });
 
-app.get("/campaigns/user/recipients", (req, res) => {
+app.post("/campaigns/user/recipients", urlencodedparser, (req, res) => {
   var data = session_storage.getItem("data");
-  data["email_body"] = req.query.email_body;
+  data["email_body"] = req.body.email_body;
   console.log("data into recipients handler", data);
 
   res.render("campaigns/user/edit/recipients", { data });
 });
 
-app.get("/campaigns/user/review_email", (req, res) => {
+app.post("/campaigns/user/review_email",urlencodedparser, (req, res) => {
   var data = session_storage.getItem("data");
-  data["wts"] = req.query.wtsoption;
+  data["wts"] = req.body.wtsoption;
   console.log("data into review_email handler", data);
   res.render("campaigns/user/edit/review_email", { data });
 });
 
-app.get("/campaigns/user/schedule", (req, res) => {
+app.post("/campaigns/user/schedule",urlencodedparser, (req, res) => {
   var data = session_storage.getItem("data");
   //here nothing to add into data for now
+  data["time"] = NULL;
+  data["status"] = "";
+  data["timer"] = null;
+  session_storage.setItem("data", data);
+
   console.log("data into schedule handler", data);
-  res.render("campaigns/user/edit/schedule_email", { data });
+  res.render("campaigns/user/edit/schedule_email", { data }); //schedule_email;
 });
 
-app.get("/campaigns/user/campaign_status", (req, res) => {
+app.post("/campaigns/user/campaign_status",urlencodedparser, (req, res) => {
   var data = session_storage.getItem("data");
-  var usertime = req.query.time;
+  var user_provided_time = req.body.time;
+  var user_provided_time1 = new Date(
+    user_provided_time.slice(0, 4),
+    user_provided_time.slice(5, 7) - 1,
+    user_provided_time.slice(8, 10),
+    user_provided_time.slice(11, 13),
+    user_provided_time.slice(14, 16)
+  );
+  var time_to_schedule_email = new Date(user_provided_time1.getTime() + 3600000 * 5.5);
+  console.log(time_to_schedule_email);
+  console.log("user enter time", time_to_schedule_email.toUTCString());
+  data["time"] = time_to_schedule_email;
 
-  data["time"] = usertime;
-  console.log("data into schedule_email with post request handler", data);
-  // console.log(usertime);
+  var current_time = new Date();
+  var current_local_time = new Date(current_time.getTime() + 3600000 * 5.5);
+  console.log(current_local_time);
+  console.log("current local time", current_local_time.toUTCString());
 
-  // var nowtime = new Date();
-  // console.log("now time : ", nowtime);
-  // var date1 = new Date(
-  //   usertime.slice(0, 4),
-  //   usertime.slice(5, 7),
-  //   usertime.slice(8, 10),
-  //   usertime.slice(11, 13),
-  //   usertime.slice(14, 16)
-  // );
-  // var date2 = new Date(
-  //   nowtime.getFullYear(),
-  //   nowtime.getMonth(),
-  //   nowtime.getDate(),
-  //   nowtime.getHours(),
-  //   nowtime.getMinutes()
-  // );
-  // if (date2 < date1) {
-  //   date2.setDate(date2.getDate() + 1);
-  // }
-  // var diff = date2 - date1;
-  // console.log("usertime is  : ", date1, "   currrenttime is : ", date2);
-  // console.log("defference is : ", diff);
+  var timer = time_to_schedule_email - current_local_time;
+  console.log("user_provided_time is  : ", time_to_schedule_email, "   currrenttime is : ", current_local_time);
+  console.log("defference is : ", time_to_schedule_email - current_local_time);
 
   setTimeout(() => {
     console.log("settime function inside");
-    send_email_of_campaigns(data);
-  }, 1000);
+    sendEmailOfCampaigns(data);
+  }, timer);
 
-  // res.render("campaigns/user/edit/campaign_status", { data });
-  res.send("campaigns is scheduled");
+  data["status"] = "scheduled";
+  data["timer"] = timer;
+  session_storage.setItem("data", data);
+  console.log(session_storage.getItem("data"));
+  res.render("campaigns/user/edit/schedule_email", { data });
+  // res.send("campaigns is scheduled");
 });
 
 app.get("/session-data", (req, res) => {
@@ -310,27 +350,58 @@ app.get("/session-data", (req, res) => {
 });
 
 app.get("/campaigns/sent", (req, res) => {
-  res.render("campaigns/sent");
+  var name, email, c_name;
+  con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
+    if (err) {
+      throw err;
+    } else {
+      name = result[0].firstname + " " + result[0].lastname;
+      email = result[0].email;
+      c_name = result[0].companyname;
+      const data = {
+        name: `${name}`,
+        email: `${email}`,
+        c_name: `${c_name}`,
+      };
+      // console.log(data);
+      res.render("campaigns/sent", { data });
+    }
+  });
 });
 app.get("/campaigns/drafts", (req, res) => {
-  res.render("campaigns/drafts");
+  con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
+    if (err) {
+      throw err;
+    } else {
+      var name = result[0].firstname + " " + result[0].lastname;
+      var email = result[0].email;
+      var c_name = result[0].companyname;
+      data = {
+        name: `${name}`,
+        email: `${email}`,
+        c_name: `${c_name}`,
+      };
+      // console.log(data);
+      res.render("campaigns/drafts", { data });
+    }
+  });
 });
 
 app.get("/subscribers", (req, res) => {
-  res.sendFile(`${srcpath}/subscribers.html`);
+  res.sendFile(`${SRCPATH}/subscribers.html`);
 });
 app.get("/forms", (req, res) => {
-  res.sendFile(`${srcpath}/forms.html`);
+  res.sendFile(`${SRCPATH}/forms.html`);
 });
 app.get("/sites", (req, res) => {
-  res.sendFile(`${srcpath}/sites.html`);
+  res.sendFile(`${SRCPATH}/sites.html`);
 });
 app.get("/automation", (req, res) => {
-  res.sendFile(`${srcpath}/automation.html`);
+  res.sendFile(`${SRCPATH}/automation.html`);
 });
 
 app.get("*", (req, res) => {
-  res.sendFile(`${errorfilespath}/error404.html`);
+  res.sendFile(`${ERRORFILEPATH}/error404.html`);
 });
 
 app.listen(port, () => {
