@@ -26,7 +26,7 @@ function send_email_of_campaigns(data) {
     host: "localhost",
     user: "root",
     password: "",
-    database: "mailerlite",
+    database: "test_db",
   });
   // var con = require("./module/mysqlconn");
   var name, email, c_name;
@@ -35,7 +35,7 @@ function send_email_of_campaigns(data) {
   con.connect(function (err) {
     if (err) throw err;
     con.query(
-      "SELECT * FROM `"+table_name+"`",
+      "SELECT * FROM `" + table_name + "`",
       function (err, result, fields) {
         if (err) {
           throw err;
@@ -44,7 +44,7 @@ function send_email_of_campaigns(data) {
           for (let i = 0; i < result.length; i++) {
             email = result[i].email;
             console.log("subscriber's email id is : ", email);
-            
+
             //sending email to subscribers
             var transporter = nodemailer.createTransport({
               service: "gmail",
@@ -92,7 +92,7 @@ app.get("/campaigns/outbox", (req, res) => {
     host: "localhost",
     user: "root",
     password: "",
-    database: "mailerlite",
+    database: "test_db",
   });
   // var con = require("./module/mysqlconn");
   var name, email, c_name;
@@ -125,7 +125,7 @@ app.get("/campaigns/create", (req, res) => {
     host: "localhost",
     user: "root",
     password: "",
-    database: "mailerlite",
+    database: "test_db",
   });
   // var con = require("./module/mysqlconn");
   var name, email, c_name;
@@ -159,7 +159,7 @@ app.get("/campaigns/user/edit/", (req, res) => {
     host: "localhost",
     user: "root",
     password: "",
-    database: "mailerlite",
+    database: "test_db",
   });
   // var con = require("./module/mysqlconn");
   var name, email, c_name;
@@ -201,7 +201,7 @@ app.get("/campaigns/user/content", (req, res) => {
     host: "localhost",
     user: "root",
     password: "",
-    database: "mailerlite",
+    database: "test_db",
     port: 3306,
   });
   // var con = require("./module/mysqlconn");
