@@ -17,7 +17,7 @@ con.connect(function (err) {
 
 var bodyParser = require("body-parser");
 // Create application/x-www-form-urlencoded parser
-var urlencodedparser = bodyParser.urlencoded({ extended: false });  
+var urlencodedparser = bodyParser.urlencoded({ extended: false });
 
 port = process.env.port || 8080;
 const app = express();
@@ -31,43 +31,9 @@ app.use(express.static(__dirname + "/public"));
 function sendEmailOfCampaigns(data) {
   console.log("send email  function inside");
   //fetch the subscribers email from database
-<<<<<<< HEAD
-  var con = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "test_db",
-  });
-  // var con = require("./module/mysqlconn");
   var name, email, c_name;
   var table_name = "s_b_of_" + data.email;
   console.log("table name is : ", table_name);
-  con.connect(function (err) {
-    if (err) throw err;
-    con.query(
-      "SELECT * FROM `" + table_name + "`",
-      function (err, result, fields) {
-        if (err) {
-          throw err;
-        } else {
-          let i = 0;
-          for (let i = 0; i < result.length; i++) {
-            email = result[i].email;
-            console.log("subscriber's email id is : ", email);
-
-            //sending email to subscribers
-            var transporter = nodemailer.createTransport({
-              service: "gmail",
-              auth: {
-                user: "travelagency3111@gmail.com",
-                pass: "ovuecqzzniieiynd",
-              },
-            });
-=======
-  var name, email, c_name;
-  var table_name = "s_b_of_" + data.email;
-  console.log("table name is : ", table_name);
->>>>>>> bfd1c17e0658cf2a884a6d7b6dda21c8dc5ff1d3
 
   con.query(
     "SELECT * FROM `" + table_name + "`",
@@ -137,16 +103,6 @@ app.get("/dashboard", (req, res) => {
 });
 
 app.get("/campaigns/outbox", (req, res) => {
-<<<<<<< HEAD
-  var con = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "test_db",
-  });
-  // var con = require("./module/mysqlconn");
-=======
->>>>>>> bfd1c17e0658cf2a884a6d7b6dda21c8dc5ff1d3
   var name, email, c_name;
   con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
     if (err) {
@@ -166,18 +122,7 @@ app.get("/campaigns/outbox", (req, res) => {
   });
 });
 
-<<<<<<< HEAD
-app.get("/campaigns/create", (req, res) => {
-  var con = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "test_db",
-  });
-  // var con = require("./module/mysqlconn");
-=======
 app.post("/campaigns/create", (req, res) => {
->>>>>>> bfd1c17e0658cf2a884a6d7b6dda21c8dc5ff1d3
   var name, email, c_name;
   con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
     if (err) {
@@ -197,19 +142,7 @@ app.post("/campaigns/create", (req, res) => {
   });
 });
 
-<<<<<<< HEAD
-app.get("/campaigns/user/edit/", (req, res) => {
-  console.log(req.query);
-  var con = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "test_db",
-  });
-  // var con = require("./module/mysqlconn");
-=======
-app.post("/campaigns/user/edit/", urlencodedparser , (req, res) => {
->>>>>>> bfd1c17e0658cf2a884a6d7b6dda21c8dc5ff1d3
+app.post("/campaigns/user/edit/", urlencodedparser, (req, res) => {
   var name, email, c_name;
   con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
     if (err) {
@@ -236,21 +169,8 @@ app.post("/campaigns/user/edit/", urlencodedparser , (req, res) => {
   });
 });
 
-<<<<<<< HEAD
-app.get("/campaigns/user/content", (req, res) => {
-  console.log(req.query);
-  var con = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "test_db",
-    port: 3306,
-  });
-  // var con = require("./module/mysqlconn");
-=======
-app.post("/campaigns/user/content",urlencodedparser, (req, res) => {
+app.post("/campaigns/user/content", urlencodedparser, (req, res) => {
   console.log(req.body);
->>>>>>> bfd1c17e0658cf2a884a6d7b6dda21c8dc5ff1d3
   var name, email, c_name;
   con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
     if (err) {
@@ -288,14 +208,14 @@ app.post("/campaigns/user/recipients", urlencodedparser, (req, res) => {
   res.render("campaigns/user/edit/recipients", { data });
 });
 
-app.post("/campaigns/user/review_email",urlencodedparser, (req, res) => {
+app.post("/campaigns/user/review_email", urlencodedparser, (req, res) => {
   var data = session_storage.getItem("data");
   data["wts"] = req.body.wtsoption;
   console.log("data into review_email handler", data);
   res.render("campaigns/user/edit/review_email", { data });
 });
 
-app.post("/campaigns/user/schedule",urlencodedparser, (req, res) => {
+app.post("/campaigns/user/schedule", urlencodedparser, (req, res) => {
   var data = session_storage.getItem("data");
   //here nothing to add into data for now
   data["time"] = NULL;
@@ -307,7 +227,7 @@ app.post("/campaigns/user/schedule",urlencodedparser, (req, res) => {
   res.render("campaigns/user/edit/schedule_email", { data }); //schedule_email;
 });
 
-app.post("/campaigns/user/campaign_status",urlencodedparser, (req, res) => {
+app.post("/campaigns/user/campaign_status", urlencodedparser, (req, res) => {
   var data = session_storage.getItem("data");
   var user_provided_time = req.body.time;
   var user_provided_time1 = new Date(
