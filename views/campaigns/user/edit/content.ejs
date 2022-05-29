@@ -97,12 +97,12 @@
 
                         <div class="row">
 
-                            <div class="col text-center">
-                                <form class="bg-light m-5" method="get" action="/campaigns/user/recipients/">
-                                    <div class="flex-box text-center w-100">
-                                        <textarea id="textarea1" class="input shadow text-center" name="email_body"
-                                            rows="15" cols="100" placeholder="Your text here ">
-                                                        					</textarea>
+                            <div class="col">
+                                <form class="bg-light text-center m-5" method="post" action="/campaigns/user/recipients/">
+                                    <div class="flex-box  w-100">
+                                        <textarea id="textarea1" name="email_body" rows="15" cols="100"
+                                            placeholder="Your text here ">
+                                        </textarea>
                                     </div>
                                     <br><br>
                                     <button type="submit" class="btn shadow-sm btn-outline-primary side"

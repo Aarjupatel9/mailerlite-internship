@@ -38,14 +38,38 @@
                     </div>
                 </div>
                 <div class="state">
-                    <%- include('../../../common/edit-navbar')%>
+                    <nav class="navbar navbar-expand-lg navbar-light  ">
+                        <ul class="navbar-nav mr-auto">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark font-weight-bold h6" href="">details <span><i
+                                            class="arrow-right "></i></span></a> <span
+                                    class="sr-only">(current)</span></a>
+                            </li>
+                            <li class="nav-item ">
+                                <a class="nav-link text-dark font-weight-bold h6 disabled" href="content"
+                                    aria-disabled="true">content <span><i class="arrow-right "></i></span></a>
+                            </li>
+                            <li class="nav-item ">
+                                <a class="nav-link text-dark font-weight-bold h6 disabled" href="recipients">recipients
+                                    <span><i class="arrow-right "></i></span></a></a>
+                            </li>
+                            <li class="nav-item ">
+                                <a class="nav-link text-dark font-weight-bold h6 disabled"
+                                    href="review_email">review<span><i class="arrow-right "></i></span></a></a>
+                            </li>
+                            <li class="nav-item ">
+                                <a class="nav-link text-dark font-weight-bold h6 disabled"
+                                    href="schedule_email">schedule</a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
-                <div class="title_name h2">Campaigns details</div>
+                <div class="title_name ml-4 h2">Campaigns details</div>
             </div>
 
             <div class="work_area">
                 <div class="work_container m-4">
-                    <form class="bg-light m-5" method="get" action="/campaigns/user/content">
+                    <form class="bg-light m-5" method="post" action="/campaigns/user/content">
                         <label class="h3 m-4 p-2">Campaign Name</label>
                         <label class="h6 ml-4 pl-2">This name is use to highlite your campaingn in mailerlite.</label>
 

@@ -16,21 +16,54 @@
 
 <body>
     <div class="conatainer">
-        <div class="side_bar  bg-light">
+        <div class="side_bar bg-light">
             <%- include('../common/sidebar')%>
         </div>
         <div class="main_area">
-            <div class="camp_heading w-100">
-                <div class="profile_plan h3 ">aarju patel pvt lmt</div>
-                <div class="profile_info h3 ">aarjupatel922003@gmail.com</div>
+            <div class="main_header">
+                <div class="camp_heading w-100">
+                    <div class="profile_plan h3 ">
+                        <%=data.c_name%>
+                    </div>
+                    <div class="profile_info">
+                        <div class="profile_container">
+                            <div class="profile_info_name h5 ">
+                                <%=data.name%>
+                            </div>
+                            <div class="profile_info_email h5 ">
+                                <%=data.email%>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="camp_heading2 ml-4 w-100">
+                    <div class="profile_plan h2 ">
+                        Campaigns
+                    </div>
+                    <div class="profile_info">
+                        <form id="main_form" method="post" action="/campaigns/create">
+                            <button type="submit" class="btn btn-primary btn-lg">Create New Campaign</button>
+                        </form>
+                    </div>
+                </div>
+                <!-- <div class="title_name h2">Campaigns</div> -->
+                <div class="state ">
+                    <%- include('../common/camp-navbar')%>
+
+                </div>
             </div>
-            <div class="title_name h2">Campaigns</div>
-            <div class="state ">
-                <%- include('../common/camp-navbar')%>
-            </div>
+
             <div class="work_area">
-                
-                hi i am in work area
+                <div class="work_container text-center m-4 p-4">
+                    <form id="main_form" method="post" action="/campaigns/create">
+                        <div class="mb-3" name="email">
+                            <label class="h3" for="exampleInputEmail1" class="form-label">Your drafts is Empty</label>
+                            <div id="emailHelp" class="form-text">Once you schedule your campaign, it will appear here.
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create New Campaign</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

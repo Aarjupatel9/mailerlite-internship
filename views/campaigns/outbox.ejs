@@ -36,16 +36,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="title_name h2">Campaigns</div>
+                <div class="title_name ml-4 h2">Campaigns</div>
                 <div class="state ">
                     <%- include('../common/camp-navbar')%>
-
                 </div>
             </div>
 
             <div class="work_area">
                 <div class="work_container text-center m-4 p-4">
-                    <form id="main_form" action="/campaigns/create">
+                    <form id="main_form" method="post" action="/campaigns/create">
                         <div class="mb-3" name="email">
                             <label class="h3" for="exampleInputEmail1" class="form-label">Your Outbox is Empty</label>
                             <div id="emailHelp" class="form-text">Once you schedule your campaign, it will appear here.

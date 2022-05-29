@@ -20,6 +20,17 @@ li {
   /* white-space: nowrap; */
 }
 
+.no-link-highlight{
+    color: black;
+    text-align-last: center;
+}
+.no-link-highlight:hover{
+    color: black;
+    text-decoration-line: none;
+    background-color: whitesmoke;
+    font-weight: bolder;
+}
+
 .title_name {
   margin: 5px 1px 1px 0px;
 }
@@ -39,16 +50,6 @@ li {
   float: right;
   flex: 1;
 }
-/* .profile_container{
-  display: flex;
-  float: right;
-} */
-/* .profile_info_name{
-  float: right;
-}
-.profile_info_email{
-  float: right;
-} */
 
 .work_area {
   width: 100%;
