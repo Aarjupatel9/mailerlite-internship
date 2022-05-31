@@ -4,7 +4,6 @@ var con = mysql.createConnection({
   user: "root",
   password: "",
   database: "mailerlite",
-  port:"3306"
 });
 
 module.exports = con;
