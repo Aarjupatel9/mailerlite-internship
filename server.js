@@ -19,6 +19,7 @@ con.connect(function (err) {
 
 var bodyParser = require("body-parser");
 const { use } = require("express/lib/application");
+const { time } = require("console");
 // Create application/x-www-form-urlencoded parser
 var urlencodedparser = bodyParser.urlencoded({ extended: false });
 
@@ -32,11 +33,10 @@ app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
 
 function sendEmailOfCampaigns(data) {
-  console.log("send email  function inside");
-
+  console.log("send email  function inside", data);
+  console.log("data.campaign_name : ", data.campaign_name);
   //we have to find user key of the user from database but now declare statisllyu here
   var userkey = 10000001; //for user travelagency3111@gmail.com
-
   //fetch the subscribers email from database
   var table_name = "subscriber_of_users";
   con.query(
@@ -68,7 +68,6 @@ function sendEmailOfCampaigns(data) {
               console.log(error);
             } else {
               console.log("Email sent : " + info.response);
-
               console.log("enter in send email section , email is in progress");
               var campaign_update_query =
                 "UPDATE `campaigns_details` SET `campaigns_status`='sent' WHERE `user_key`= '10000001' AND `subjectofemail`='" +
@@ -89,6 +88,34 @@ function sendEmailOfCampaigns(data) {
       }
     }
   );
+}
+
+function getMounthNumber(mounthname) {
+  if (mounthname == "Jan") {
+    return 0;
+  } else if (mounthname == "Feb") {
+    return 1;
+  } else if (mounthname == "March") {
+    return 2;
+  } else if (mounthname == "Apr") {
+    return 3;
+  } else if (mounthname == "May") {
+    return 4;
+  } else if (mounthname == "June") {
+    return 5;
+  } else if (mounthname == "July") {
+    return 6;
+  } else if (mounthname == "Aug") {
+    return 7;
+  } else if (mounthname == "Sept") {
+    return 8;
+  } else if (mounthname == "Oct") {
+    return 5;
+  } else if (mounthname == "Nov") {
+    return 10;
+  } else if (mounthname == "Dec") {
+    return 11;
+  }
 }
 
 app.get("/text-editor", (req, res) => {
@@ -332,10 +359,16 @@ app.post("/campaigns/user/campaign_status", urlencodedparser, (req, res) => {
     "','" +
     data.wts +
     "','" +
-    data.time +
+    data.time.toUTCString() +
     "','" +
-    data.current_time +
+    data.current_time.toUTCString() +
     "')";
+  console.log(
+    "database saved time : ",
+    data.time.toUTCString(),
+    "   And current time is :  ",
+    data.current_time.toUTCString()
+  );
 
   con.query(sqlquery, function (err, result) {
     if (err) throw err;
@@ -383,7 +416,7 @@ app.get("/campaigns/sent", (req, res) => {
           throw err;
         } else {
           if (result.length > 0) {
-            console.log(result[0].email_body);
+            // console.log(result[0].email_body);
             data["cdetails"] = result;
           } else {
             data["cdetails"] = 0;
@@ -432,7 +465,55 @@ app.get("*", (req, res) => {
 
 app.listen(port, () => {
   console.log(`app start at port ${port}`);
-  //we will define email timeout after some time here 
-  //at start the server the remaining email must be sent at their time we will declare here 
-  
+
+  //at start the server the remaining(previouslly unsent which is 
+  //in outbox due to server failure(crash)) email
+  // must be sent at their time 
+  //this functionality is define here at server start functionx
+  con.query(
+    "SELECT * FROM `campaigns_details` WHERE `campaigns_status` = 'outbox'",
+    function (err, result, fields) {
+      if (err) {
+        throw err;
+      } else {
+        for (let i = 0; i < result.length; i++) {
+          // console.log("enter in for loop");
+          console.log(result[i].timeofsend);
+          var time_to_send = result[i].timeofsend;
+          var time_to_send1 = new Date(
+            time_to_send.slice(12, 16),
+            getMounthNumber(time_to_send.slice(8, 11)),
+            time_to_send.slice(4, 7),
+            time_to_send.slice(17, 19),
+            time_to_send.slice(20, 22)
+          );
+          var time_to_send2 = new Date(time_to_send1.getTime() + 3600000 * 5.5);
+          // console.log("per : ", getMounthNumber(time_to_send.slice(8, 11)));
+
+          var current_time = new Date();
+          var current_local_time = new Date(
+            current_time.getTime() + 3600000 * 5.5
+          );
+          var timer = time_to_send2 - current_local_time;
+          console.log("time to send : ", time_to_send2);
+          console.log("current local time : ", current_local_time);
+          console.log(timer);
+          //make object for sending email
+          const cdetails = {
+            userkey: `${result[i].user_key}`,
+            campaign_name: `${result[i].campaign_name}`,
+            subject: `${result[i].subjectofemail}`,
+            email_body: `${result[i].email_body}`,
+            wts: `${result[i].whomtosend}`,
+            campaign_type: `${result[i].campaign_type}`,
+          };
+          // console.log(cdetails);
+          setTimeout(() => {
+            console.log("settime function inside at server starrt");
+            sendEmailOfCampaigns(cdetails);
+          }, timer);
+        }
+      }
+    }
+  );
 });
