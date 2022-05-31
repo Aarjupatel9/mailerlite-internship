@@ -44,9 +44,44 @@
 
             <div class="work_area">
                 <div class="work_container text-center m-4 p-4">
+                    <%if(data.cdetails){%>
+                        <h3>Your Campaign Details</h3>
+                        <div class=" h3 row add_border ">
+                            <div class="col">
+                                campaign name
+                            </div>
+                            <div class="col">
+                                subject of email
+                            </div>
+                            <div class="col">
+                                Email Body
+                            </div>
+                            <div class="col">
+                                time of send
+                            </div>
+                        </div>
+                        <% for (var i=0; i < data.cdetails.length; i++) { %>
+                        <div class="row add_border ">
+                            <div class="col">
+                                <%=data.cdetails[i].campaign_name%>
+                            </div>
+                            <div class="col">
+                                <%=data.cdetails[i].subjectofemail%>
+                            </div>
+                            <div class="col">
+                                <%=data.cdetails[i].email_body%>
+                            </div>
+                            <div class="col">
+                                <%=data.cdetails[i].timeofsend%>
+                            </div>
+                        </div>
+                        <%}%>
+                        <%}%>
                     <form id="main_form" method="post" action="/campaigns/create">
                         <div class="mb-3" name="email">
+                            <%if(!data.cdetails){%>
                             <label class="h3" for="exampleInputEmail1" class="form-label">Your Outbox is Empty</label>
+                            <%}%>
                             <div id="emailHelp" class="form-text">Once you schedule your campaign, it will appear here.
                             </div>
                         </div>

@@ -61,3 +61,8 @@ li {
 .type_container hr {
   border: 1px solid lightgreen;
 }
+
+
+.add_border{
+  border: 1px solid black ;
+}
