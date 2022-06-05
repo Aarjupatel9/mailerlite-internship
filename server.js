@@ -14,7 +14,7 @@ const { NULL } = require("mysql/lib/protocol/constants/types");
 
 var con = require("./module/mysqlconn");
 con.connect(function (err) {
-  if (err) throw err;
+  if (err) console.log(err);
 });
 
 var bodyParser = require("body-parser");
@@ -31,6 +31,7 @@ const EDITORFILEPATH = path.join(__dirname, "text-editor");
 
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
+app.use(express.json());
 
 function sendEmailOfCampaigns(data) {
   console.log("send email  function inside", data);
@@ -43,7 +44,7 @@ function sendEmailOfCampaigns(data) {
     "SELECT * FROM `" + table_name + "` WHERE `user_key`=" + userkey + "",
     function (err, result, fields) {
       if (err) {
-        throw err;
+        console.log(err);
       } else {
         // console.log(result);
         for (let i = 0; i < result.length; i++) {
@@ -90,6 +91,61 @@ function sendEmailOfCampaigns(data) {
   );
 }
 
+function saveDraftsOfCampaigns(data) {
+  console.log("enter in save drafts");
+  var draftsdata = {
+    campaign_name: data.campaign_name,
+  };
+  if (data.campaign_name) {
+    // console.log(data.campaign_name);
+  }
+  if (data.campaign_type) {
+    draftsdata["campaign_type"] = data.campaign_type;
+  } else {
+    draftsdata["campaign_type"] = "";
+  }
+  if (data.subject) {
+    draftsdata["subjectofemail"] = data.subject;
+  } else {
+    draftsdata["subjectofemail"] = "";
+  }
+  if (data.email_body) {
+    draftsdata["email_body"] = data.email_body;
+  } else {
+    draftsdata["email_body"] = "";
+  }
+  if (data.wts) {
+    draftsdata["whomtosend"] = data.wts;
+
+    // Now, whole campaign details is collected only schedulation is not complited so we will store it as draft
+    // console.log(" drafts data is :  ", draftsdata);
+    drftquery =
+      "INSERT INTO `campaigns_details`(`user_key`,`campaigns_status`, `campaign_name`, `campaign_type`, `subjectofemail`, `email_body`, `whomtosend`, `timeofsend`, `timeofscheduled`) VALUES ('10000001','" +
+      "draft" +
+      "','" +
+      draftsdata.campaign_name +
+      "','" +
+      draftsdata.campaign_type +
+      "','" +
+      draftsdata.subjectofemail +
+      "','" +
+      draftsdata.email_body +
+      "','" +
+      draftsdata.whomtosend +
+      "','','')"; //timetosend and scheduled time in draft row will be empty
+
+    // con.query(drftquery, function (err, result) {
+    //   if (err) {
+    //     console.log(err);
+    //   } else {
+    //     console.log(result);
+    //   }
+    // });
+  } else {
+    draftsdata["whomtosend"] = "";
+  }
+}
+
 function getMounthNumber(mounthname) {
   if (mounthname == "Jan") {
     return 0;
@@ -101,7 +157,7 @@ function getMounthNumber(mounthname) {
     return 3;
   } else if (mounthname == "May") {
     return 4;
-  } else if (mounthname == "June") {
+  } else if (mounthname == "Jun") {
     return 5;
   } else if (mounthname == "July") {
     return 6;
@@ -118,9 +174,75 @@ function getMounthNumber(mounthname) {
   }
 }
 
+//for trial this request handler is used
+app.get("/try.html", (req, res) => {
+  res.sendFile(`${SRCPATH}/try.ejs`);
+});
+app.get("/try.ejs", (req, res) => {
+  res.render("campaigns/try");
+});
+app.post("/get-tryal-json-object", (req, res) => {
+  res.send({ name: "aarju patel from json object" });
+});
 app.get("/text-editor", (req, res) => {
   res.sendFile(`${EDITORFILEPATH}/editor.html`);
 });
+
+//api for deal with request from web-app
+
+app.post("/cancel-set-campaign", urlencodedparser, (req, res) => {
+  console.log("enter in api");
+  var campaign_name = req.body.campaign_name;
+  var subjectofemail = req.body.subjectofemail;
+  var email_body = req.body.email_body;
+  var timeofsend = req.body.timeofsend;
+  var campaign_key = req.body.campaign_key;
+
+  //now we will remove it from outbox and set as drafts
+  var outboxtodrafftquery =
+    "INSERT INTO `campaigns_details` (`user_key`,`campaigns_status`, `campaign_name`, `campaign_type`, `subjectofemail`, `email_body`, `whomtosend`, `timeofsend`, `timeofscheduled`) VALUES ('10000001','" +
+    "draft" +
+    "','" +
+    campaign_name +
+    "','option1','" + //by default
+    subjectofemail +
+    "','" +
+    email_body +
+    "','toall','','')";
+
+  var removefromoutboxquery =
+    "DELETE FROM `campaigns_details` WHERE `user_key`='10000001' AND `campaigns_status`= 'outbox' AND `campaign_name` = '" +
+    campaign_name +
+    "' AND `subjectofemail` ='" +
+    subjectofemail +
+    "' AND `email_body`='" +
+    email_body +
+    "' AND `timeofsend`='" +
+    timeofsend +
+    "' AND `campaign_key` ='" +
+    campaign_key +
+    "' ";
+
+  con.query(outboxtodrafftquery, function (err, result) {
+    if (err) {
+      res.send({ response_status: "0" });
+      console.log(err);
+    } else {
+      console.log("save as draft query affect row : ", result.affectedRows);
+      con.query(removefromoutboxquery, function (err, result) {
+        if (err) {
+          res.send({ response_status: "0" });
+          console.log(err);
+        } else {
+          res.send({ response_status: "1" });
+          console.log("remove query affect row: ", result.affectedRows);
+        }
+      });
+    }
+  });
+});
+
+//endpoints for the web-app
 
 app.get("/", (req, res) => {
   // console.log(req)
@@ -147,17 +269,14 @@ app.get("/", (req, res) => {
       console.log("Unknown");
     }
   }
-  function getDeviceInfo() {
-    var hostname = os.hostname();
-    console.log("Hostname is:- " + hostname);
-  }
+
   // console.log(req.headers.host);
 
   //imp
   var name, email, c_name;
   con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
     if (err) {
-      throw err;
+      console.log(err);
     } else {
       name = result[0].firstname + " " + result[0].lastname;
       email = result[0].email;
@@ -179,7 +298,7 @@ app.get("/campaigns/outbox", (req, res) => {
   var name, email, c_name;
   con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
     if (err) {
-      throw err;
+      console.log(err);
     } else {
       name = result[0].firstname + " " + result[0].lastname;
       email = result[0].email;
@@ -191,17 +310,19 @@ app.get("/campaigns/outbox", (req, res) => {
       };
       // console.log(data);
       var getcampaigndetailsquery =
-        " SELECT * FROM `campaigns_details` WHERE `user_key`='10000001' AND `campaigns_status` = 'outbox' ";
+        " SELECT * FROM `campaigns_details` WHERE `user_key`='10000001' AND `campaigns_status` = 'outbox' OR `campaigns_status` = 's_later' ORDER BY `campaign_key` DESC ";
       con.query(getcampaigndetailsquery, function (err, result, field) {
         if (err) {
-          throw err;
+          console.log(err);
         } else {
           if (result.length > 0) {
-            console.log(result[0].email_body);
+            // console.log(result[0].email_body);
             data["cdetails"] = result;
           } else {
             data["cdetails"] = 0;
           }
+          // console.log(data);
+
           res.render("campaigns/outbox", { data });
         }
       });
@@ -209,11 +330,11 @@ app.get("/campaigns/outbox", (req, res) => {
   });
 });
 
-app.post("/campaigns/create", (req, res) => {
+app.post("/campaigns/create", urlencodedparser, (req, res) => {
   var name, email, c_name;
   con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
     if (err) {
-      throw err;
+      console.log(err);
     } else {
       name = result[0].firstname + " " + result[0].lastname;
       email = result[0].email;
@@ -233,7 +354,7 @@ app.post("/campaigns/user/edit/", urlencodedparser, (req, res) => {
   var name, email, c_name;
   con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
     if (err) {
-      throw err;
+      console.log(err);
     } else {
       name = result[0].firstname + " " + result[0].lastname;
       email = result[0].email;
@@ -246,10 +367,11 @@ app.post("/campaigns/user/edit/", urlencodedparser, (req, res) => {
         campaign_type: `${req.body.type}`,
       };
       // console.log(data);
-      session_storage.setItem("data", data);
+      saveDraftsOfCampaigns(data);
+      session_storage.setItem("data_10000001", data);
       console.log(
         "set sesssion storege before edit page",
-        session_storage.getItem("data")
+        session_storage.getItem("data_10000001")
       );
       res.render("campaigns/user/edit/edit", { data });
     }
@@ -261,7 +383,7 @@ app.post("/campaigns/user/content", urlencodedparser, (req, res) => {
   var name, email, c_name;
   con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
     if (err) {
-      throw err;
+      console.log(err);
     } else {
       name = result[0].firstname + " " + result[0].lastname;
       email = result[0].email;
@@ -271,16 +393,17 @@ app.post("/campaigns/user/content", urlencodedparser, (req, res) => {
         email: `${email}`,
         c_name: `${c_name}`,
         campaign_name: `${req.body.campaigns_name}`,
-        email_subject: `${req.body.subject}`,
+        subject: `${req.body.subject}`,
       };
-      var data = session_storage.getItem("data");
+      var data = session_storage.getItem("data_10000001");
       data["subject"] = req.body.subject;
-      session_storage.setItem("data", data);
+      session_storage.setItem("data_10000001", data);
 
+      saveDraftsOfCampaigns(data);
       console.log("in content handler data is ", data);
       console.log(
         "in content handler session storage is  ",
-        session_storage.getItem("data")
+        session_storage.getItem("data_10000001")
       );
       res.render("campaigns/user/edit/content", { data });
     }
@@ -288,34 +411,36 @@ app.post("/campaigns/user/content", urlencodedparser, (req, res) => {
 });
 
 app.post("/campaigns/user/recipients", urlencodedparser, (req, res) => {
-  var data = session_storage.getItem("data");
+  var data = session_storage.getItem("data_10000001");
   data["email_body"] = req.body.email_body;
-  console.log("data into recipients handler", data);
+  saveDraftsOfCampaigns(data);
 
+  console.log("data into recipients handler", data);
   res.render("campaigns/user/edit/recipients", { data });
 });
 
 app.post("/campaigns/user/review_email", urlencodedparser, (req, res) => {
-  var data = session_storage.getItem("data");
+  var data = session_storage.getItem("data_10000001");
   data["wts"] = req.body.wtsoption;
+  saveDraftsOfCampaigns(data);
   console.log("data into review_email handler", data);
   res.render("campaigns/user/edit/review_email", { data });
 });
 
 app.post("/campaigns/user/schedule", urlencodedparser, (req, res) => {
-  var data = session_storage.getItem("data");
+  var data = session_storage.getItem("data_10000001");
   //here nothing to add into data for now
   data["time"] = NULL;
   data["status"] = "";
   data["timer"] = null;
-  session_storage.setItem("data", data);
+  session_storage.setItem("data_10000001", data);
 
-  console.log("data into schedule handler", session_storage.getItem("data"));
+  console.log("data into schedule handler", session_storage.getItem("data_10000001"));
   res.render("campaigns/user/edit/schedule_email", { data }); //schedule_email;
 });
 
 app.post("/campaigns/user/campaign_status", urlencodedparser, (req, res) => {
-  var data = session_storage.getItem("data");
+  var data = session_storage.getItem("data_10000001");
   var user_provided_time = req.body.time;
   var user_provided_time1 = new Date(
     user_provided_time.slice(0, 4),
@@ -345,9 +470,19 @@ app.post("/campaigns/user/campaign_status", urlencodedparser, (req, res) => {
   );
   console.log("defference is : ", time_to_schedule_email - current_local_time);
 
+  if (timer < 2147483646) {
+    setTimeout(() => {
+      console.log("settime function inside");
+      sendEmailOfCampaigns(data);
+    }, timer);
+    var schedule_status = "outbox";
+  } else {
+    schedule_status = "s_later";
+  }
+
   var sqlquery =
     "INSERT INTO `campaigns_details`(`user_key`,`campaigns_status`, `campaign_name`, `campaign_type`, `subjectofemail`, `email_body`, `whomtosend`, `timeofsend`, `timeofscheduled`) VALUES ('10000001','" +
-    "outbox" +
+    schedule_status +
     "','" +
     data.campaign_name +
     "','" +
@@ -371,34 +506,32 @@ app.post("/campaigns/user/campaign_status", urlencodedparser, (req, res) => {
   );
 
   con.query(sqlquery, function (err, result) {
-    if (err) throw err;
+    if (err) console.log(err);
     console.log("Number of records inserted: " + result.affectedRows);
   });
-  0;
-
-  setTimeout(() => {
-    console.log("settime function inside");
-    sendEmailOfCampaigns(data);
-  }, timer);
 
   data["status"] = "scheduled";
   data["timer"] = timer;
-  session_storage.setItem("data", data);
-  console.log(session_storage.getItem("data"));
+  session_storage.setItem("data_10000001", data);
+  console.log(session_storage.getItem("data_10000001"));
+  // if (data.status == "scheduled") {
+  //   res.render("campaigns/outbox", { data });
+  // } else {
   res.render("campaigns/user/edit/schedule_email", { data });
   // res.send("campaigns is scheduled");
+  // }
 });
 
 app.get("/session-data", (req, res) => {
   console.log("request for session data");
-  res.send(session_storage.getItem("data"));
+  res.send(session_storage.getItem("data_10000001"));
 });
 
 app.get("/campaigns/sent", (req, res) => {
   var name, email, c_name;
   con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
     if (err) {
-      throw err;
+      console.log(err);
     } else {
       name = result[0].firstname + " " + result[0].lastname;
       email = result[0].email;
@@ -410,10 +543,10 @@ app.get("/campaigns/sent", (req, res) => {
       };
       // console.log(data);
       var getcampaigndetailsquery =
-        " SELECT * FROM `campaigns_details` WHERE `user_key`='10000001' AND `campaigns_status` = 'sent' ";
+        " SELECT * FROM `campaigns_details` WHERE `user_key`='10000001' AND `campaigns_status` = 'sent' ORDER BY `campaign_key` DESC ";
       con.query(getcampaigndetailsquery, function (err, result, field) {
         if (err) {
-          throw err;
+          console.log(err);
         } else {
           if (result.length > 0) {
             // console.log(result[0].email_body);
@@ -427,10 +560,11 @@ app.get("/campaigns/sent", (req, res) => {
     }
   });
 });
+
 app.get("/campaigns/drafts", (req, res) => {
   con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
     if (err) {
-      throw err;
+      console.log(err);
     } else {
       var name = result[0].firstname + " " + result[0].lastname;
       var email = result[0].email;
@@ -440,8 +574,19 @@ app.get("/campaigns/drafts", (req, res) => {
         email: `${email}`,
         c_name: `${c_name}`,
       };
-      // console.log(data);
-      res.render("campaigns/drafts", { data });
+      con.query(
+        "SELECT * FROM `campaigns_details` WHERE `user_key`='10000001' AND `campaigns_status`='draft'  ",
+        function (err, result, fields) {
+          if (err) {
+            console.log(err);
+          } else {
+            // console.log(result);
+            data["draftdetails"] = result;
+            // console.log(data);
+            res.render("campaigns/drafts", { data });
+          }
+        }
+      );
     }
   });
 });
@@ -449,12 +594,15 @@ app.get("/campaigns/drafts", (req, res) => {
 app.get("/subscribers", (req, res) => {
   res.sendFile(`${SRCPATH}/subscribers.html`);
 });
+
 app.get("/forms", (req, res) => {
   res.sendFile(`${SRCPATH}/forms.html`);
 });
+
 app.get("/sites", (req, res) => {
   res.sendFile(`${SRCPATH}/sites.html`);
 });
+
 app.get("/automation", (req, res) => {
   res.sendFile(`${SRCPATH}/automation.html`);
 });
@@ -465,21 +613,21 @@ app.get("*", (req, res) => {
 
 app.listen(port, () => {
   console.log(`app start at port ${port}`);
-
-  //at start the server the remaining(previouslly unsent which is 
+  //at start the server the remaining(previouslly unsent which is
   //in outbox due to server failure(crash)) email
-  // must be sent at their time 
+  // must be sent at their time
   //this functionality is define here at server start functionx
   con.query(
     "SELECT * FROM `campaigns_details` WHERE `campaigns_status` = 'outbox'",
     function (err, result, fields) {
       if (err) {
-        throw err;
+        console.log(err);
       } else {
         for (let i = 0; i < result.length; i++) {
           // console.log("enter in for loop");
           console.log(result[i].timeofsend);
           var time_to_send = result[i].timeofsend;
+          console.log(getMounthNumber(time_to_send.slice(8, 11)));
           var time_to_send1 = new Date(
             time_to_send.slice(12, 16),
             getMounthNumber(time_to_send.slice(8, 11)),
@@ -489,7 +637,6 @@ app.listen(port, () => {
           );
           var time_to_send2 = new Date(time_to_send1.getTime() + 3600000 * 5.5);
           // console.log("per : ", getMounthNumber(time_to_send.slice(8, 11)));
-
           var current_time = new Date();
           var current_local_time = new Date(
             current_time.getTime() + 3600000 * 5.5
@@ -508,10 +655,14 @@ app.listen(port, () => {
             campaign_type: `${result[i].campaign_type}`,
           };
           // console.log(cdetails);
-          setTimeout(() => {
-            console.log("settime function inside at server starrt");
-            sendEmailOfCampaigns(cdetails);
-          }, timer);
+          if (timer) {
+            setTimeout(() => {
+              console.log("settime function inside at server starrt");
+              sendEmailOfCampaigns(cdetails);
+            }, timer);
+          } else {
+            console.log("timer error at starting");
+          }
         }
       }
     }

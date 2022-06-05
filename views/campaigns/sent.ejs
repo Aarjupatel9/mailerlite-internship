@@ -5,14 +5,37 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link href="/css-files/campaigns.css" rel="stylesheet" type="text/css">
+    <style>
+        th {
+            border: solid 1px rgb(22, 230, 101);
+        }
 
+        table {
+            border-collapse: collapse;
+            /* table-layout: fixed; */
+            /* width: 310px; */
+        }
+
+        /* th{
+                border: 1px;
+            } */
+
+        table td {
+            border: solid 1px rgb(22, 230, 101);
+            width: 100px;
+            word-wrap: break-word;
+        }
+
+        .no-border {
+            border: 0px;
+        }
+    </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <title>campaigns ejs</title>
-    
+
 </head>
 
 <body>
@@ -37,7 +60,17 @@
                         </div>
                     </div>
                 </div>
-                <div class="title_name ml-4 h2">Campaigns</div>
+                <div class="camp_heading2 ml-4 w-100">
+                    <div class="profile_plan h2 ">
+                        Campaigns
+                    </div>
+                    <div class="profile_info">
+                        <form id="main_form" method="post" action="/campaigns/create">
+                            <button type="submit" class="btn btn-primary btn-lg">Create New Campaign</button>
+                        </form>
+                    </div>
+                </div>
+                <!-- <div class="title_name ml-4 h2">Campaigns</div> -->
                 <div class="state ">
                     <%- include('../common/camp-navbar')%>
                 </div>
@@ -45,53 +78,66 @@
 
             <div class="work_area">
                 <div class="work_container text-center m-4 p-4">
-                    <%if(data.cdetails){%>
-                        <h3>Your Campaign Details</h3>
-                        <div class=" h3 row add_border ">
-                            <div class="col">
-                                campaign name
-                            </div>
-                            <div class="col">
-                                subject of email
-                            </div>
-                            <div class="col">
-                                Email Body
-                            </div>
-                            <div class="col">
-                                time of send
-                            </div>
-                        </div>
-                        <% for (var i=0; i < data.cdetails.length; i++) { %>
-                            <div class="row add_border ">
-                                <div class="col">
-                                    <%=data.cdetails[i].campaign_name%>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="h2 card-title">Sent Box</h4>
+                            <p class="card-description">
+                                Your Campaign Details
+                            </p>
+                            <%if(data.cdetails){%>
+                                <div class="table-responsive">
+                                    <table class="table" id="draft-table">
+                                        <thead>
+                                            <tr>
+                                                <th>campaign name</th>
+                                                <th>subject of email</th>
+                                                <th>Email Body</th>
+                                                <th>time of send</th>
+                                                <th>Whom to send</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% for (var i=0; i < data.cdetails.length; i++) { %>
+                                                <tr class="no-border">
+
+                                                    <td>
+                                                        <%=data.cdetails[i].campaign_name%>
+                                                    </td>
+                                                    <td>
+                                                        <%=data.cdetails[i].subjectofemail%>
+                                                    </td>
+                                                    <td>
+                                                        <%=data.cdetails[i].email_body%>
+                                                    </td>
+                                                    <td>
+                                                        <%=data.cdetails[i].timeofsend%>
+                                                    </td>
+                                                    <td>
+                                                        <%=data.cdetails[i].whomtosend%>
+                                                    </td>
+                                                </tr>
+                                                <%}%>
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <div class="col">
-                                    <%=data.cdetails[i].subjectofemail%>
-                                </div>
-                                <div class="col">
-                                    <%=data.cdetails[i].email_body%>
-                                </div>
-                                <div class="col">
-                                    <%=data.cdetails[i].timeofsend%>
-                                </div>
-                            </div>
-                            <%}%>
                                 <%}%>
-                    <form id="main_form" method="post" action="/campaigns/create">
-                        <div class="mb-3" name="email">
-                            <%if(!data.cdetails){%>
-                            <label class="h3" for="exampleInputEmail1" class="form-label">You have not sent any campaigns</label>
-                            <%}%>
-                            <div id="emailHelp" class="form-text">Once your campaign id sent, it will appear here.
-                            </div>
+                                    <%if(!data.cdetails){%>
+                                        <form id="main_form" method="post" action="/campaigns/create">
+                                            <div class="mb-3" name="email">
+                                                <label class="h3" for="exampleInputEmail1" class="form-label">You have
+                                                    not sent any campaigns</label>
+                                                <div id="emailHelp" class="form-text">Once your campaign id sent, it
+                                                    will appear here.
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Create New Campaign</button>
+                                        </form>
+                                        <%}%>
                         </div>
-                        <button type="submit" class="btn btn-primary">Create New Campaign</button>
-                    </form>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
 
 </body>

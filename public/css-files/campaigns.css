@@ -2,6 +2,11 @@ li {
   margin-bottom: 25px;
 }
 
+/* nav div ul li a:hover {
+  text-decoration: solid navy 10px;
+} */
+
+
 .conatainer {
   display: flex;
   /* overflow-y: scroll; */
