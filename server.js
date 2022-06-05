@@ -1,37 +1,54 @@
 const express = require("express");
 const os = require("os");
 const path = require("path");
-const mysql = require("mysql");
-const request = require("request");
-const { name } = require("ejs");
-const response = require("express/lib/response");
-const cookieParser = require("cookie-parser");
-// const session = require("express-session");
+const dotenv = require("dotenv");
 var nodemailer = require("nodemailer");
 var navigator = require("navigator");
+const cookieParser = require("cookie-parser");
 const session_storage = require("node-sessionstorage");
+var bodyParser = require("body-parser");
+var urlencodedparser = bodyParser.urlencoded({ extended: false });
+
+const mysql = require("mysql");
+const request = require("request");
+const response = require("express/lib/response");
+
+
+const app = express();
 const { NULL } = require("mysql/lib/protocol/constants/types");
+const { name } = require("ejs");
+const { use } = require("express/lib/application");
+const { time } = require("console");
+
+
 
 var con = require("./module/mysqlconn");
 con.connect(function (err) {
   if (err) console.log(err);
 });
 
-var bodyParser = require("body-parser");
-const { use } = require("express/lib/application");
-const { time } = require("console");
-// Create application/x-www-form-urlencoded parser
-var urlencodedparser = bodyParser.urlencoded({ extended: false });
 
+// Create application/x-www-form-urlencoded parser
 port = process.env.port || 8080;
-const app = express();
+
 const SRCPATH = path.join(__dirname, "src");
 const ERRORFILEPATH = path.join(__dirname, "errorfiles");
 const EDITORFILEPATH = path.join(__dirname, "text-editor");
+const PUBLICPATH = path.join(__dirname, "/public");
+
+dotenv.config({ path: "./.env" });
+
+app.use(express.static(PUBLICPATH));
+app.use(cookieParser());
+app.use(express.json());
 
 app.set("view engine", "ejs");
-app.use(express.static(__dirname + "/public"));
-app.use(express.json());
+app.set("view engine", "hbs");
+
+//define router
+app.use('/', require('./routes/pages'));
+app.use('/auth', require('./routes/auth'));
+
 
 function sendEmailOfCampaigns(data) {
   console.log("send email  function inside", data);
@@ -323,7 +340,7 @@ app.get("/campaigns/outbox", (req, res) => {
           }
           // console.log(data);
 
-          res.render("campaigns/outbox", { data });
+          res.render("campaigns/outbox.ejs", { data });
         }
       });
     }
@@ -345,7 +362,7 @@ app.post("/campaigns/create", urlencodedparser, (req, res) => {
         c_name: `${c_name}`,
       };
       // console.log(data);
-      res.render("campaigns/create", { data });
+      res.render("campaigns/create.ejs", { data });
     }
   });
 });
@@ -373,7 +390,7 @@ app.post("/campaigns/user/edit/", urlencodedparser, (req, res) => {
         "set sesssion storege before edit page",
         session_storage.getItem("data_10000001")
       );
-      res.render("campaigns/user/edit/edit", { data });
+      res.render("campaigns/user/edit/edit.ejs", { data });
     }
   });
 });
@@ -405,7 +422,7 @@ app.post("/campaigns/user/content", urlencodedparser, (req, res) => {
         "in content handler session storage is  ",
         session_storage.getItem("data_10000001")
       );
-      res.render("campaigns/user/edit/content", { data });
+      res.render("campaigns/user/edit/content.ejs", { data });
     }
   });
 });
@@ -416,7 +433,7 @@ app.post("/campaigns/user/recipients", urlencodedparser, (req, res) => {
   saveDraftsOfCampaigns(data);
 
   console.log("data into recipients handler", data);
-  res.render("campaigns/user/edit/recipients", { data });
+  res.render("campaigns/user/edit/recipients.ejs", { data });
 });
 
 app.post("/campaigns/user/review_email", urlencodedparser, (req, res) => {
@@ -424,7 +441,7 @@ app.post("/campaigns/user/review_email", urlencodedparser, (req, res) => {
   data["wts"] = req.body.wtsoption;
   saveDraftsOfCampaigns(data);
   console.log("data into review_email handler", data);
-  res.render("campaigns/user/edit/review_email", { data });
+  res.render("campaigns/user/edit/review_email.ejs", { data });
 });
 
 app.post("/campaigns/user/schedule", urlencodedparser, (req, res) => {
@@ -436,7 +453,7 @@ app.post("/campaigns/user/schedule", urlencodedparser, (req, res) => {
   session_storage.setItem("data_10000001", data);
 
   console.log("data into schedule handler", session_storage.getItem("data_10000001"));
-  res.render("campaigns/user/edit/schedule_email", { data }); //schedule_email;
+  res.render("campaigns/user/edit/schedule_email.ejs", { data }); //schedule_email;
 });
 
 app.post("/campaigns/user/campaign_status", urlencodedparser, (req, res) => {
@@ -517,7 +534,7 @@ app.post("/campaigns/user/campaign_status", urlencodedparser, (req, res) => {
   // if (data.status == "scheduled") {
   //   res.render("campaigns/outbox", { data });
   // } else {
-  res.render("campaigns/user/edit/schedule_email", { data });
+  res.render("campaigns/user/edit/schedule_email.ejs", { data });
   // res.send("campaigns is scheduled");
   // }
 });
@@ -554,7 +571,7 @@ app.get("/campaigns/sent", (req, res) => {
           } else {
             data["cdetails"] = 0;
           }
-          res.render("campaigns/sent", { data });
+          res.render("campaigns/sent.ejs", { data });
         }
       });
     }
@@ -583,7 +600,7 @@ app.get("/campaigns/drafts", (req, res) => {
             // console.log(result);
             data["draftdetails"] = result;
             // console.log(data);
-            res.render("campaigns/drafts", { data });
+            res.render("campaigns/drafts.ejs", { data });
           }
         }
       );
