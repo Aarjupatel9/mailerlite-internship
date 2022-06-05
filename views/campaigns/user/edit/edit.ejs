@@ -38,21 +38,45 @@
                     </div>
                 </div>
                 <div class="state">
-                    <%- include('../../../common/edit-navbar')%>
+                    <nav class="navbar navbar-expand-lg navbar-light  ">
+                        <ul class="navbar-nav mr-auto">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark font-weight-bold h6" href="">details <span><i
+                                            class="arrow-right "></i></span></a> <span
+                                    class="sr-only">(current)</span></a>
+                            </li>
+                            <li class="nav-item ">
+                                <a class="nav-link text-dark font-weight-bold h6 disabled" href="content"
+                                    aria-disabled="true">content <span><i class="arrow-right "></i></span></a>
+                            </li>
+                            <li class="nav-item ">
+                                <a class="nav-link text-dark font-weight-bold h6 disabled" href="recipients">recipients
+                                    <span><i class="arrow-right "></i></span></a></a>
+                            </li>
+                            <li class="nav-item ">
+                                <a class="nav-link text-dark font-weight-bold h6 disabled"
+                                    href="review_email">review<span><i class="arrow-right "></i></span></a></a>
+                            </li>
+                            <li class="nav-item ">
+                                <a class="nav-link text-dark font-weight-bold h6 disabled"
+                                    href="schedule_email">schedule</a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
-                <div class="title_name h2">Campaigns details</div>
+                <div class="title_name ml-4 h2">Campaigns details</div>
             </div>
 
             <div class="work_area">
                 <div class="work_container m-4">
-                    <form class="bg-light m-5" method="get" action="/campaigns/user/content">
+                    <form class="bg-light m-5" method="post" action="/campaigns/user/content">
                         <label class="h3 m-4 p-2">Campaign Name</label>
                         <label class="h6 ml-4 pl-2">This name is use to highlite your campaingn in mailerlite.</label>
 
                         <div class="form-group m-4 pl-2 ">
                             <label for="campaigns_name">Campaign Name</label>
                             <input type="text" name="campaigns_name" class="form-control" id="campaigns_name"
-                                value="<%=data.campaign_name%>">
+                                value="<%=data.campaign_name%>" readonly>
                         </div>
 
                         <label class="h3 m-4 p-2">Subject</label>
@@ -71,18 +95,18 @@
                             <div class="form-group col ">
                                 <label for="s_name">Sender's Name</label>
                                 <input type="text" name="s_name" class="form-control" id="s_name"
-                                    value="<%=data.name%>">
+                                    value="<%=data.name%>" required>
                             </div>
                             <div class="form-group col  ">
                                 <label for="s_email">Sender's Email</label>
                                 <input type="text" name="s_email" class="form-control" id="s_email"
-                                    value="<%=data.email%>">
+                                    value="<%=data.email%>" readonly>
                             </div>
                         </div>
 
                         <hr>
-                        <div class="pb-2 pl-4">
-                            <button type="submit" class=" btn btn-primary">Save & next</button>
+                        <div class="text-center pb-2 pl-4">
+                            <button type="submit" class=" btn btn-success">Save & Next</button>
                         </div>
                     </form>
                 </div>

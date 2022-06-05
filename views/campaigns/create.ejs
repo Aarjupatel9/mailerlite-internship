@@ -16,7 +16,7 @@
 
 <body>
     <div class="conatainer">
-        <div class="side_bar overflow-auto flex-column bg-light">
+        <div class="side_bar bg-light">
             <%- include('../common/sidebar')%>
         </div>
         <div class="main_area">
@@ -36,21 +36,20 @@
                         </div>
                     </div>
                 </div>
-                <div class="title_name h1">New Campaigns</div>
+                <div class="title_name ml-4 h1">New Campaigns</div>
 
             </div>
 
             <div class="work_area">
-                <div class="work_container m-4">
-                    <form class="bg-light m-5" method="get" action="/campaigns/user/edit/">
+                <div class="work_container m-4 p-4">
+                    <form class="bg-light m-5" method="post" action="/campaigns/user/edit/">
                         <label class="h2 m-4 p-2">Campaign Details</label>
                         <label class="h5 ml-4 pl-2">Start a new campaign by entering the name and choosing the campaign
                             type.</label>
 
                         <div class="form-group m-4 pl-2 ">
                             <label for="exampleInputEmail1">Campaign Name</label>
-                            <input type="text" name="campaigns_name" class="form-control" id="exampleInputEmail1"
-                                aria-describedby="emailHelp" placeholder="New campaigns name">
+                            <input type="text" name="campaigns_name" class="form-control"  placeholder="New campaigns name"  required>
                         </div>
 
                         <label class="h5 ml-4 pl-2">type</label>    
@@ -91,8 +90,8 @@
                             </div>
                         </div>
                         <hr>
-                        <div class="align-content-lg-end">
-                            <button type="submit" class=" btn btn-primary">Submit</button>
+                        <div class="text-center">
+                            <button type="submit" class=" btn btn-success btn-lg">save & next</button>
                         </div>
                     </form>
                 </div>

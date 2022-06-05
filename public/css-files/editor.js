@@ -57,3 +57,10 @@ function f9() {
   document.getElementById("textarea1").style.textTransform = "capitalize";
   document.getElementById("textarea1").value = " ";
 }
+
+function getContent() {
+  var content = document.getElementById("textarea1").value;
+
+  document.getElementById("dc").innerHTML =   "<h1>Hello</h1><p>Your HTML Contents are visible now</p>";
+
+}

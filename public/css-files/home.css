@@ -2,11 +2,6 @@ li {
   margin-bottom: 25px;
 }
 
-/* nav div ul li a:hover {
-  text-decoration: solid navy 10px;
-} */
-
-
 .conatainer {
   display: flex;
   /* overflow-y: scroll; */
@@ -23,6 +18,17 @@ li {
   /* display: inline-block; */
   /* overflow-y: scroll; */
   /* white-space: nowrap; */
+}
+
+.no-link-highlight{
+    color: black;
+    text-align-last: center;
+}
+.no-link-highlight:hover{
+    color: black;
+    text-decoration-line: none;
+    background-color: whitesmoke;
+    font-weight: bolder;
 }
 
 .title_name {
@@ -44,16 +50,6 @@ li {
   float: right;
   flex: 1;
 }
-/* .profile_container{
-  display: flex;
-  float: right;
-} */
-/* .profile_info_name{
-  float: right;
-}
-.profile_info_email{
-  float: right;
-} */
 
 .work_area {
   width: 100%;
@@ -65,9 +61,4 @@ li {
 }
 .type_container hr {
   border: 1px solid lightgreen;
-}
-
-
-.add_border{
-  border: 1px solid black ;
 }
