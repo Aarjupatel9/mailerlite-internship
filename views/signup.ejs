@@ -5,13 +5,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>login</title>
+    <title>Signup</title>
     <link rel="stylesheet" href="/bootstrap.css">
     <link rel="stylesheet" href="/mycss.css">
 </head>
 
 <body>
-    
+   
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
             <div class="container-fluid">
                 <a class="navbar-brand" href="/">MailerHeavy</a>
@@ -33,7 +33,7 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="#">Forms</a>
-                        </li>
+                        </li>  
                     </ul>
                     <form class="d-flex">
                     <a class="btn btn-warning btn-my" href="/signup" role="button">Signup</a>
@@ -42,26 +42,52 @@
                 </div>
             </div>
         </nav>
+    
+
     <div class="container container-frm">
-        <form action="/login" method="post">
+        <form action="/signup" method="post">
+            <div class="form-group">
+                <label for="fname">First Name</label>
+                <input type="text" class="form-control" id="fname" name="fname" placeholder="Enter First Name">
+            </div>
+            <div class="form-group">
+                <label for="lname">Last Name</label>
+                <input type="text" class="form-control" id="lname" name="lname" placeholder="Enter Last Name">
+            </div>
+
+            <div class="form-group">
+                <label for="mono">Mobile Number</label>
+                <input type="text" class="form-control" id="mono" name="mono" placeholder="Enter Mobile Number">
+            </div>
+
             <div class="form-group">
                 <label for="email">Email address</label>
-                <input type="emails" class="form-control" id="emails" name="emails" placeholder="Enter email">
+                <input type="emails" class="form-control" id="emails" name="emails" aria-describedby="emailHelp"
+                    placeholder="Enter email">
+                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
+                    else.</small>
+            </div>
+            <div class="form-group">
+                <label for="Passwords">Company Name</label>
+                <input type="text" class="form-control" id="companyname" name="companyname" placeholder="Password">
             </div>
             <div class="form-group">
                 <label for="Passwords">Password</label>
                 <input type="password" class="form-control" id="passwords" name="passwords" placeholder="Password">
             </div>
+            <div class="form-group">
+                <label for="RePasswords">Confirm Password</label>
+                <input type="password" class="form-control" id="repasswords" name="repasswords" placeholder="Password">
+            </div>
             <br />
-            <button type="submit" class="btn btn-primary">Login</button>
+            <button type="submit" class="btn btn-primary">Signup</button>
+            
         </form>
-        {{#if message}}
-            <h4 class="alert alert-danger m4-4">{{message}}</h4>
-        {{/if}}
+        <%if(message){%>
+            <h4 class="alert alert-danger m4-4"><%=message%></h4>
+        <%}%>
     </div>
-    <script src="jquery.js"></script>
-    <script src="bootstrap.js"></script>
-    <script src="server.js"></script>
+
 </body>
 
 </html>

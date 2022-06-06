@@ -6,13 +6,14 @@ var nodemailer = require("nodemailer");
 var navigator = require("navigator");
 const cookieParser = require("cookie-parser");
 const session_storage = require("node-sessionstorage");
+
 var bodyParser = require("body-parser");
 var urlencodedparser = bodyParser.urlencoded({ extended: false });
+const authController = require("./controllers/auth.js");
 
 const mysql = require("mysql");
 const request = require("request");
 const response = require("express/lib/response");
-
 
 const app = express();
 const { NULL } = require("mysql/lib/protocol/constants/types");
@@ -20,13 +21,10 @@ const { name } = require("ejs");
 const { use } = require("express/lib/application");
 const { time } = require("console");
 
-
-
 var con = require("./module/mysqlconn");
 con.connect(function (err) {
   if (err) console.log(err);
 });
-
 
 // Create application/x-www-form-urlencoded parser
 port = process.env.port || 8080;
@@ -46,15 +44,72 @@ app.set("view engine", "ejs");
 app.set("view engine", "hbs");
 
 //define router
-app.use('/', require('./routes/pages'));
-app.use('/auth', require('./routes/auth'));
+// app.use('/', require('./routes/pages'));
+// app.use('/auth', require('./routes/auth'));
+//  app.use('/auth', require('./routes/campaign_router'));
 
+//experimental area
+app.get("/", authController.isLoggedIn, (req, res) => {
+  console.log("enrter in / page ");
+  console.log(req.isloggedin, " ", req.user_key);
+  // var user = [];
+  // user["access"] = 1;
+  var name, email, c_name;
+  con.query(
+    "SELECT * FROM users_details WHERE `user_key`='" + req.user_key + "'",
+    function (err, result, fields) {
+      if (err) {
+        console.log(err);
+      } else {
+        name = result[0].firstname + " " + result[0].lastname;
+        email = result[0].email;
+        c_name = result[0].companyname;
+        const data = {
+          name: `${name}`,
+          email: `${email}`,
+          c_name: `${c_name}`,
+          // dbrowser:`${detectBrowser()}`
+        };
+        // console.log(data);
+        res.render("home/home.ejs", { data });
+      }
+    }
+  );
+});
 
+app.get("/signup", (req, res) => {
+  var message = "hii";
+  res.render("signup.ejs", { message });
+});
+
+app.get("/login", (req, res) => {
+  var message = "hii";
+  res.render("login.ejs", { message });
+});
+
+app.get("/profile", authController.isLoggedIn, (req, res) => {
+  console.log(req.user);
+  if (req.user) {
+    res.render("profile.ejs", {
+      user: req.user,
+    });
+  } else {
+    res.redirect("/login");
+  }
+});
+
+app.post("/signup", urlencodedparser, authController.signup);
+
+app.post("/login", urlencodedparser, authController.login);
+
+app.get("/logout", authController.logout);
+
+//function use in the app
 function sendEmailOfCampaigns(data) {
   console.log("send email  function inside", data);
   console.log("data.campaign_name : ", data.campaign_name);
   //we have to find user key of the user from database but now declare statisllyu here
-  var userkey = 10000001; //for user travelagency3111@gmail.com
+  var userkey = req.user_key; //for user travelagency3111@gmail.com
   //fetch the subscribers email from database
   var table_name = "subscriber_of_users";
   con.query(
@@ -191,6 +246,30 @@ function getMounthNumber(mounthname) {
   }
 }
 
+function detectBrowser() {
+  var hostname = os.hostname();
+  console.log("Hostname is:- " + hostname);
+  if (
+    (navigator.userAgent.indexOf("Opera") ||
+      navigator.userAgent.indexOf("OPR")) != -1
+  ) {
+    console.log("Opera");
+  } else if (navigator.userAgent.indexOf("Chrome") != -1) {
+    console.log("Chrome");
+  } else if (navigator.userAgent.indexOf("Safari") != -1) {
+    console.log("Safari");
+  } else if (navigator.userAgent.indexOf("Firefox") != -1) {
+    console.log("Firefox");
+  } else if (
+    navigator.userAgent.indexOf("MSIE") != -1 ||
+    !!document.documentMode == true
+  ) {
+    console.log("IE"); //crap
+  } else {
+    console.log("Unknown");
+  }
+}
+
 //for trial this request handler is used
 app.get("/try.html", (req, res) => {
   res.sendFile(`${SRCPATH}/try.ejs`);
@@ -259,368 +338,417 @@ app.post("/cancel-set-campaign", urlencodedparser, (req, res) => {
   });
 });
 
-//endpoints for the web-app
+// universal endpoints for the web-app
 
-app.get("/", (req, res) => {
-  // console.log(req)
-  function detectBrowser() {
-    var hostname = os.hostname();
-    console.log("Hostname is:- " + hostname);
-    if (
-      (navigator.userAgent.indexOf("Opera") ||
-        navigator.userAgent.indexOf("OPR")) != -1
-    ) {
-      console.log("Opera");
-    } else if (navigator.userAgent.indexOf("Chrome") != -1) {
-      console.log("Chrome");
-    } else if (navigator.userAgent.indexOf("Safari") != -1) {
-      console.log("Safari");
-    } else if (navigator.userAgent.indexOf("Firefox") != -1) {
-      console.log("Firefox");
-    } else if (
-      navigator.userAgent.indexOf("MSIE") != -1 ||
-      !!document.documentMode == true
-    ) {
-      console.log("IE"); //crap
-    } else {
-      console.log("Unknown");
-    }
-  }
-
-  // console.log(req.headers.host);
-
+app.get("/", authController.isLoggedIn, (req, res) => {
   //imp
   var name, email, c_name;
-  con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
-    if (err) {
-      console.log(err);
-    } else {
-      name = result[0].firstname + " " + result[0].lastname;
-      email = result[0].email;
-      c_name = result[0].companyname;
-      const data = {
-        name: `${name}`,
-        email: `${email}`,
-        c_name: `${c_name}`,
-        // dbrowser:`${detectBrowser()}`
-      };
-      // console.log(data);
-      res.render("home/home", { data });
+  con.query(
+    "SELECT * FROM users_details WHERE `user_key`='" + req.user_key + "'",
+    function (err, result, fields) {
+      if (err) {
+        console.log(err);
+      } else {
+        name = result[0].firstname + " " + result[0].lastname;
+        email = result[0].email;
+        c_name = result[0].companyname;
+        const data = {
+          name: `${name}`,
+          email: `${email}`,
+          c_name: `${c_name}`,
+          // dbrowser:`${detectBrowser()}`
+        };
+        // console.log(data);
+        res.render("home/home", { data });
+      }
     }
-  });
+  );
 });
 
-app.get("/campaigns/outbox", (req, res) => {
+app.get("/campaigns/outbox", authController.isLoggedIn, (req, res) => {
   //fetching user data
   var name, email, c_name;
-  con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
-    if (err) {
-      console.log(err);
-    } else {
-      name = result[0].firstname + " " + result[0].lastname;
-      email = result[0].email;
-      c_name = result[0].companyname;
-      var data = {
-        name: `${name}`,
-        email: `${email}`,
-        c_name: `${c_name}`,
-      };
-      // console.log(data);
-      var getcampaigndetailsquery =
-        " SELECT * FROM `campaigns_details` WHERE `user_key`='10000001' AND `campaigns_status` = 'outbox' OR `campaigns_status` = 's_later' ORDER BY `campaign_key` DESC ";
-      con.query(getcampaigndetailsquery, function (err, result, field) {
+  var user_key = req.user_key;
+  con.query(
+    "SELECT * FROM users_details WHERE `user_key`='" + user_key + "'",
+    function (err, result, fields) {
+      if (err) {
+        console.log(err);
+      } else {
+        name = result[0].firstname + " " + result[0].lastname;
+        email = result[0].email;
+        c_name = result[0].companyname;
+        var data = {
+          name: `${name}`,
+          email: `${email}`,
+          c_name: `${c_name}`,
+        };
+        // console.log(data);
+        var getcampaigndetailsquery =
+          " SELECT * FROM `campaigns_details` WHERE `user_key`='" +
+          user_key +
+          "' AND (`campaigns_status` = 'outbox' OR `campaigns_status` = 's_later') ORDER BY `campaign_key` DESC ";
+        con.query(getcampaigndetailsquery, function (err, result, field) {
+          if (err) {
+            console.log(err);
+          } else {
+            if (result.length > 0) {
+              // console.log(result[0].email_body);
+              data["cdetails"] = result;
+            } else {
+              data["cdetails"] = 0;
+            }
+            // console.log(data);
+
+            res.render("campaigns/outbox.ejs", { data });
+          }
+        });
+      }
+    }
+  );
+});
+
+app.post(
+  "/campaigns/create",
+  authController.isLoggedIn,
+  urlencodedparser,
+  (req, res) => {
+    var name, email, c_name;
+    con.query(
+      "SELECT * FROM users_details WHERE `user_key`='" + req.user_key + "'",
+      function (err, result, fields) {
         if (err) {
           console.log(err);
         } else {
-          if (result.length > 0) {
-            // console.log(result[0].email_body);
-            data["cdetails"] = result;
-          } else {
-            data["cdetails"] = 0;
-          }
+          name = result[0].firstname + " " + result[0].lastname;
+          email = result[0].email;
+          c_name = result[0].companyname;
+          const data = {
+            name: `${name}`,
+            email: `${email}`,
+            c_name: `${c_name}`,
+          };
           // console.log(data);
-
-          res.render("campaigns/outbox.ejs", { data });
+          res.render("campaigns/create.ejs", { data });
         }
-      });
-    }
-  });
-});
-
-app.post("/campaigns/create", urlencodedparser, (req, res) => {
-  var name, email, c_name;
-  con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
-    if (err) {
-      console.log(err);
-    } else {
-      name = result[0].firstname + " " + result[0].lastname;
-      email = result[0].email;
-      c_name = result[0].companyname;
-      const data = {
-        name: `${name}`,
-        email: `${email}`,
-        c_name: `${c_name}`,
-      };
-      // console.log(data);
-      res.render("campaigns/create.ejs", { data });
-    }
-  });
-});
-
-app.post("/campaigns/user/edit/", urlencodedparser, (req, res) => {
-  var name, email, c_name;
-  con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
-    if (err) {
-      console.log(err);
-    } else {
-      name = result[0].firstname + " " + result[0].lastname;
-      email = result[0].email;
-      c_name = result[0].companyname;
-      const data = {
-        name: `${name}`,
-        email: `${email}`,
-        c_name: `${c_name}`,
-        campaign_name: `${req.body.campaigns_name}`,
-        campaign_type: `${req.body.type}`,
-      };
-      // console.log(data);
-      saveDraftsOfCampaigns(data);
-      session_storage.setItem("data_10000001", data);
-      console.log(
-        "set sesssion storege before edit page",
-        session_storage.getItem("data_10000001")
-      );
-      res.render("campaigns/user/edit/edit.ejs", { data });
-    }
-  });
-});
-
-app.post("/campaigns/user/content", urlencodedparser, (req, res) => {
-  console.log(req.body);
-  var name, email, c_name;
-  con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
-    if (err) {
-      console.log(err);
-    } else {
-      name = result[0].firstname + " " + result[0].lastname;
-      email = result[0].email;
-      c_name = result[0].companyname;
-      const new_data = {
-        name: `${name}`,
-        email: `${email}`,
-        c_name: `${c_name}`,
-        campaign_name: `${req.body.campaigns_name}`,
-        subject: `${req.body.subject}`,
-      };
-      var data = session_storage.getItem("data_10000001");
-      data["subject"] = req.body.subject;
-      session_storage.setItem("data_10000001", data);
-
-      saveDraftsOfCampaigns(data);
-      console.log("in content handler data is ", data);
-      console.log(
-        "in content handler session storage is  ",
-        session_storage.getItem("data_10000001")
-      );
-      res.render("campaigns/user/edit/content.ejs", { data });
-    }
-  });
-});
-
-app.post("/campaigns/user/recipients", urlencodedparser, (req, res) => {
-  var data = session_storage.getItem("data_10000001");
-  data["email_body"] = req.body.email_body;
-  saveDraftsOfCampaigns(data);
-
-  console.log("data into recipients handler", data);
-  res.render("campaigns/user/edit/recipients.ejs", { data });
-});
-
-app.post("/campaigns/user/review_email", urlencodedparser, (req, res) => {
-  var data = session_storage.getItem("data_10000001");
-  data["wts"] = req.body.wtsoption;
-  saveDraftsOfCampaigns(data);
-  console.log("data into review_email handler", data);
-  res.render("campaigns/user/edit/review_email.ejs", { data });
-});
-
-app.post("/campaigns/user/schedule", urlencodedparser, (req, res) => {
-  var data = session_storage.getItem("data_10000001");
-  //here nothing to add into data for now
-  data["time"] = NULL;
-  data["status"] = "";
-  data["timer"] = null;
-  session_storage.setItem("data_10000001", data);
-
-  console.log("data into schedule handler", session_storage.getItem("data_10000001"));
-  res.render("campaigns/user/edit/schedule_email.ejs", { data }); //schedule_email;
-});
-
-app.post("/campaigns/user/campaign_status", urlencodedparser, (req, res) => {
-  var data = session_storage.getItem("data_10000001");
-  var user_provided_time = req.body.time;
-  var user_provided_time1 = new Date(
-    user_provided_time.slice(0, 4),
-    user_provided_time.slice(5, 7) - 1,
-    user_provided_time.slice(8, 10),
-    user_provided_time.slice(11, 13),
-    user_provided_time.slice(14, 16)
-  );
-  var time_to_schedule_email = new Date(
-    user_provided_time1.getTime() + 3600000 * 5.5
-  );
-  console.log(time_to_schedule_email);
-  console.log("user enter time", time_to_schedule_email.toUTCString());
-
-  var current_time = new Date();
-  var current_local_time = new Date(current_time.getTime() + 3600000 * 5.5);
-  console.log(current_local_time);
-  console.log("current local time", current_local_time.toUTCString());
-  var timer = time_to_schedule_email - current_local_time;
-  data["time"] = time_to_schedule_email;
-  data["current_time"] = current_local_time;
-  console.log(
-    "user_provided_time is  : ",
-    time_to_schedule_email,
-    "   currrenttime is : ",
-    current_local_time
-  );
-  console.log("defference is : ", time_to_schedule_email - current_local_time);
-
-  if (timer < 2147483646) {
-    setTimeout(() => {
-      console.log("settime function inside");
-      sendEmailOfCampaigns(data);
-    }, timer);
-    var schedule_status = "outbox";
-  } else {
-    schedule_status = "s_later";
+      }
+    );
   }
+);
 
-  var sqlquery =
-    "INSERT INTO `campaigns_details`(`user_key`,`campaigns_status`, `campaign_name`, `campaign_type`, `subjectofemail`, `email_body`, `whomtosend`, `timeofsend`, `timeofscheduled`) VALUES ('10000001','" +
-    schedule_status +
-    "','" +
-    data.campaign_name +
-    "','" +
-    data.campaign_type +
-    "','" +
-    data.subject +
-    "','" +
-    data.email_body +
-    "','" +
-    data.wts +
-    "','" +
-    data.time.toUTCString() +
-    "','" +
-    data.current_time.toUTCString() +
-    "')";
-  console.log(
-    "database saved time : ",
-    data.time.toUTCString(),
-    "   And current time is :  ",
-    data.current_time.toUTCString()
-  );
+app.post(
+  "/campaigns/user/edit/",
+  urlencodedparser,
+  authController.isLoggedIn,
+  (req, res) => {
+    var name, email, c_name;
+    con.query(
+      "SELECT * FROM users_details WHERE `user_key`='" + req.user_key + "'",
+      function (err, result, fields) {
+        if (err) {
+          console.log(err);
+        } else {
+          name = result[0].firstname + " " + result[0].lastname;
+          email = result[0].email;
+          c_name = result[0].companyname;
+          const data = {
+            name: `${name}`,
+            email: `${email}`,
+            c_name: `${c_name}`,
+            campaign_name: `${req.body.campaigns_name}`,
+            campaign_type: `${req.body.type}`,
+          };
+          // console.log(data);
+          saveDraftsOfCampaigns(data);
+          session_storage.setItem("data_10000001", data);
+          console.log(
+            "set sesssion storege before edit page",
+            session_storage.getItem("data_10000001")
+          );
+          res.render("campaigns/user/edit/edit.ejs", { data });
+        }
+      }
+    );
+  }
+);
 
-  con.query(sqlquery, function (err, result) {
-    if (err) console.log(err);
-    console.log("Number of records inserted: " + result.affectedRows);
-  });
+app.post(
+  "/campaigns/user/content",
+  urlencodedparser,
+  authController.isLoggedIn,
+  (req, res) => {
+    console.log(req.body);
+    var name, email, c_name;
+    con.query(
+      "SELECT * FROM users_details WHERE `user_key`='" + req.user_key + "'",
+      function (err, result, fields) {
+        if (err) {
+          console.log(err);
+        } else {
+          name = result[0].firstname + " " + result[0].lastname;
+          email = result[0].email;
+          c_name = result[0].companyname;
+          const new_data = {
+            name: `${name}`,
+            email: `${email}`,
+            c_name: `${c_name}`,
+            campaign_name: `${req.body.campaigns_name}`,
+            subject: `${req.body.subject}`,
+          };
+          var data = session_storage.getItem("data_10000001");
+          data["subject"] = req.body.subject;
+          session_storage.setItem("data_10000001", data);
 
-  data["status"] = "scheduled";
-  data["timer"] = timer;
-  session_storage.setItem("data_10000001", data);
-  console.log(session_storage.getItem("data_10000001"));
-  // if (data.status == "scheduled") {
-  //   res.render("campaigns/outbox", { data });
-  // } else {
-  res.render("campaigns/user/edit/schedule_email.ejs", { data });
-  // res.send("campaigns is scheduled");
-  // }
-});
+          saveDraftsOfCampaigns(data);
+          console.log("in content handler data is ", data);
+          console.log(
+            "in content handler session storage is  ",
+            session_storage.getItem("data_10000001")
+          );
+          res.render("campaigns/user/edit/content.ejs", { data });
+        }
+      }
+    );
+  }
+);
+
+app.post(
+  "/campaigns/user/recipients",
+  urlencodedparser,
+  authController.isLoggedIn,
+  (req, res) => {
+    var data = session_storage.getItem("data_10000001");
+    data["email_body"] = req.body.email_body;
+    saveDraftsOfCampaigns(data);
+
+    console.log("data into recipients handler", data);
+    res.render("campaigns/user/edit/recipients.ejs", { data });
+  }
+);
+
+app.post(
+  "/campaigns/user/review_email",
+  urlencodedparser,
+  authController.isLoggedIn,
+  (req, res) => {
+    var data = session_storage.getItem("data_10000001");
+    data["wts"] = req.body.wtsoption;
+    saveDraftsOfCampaigns(data);
+    console.log("data into review_email handler", data);
+    res.render("campaigns/user/edit/review_email.ejs", { data });
+  }
+);
+
+app.post(
+  "/campaigns/user/schedule",
+  urlencodedparser,
+  authController.isLoggedIn,
+  (req, res) => {
+    var data = session_storage.getItem("data_10000001");
+    //here nothing to add into data for now
+    data["time"] = NULL;
+    data["status"] = "";
+    data["timer"] = null;
+    session_storage.setItem("data_10000001", data);
+
+    console.log(
+      "data into schedule handler",
+      session_storage.getItem("data_10000001")
+    );
+    res.render("campaigns/user/edit/schedule_email.ejs", { data }); //schedule_email;
+  }
+);
+
+app.post(
+  "/campaigns/user/campaign_status",
+  urlencodedparser,
+  authController.isLoggedIn,
+  (req, res) => {
+    var user_key = req.user_key;
+
+    var data = session_storage.getItem("data_10000001");
+    var user_provided_time = req.body.time;
+    var user_provided_time1 = new Date(
+      user_provided_time.slice(0, 4),
+      user_provided_time.slice(5, 7) - 1,
+      user_provided_time.slice(8, 10),
+      user_provided_time.slice(11, 13),
+      user_provided_time.slice(14, 16)
+    );
+    var time_to_schedule_email = new Date(
+      user_provided_time1.getTime() + 3600000 * 5.5
+    );
+    console.log(time_to_schedule_email);
+    console.log("user enter time", time_to_schedule_email.toUTCString());
+
+    var current_time = new Date();
+    var current_local_time = new Date(current_time.getTime() + 3600000 * 5.5);
+    console.log(current_local_time);
+    console.log("current local time", current_local_time.toUTCString());
+    var timer = time_to_schedule_email - current_local_time;
+    data["time"] = time_to_schedule_email;
+    data["current_time"] = current_local_time;
+    console.log(
+      "user_provided_time is  : ",
+      time_to_schedule_email,
+      "   currrenttime is : ",
+      current_local_time
+    );
+    console.log(
+      "defference is : ",
+      time_to_schedule_email - current_local_time
+    );
+
+    if (timer < 2147483646) {
+      setTimeout(() => {
+        console.log("settime function inside");
+        sendEmailOfCampaigns(data);
+      }, timer);
+      var schedule_status = "outbox";
+    } else {
+      schedule_status = "s_later";
+    }
+
+    var sqlquery =
+      "INSERT INTO `campaigns_details`(`user_key`,`campaigns_status`, `campaign_name`, `campaign_type`, `subjectofemail`, `email_body`, `whomtosend`, `timeofsend`, `timeofscheduled`) VALUES ('" +
+      user_key +
+      "','" +
+      schedule_status +
+      "','" +
+      data.campaign_name +
+      "','" +
+      data.campaign_type +
+      "','" +
+      data.subject +
+      "','" +
+      data.email_body +
+      "','" +
+      data.wts +
+      "','" +
+      data.time.toUTCString() +
+      "','" +
+      data.current_time.toUTCString() +
+      "')";
+    console.log(
+      "database saved time : ",
+      data.time.toUTCString(),
+      "   And current time is :  ",
+      data.current_time.toUTCString()
+    );
+
+    con.query(sqlquery, function (err, result) {
+      if (err) console.log(err);
+      console.log("Number of records inserted: " + result.affectedRows);
+    });
+
+    data["status"] = "scheduled";
+    data["timer"] = timer;
+    session_storage.setItem("data_10000001", data);
+    console.log(session_storage.getItem("data_10000001"));
+    // if (data.status == "scheduled") {
+    //   res.render("campaigns/outbox", { data });
+    // } else {
+    res.render("campaigns/user/edit/schedule_email.ejs", { data });
+    // res.send("campaigns is scheduled");
+    // }
+  }
+);
 
 app.get("/session-data", (req, res) => {
   console.log("request for session data");
   res.send(session_storage.getItem("data_10000001"));
 });
 
-app.get("/campaigns/sent", (req, res) => {
+app.get("/campaigns/sent", authController.isLoggedIn, (req, res) => {
   var name, email, c_name;
-  con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
-    if (err) {
-      console.log(err);
-    } else {
-      name = result[0].firstname + " " + result[0].lastname;
-      email = result[0].email;
-      c_name = result[0].companyname;
-      const data = {
-        name: `${name}`,
-        email: `${email}`,
-        c_name: `${c_name}`,
-      };
-      // console.log(data);
-      var getcampaigndetailsquery =
-        " SELECT * FROM `campaigns_details` WHERE `user_key`='10000001' AND `campaigns_status` = 'sent' ORDER BY `campaign_key` DESC ";
-      con.query(getcampaigndetailsquery, function (err, result, field) {
-        if (err) {
-          console.log(err);
-        } else {
-          if (result.length > 0) {
-            // console.log(result[0].email_body);
-            data["cdetails"] = result;
-          } else {
-            data["cdetails"] = 0;
-          }
-          res.render("campaigns/sent.ejs", { data });
-        }
-      });
-    }
-  });
-});
-
-app.get("/campaigns/drafts", (req, res) => {
-  con.query("SELECT * FROM subscriber_details", function (err, result, fields) {
-    if (err) {
-      console.log(err);
-    } else {
-      var name = result[0].firstname + " " + result[0].lastname;
-      var email = result[0].email;
-      var c_name = result[0].companyname;
-      data = {
-        name: `${name}`,
-        email: `${email}`,
-        c_name: `${c_name}`,
-      };
-      con.query(
-        "SELECT * FROM `campaigns_details` WHERE `user_key`='10000001' AND `campaigns_status`='draft'  ",
-        function (err, result, fields) {
+  var user_key = req.user_key;
+  con.query(
+    "SELECT * FROM users_details WHERE `user_key`='" + req.user_key + "'",
+    function (err, result, fields) {
+      if (err) {
+        console.log(err);
+      } else {
+        name = result[0].firstname + " " + result[0].lastname;
+        email = result[0].email;
+        c_name = result[0].companyname;
+        const data = {
+          name: `${name}`,
+          email: `${email}`,
+          c_name: `${c_name}`,
+        };
+        // console.log(data);
+        var getcampaigndetailsquery =
+          " SELECT * FROM `campaigns_details` WHERE `user_key`='" +
+          user_key +
+          "' AND `campaigns_status` = 'sent' ORDER BY `campaign_key` DESC ";
+        con.query(getcampaigndetailsquery, function (err, result, field) {
           if (err) {
             console.log(err);
           } else {
-            // console.log(result);
-            data["draftdetails"] = result;
-            // console.log(data);
-            res.render("campaigns/drafts.ejs", { data });
+            if (result.length > 0) {
+              // console.log(result[0].email_body);
+              data["cdetails"] = result;
+            } else {
+              data["cdetails"] = 0;
+            }
+            res.render("campaigns/sent.ejs", { data });
           }
-        }
-      );
+        });
+      }
     }
-  });
+  );
 });
 
-app.get("/subscribers", (req, res) => {
+app.get("/campaigns/drafts", authController.isLoggedIn, (req, res) => {
+  var user_key = req.user_key;
+
+  con.query(
+    "SELECT * FROM users_details WHERE `user_key`='" + req.user_key + "'",
+    function (err, result, fields) {
+      if (err) {
+        console.log(err);
+      } else {
+        var name = result[0].firstname + " " + result[0].lastname;
+        var email = result[0].email;
+        var c_name = result[0].companyname;
+        data = {
+          name: `${name}`,
+          email: `${email}`,
+          c_name: `${c_name}`,
+        };
+        con.query(
+          "SELECT * FROM `campaigns_details` WHERE `user_key`='" +
+            user_key +
+            "' AND `campaigns_status`='draft'  ",
+          function (err, result, fields) {
+            if (err) {
+              console.log(err);
+            } else {
+              // console.log(result);
+              data["draftdetails"] = result;
+              // console.log(data);
+              res.render("campaigns/drafts.ejs", { data });
+            }
+          }
+        );
+      }
+    }
+  );
+});
+
+app.get("/subscribers", authController.isLoggedIn, (req, res) => {
   res.sendFile(`${SRCPATH}/subscribers.html`);
 });
 
-app.get("/forms", (req, res) => {
+app.get("/forms", authController.isLoggedIn, (req, res) => {
   res.sendFile(`${SRCPATH}/forms.html`);
 });
 
-app.get("/sites", (req, res) => {
+app.get("/sites", authController.isLoggedIn, (req, res) => {
   res.sendFile(`${SRCPATH}/sites.html`);
 });
 
-app.get("/automation", (req, res) => {
+app.get("/automation", authController.isLoggedIn, (req, res) => {
   res.sendFile(`${SRCPATH}/automation.html`);
 });
 

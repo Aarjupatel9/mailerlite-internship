@@ -139,7 +139,7 @@
                                         </thead>
                                         <tbody>
                                             <% for (var i=0; i < data.cdetails.length; i++) { %>
-                                                <tr class="no-border">
+                                                <tr id="name[<%=i%>]" name="name[<%=i%>]" class="no-border">
                                                     <td class="no-border">
                                                         <input
                                                             onclick="cancleCampaign(`<%=data.cdetails[i].campaign_key%>`,`<%=data.cdetails[i].campaign_name%>`, `<%=data.cdetails[i].subjectofemail%>`,`<%=data.cdetails[i].email_body%>`,`<%=data.cdetails[i].timeofsend%>`,)"

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 05, 2022 at 04:02 PM
+-- Generation Time: Jun 06, 2022 at 07:07 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -65,29 +65,9 @@ INSERT INTO `campaigns_details` (`campaign_key`, `user_key`, `campaigns_status`,
 (40, 10000001, 'draft', 'test2', 'option1', 'fhskf', 'agkas', 'toall', '', ''),
 (41, 10000001, 'draft', 'test2', 'option1', 'fhskf', 'agkas', 'toall', '', ''),
 (42, 10000001, 'draft', 'send mail test', 'option1', 'nfskfjav', 'AGFVJSFGKUYER', 'toall', '', ''),
-(43, 10000001, 's_later', 'internship', 'option1', 'information about conference', 'mnk', 'toall', 'Thu, 30 Jun 2022 22:41:00 GMT', 'Sat, 04 Jun 2022 22:41:50 GMT');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `subscriber_details`
---
-
-CREATE TABLE `subscriber_details` (
-  `firstname` varchar(50) NOT NULL,
-  `lastname` varchar(50) NOT NULL,
-  `companyname` varchar(50) NOT NULL,
-  `email` varchar(50) NOT NULL,
-  `phonenumber` bigint(20) NOT NULL,
-  `user_key` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `subscriber_details`
---
-
-INSERT INTO `subscriber_details` (`firstname`, `lastname`, `companyname`, `email`, `phonenumber`, `user_key`) VALUES
-('aarju', 'patel', 'aman pvt limited', 'travelagency3111@gmail.com', 6353884460, 10000001);
+(43, 10000001, 's_later', 'internship', 'option1', 'information about conference', 'mnk', 'toall', 'Thu, 30 Jun 2022 22:41:00 GMT', 'Sat, 04 Jun 2022 22:41:50 GMT'),
+(44, 10000001, 'outbox', 'at 5-6', 'option1', 'test perpose', 'jrhfkajf', 'toall', 'Sat, 25 Jun 2022 21:41:00 GMT', 'Sun, 05 Jun 2022 21:41:16 GMT'),
+(45, 10000005, 'outbox', 'deven first campaign', 'option1', 'test perpose', 'hi njnjcnj', 'toall', 'Fri, 24 Jun 2022 22:03:00 GMT', 'Mon, 06 Jun 2022 22:01:21 GMT');
 
 -- --------------------------------------------------------
 
@@ -100,7 +80,7 @@ CREATE TABLE `subscriber_of_users` (
   `firstname` varchar(50) NOT NULL,
   `lastname` varchar(50) NOT NULL,
   `email` varchar(50) NOT NULL,
-  `phonenumber` int(11) NOT NULL
+  `phonenumber` bigint(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -109,7 +89,8 @@ CREATE TABLE `subscriber_of_users` (
 
 INSERT INTO `subscriber_of_users` (`user_key`, `firstname`, `lastname`, `email`, `phonenumber`) VALUES
 (10000001, 'aarju', 'boda', 'aarjupatel922003@gmail.com', 1234567890),
-(10000001, 'aman', 'boda', 'wwwaarjubodaaarjuboda@gmail.com', 1987687960);
+(10000001, 'aman', 'boda', 'wwwaarjubodaaarjuboda@gmail.com', 1987687960),
+(10000005, 'deven', 'parmar', 'aarjupatel922003@gmail.com', 1234567788);
 
 --
 -- Indexes for dumped tables
@@ -121,12 +102,6 @@ INSERT INTO `subscriber_of_users` (`user_key`, `firstname`, `lastname`, `email`,
 ALTER TABLE `campaigns_details`
   ADD PRIMARY KEY (`campaign_key`),
   ADD KEY `user_key` (`user_key`);
-
---
--- Indexes for table `subscriber_details`
---
-ALTER TABLE `subscriber_details`
-  ADD PRIMARY KEY (`user_key`);
 
 --
 -- Indexes for table `subscriber_of_users`
@@ -142,13 +117,7 @@ ALTER TABLE `subscriber_of_users`
 -- AUTO_INCREMENT for table `campaigns_details`
 --
 ALTER TABLE `campaigns_details`
-  MODIFY `campaign_key` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
-
---
--- AUTO_INCREMENT for table `subscriber_details`
---
-ALTER TABLE `subscriber_details`
-  MODIFY `user_key` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10000003;
+  MODIFY `campaign_key` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- Constraints for dumped tables
@@ -158,13 +127,13 @@ ALTER TABLE `subscriber_details`
 -- Constraints for table `campaigns_details`
 --
 ALTER TABLE `campaigns_details`
-  ADD CONSTRAINT `campaigns_details_ibfk_1` FOREIGN KEY (`user_key`) REFERENCES `subscriber_details` (`user_key`);
+  ADD CONSTRAINT `campaigns_details_ibfk_1` FOREIGN KEY (`user_key`) REFERENCES `users_details` (`user_key`);
 
 --
 -- Constraints for table `subscriber_of_users`
 --
 ALTER TABLE `subscriber_of_users`
-  ADD CONSTRAINT `subscriber_of_users_ibfk_1` FOREIGN KEY (`user_key`) REFERENCES `subscriber_details` (`user_key`);
+  ADD CONSTRAINT `subscriber_of_users_ibfk_1` FOREIGN KEY (`user_key`) REFERENCES `users_details` (`user_key`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

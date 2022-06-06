@@ -36,28 +36,42 @@
                         </li>
                     </ul>
                     <form class="d-flex">
-                    <a class="btn btn-warning btn-my" href="/signup" role="button">Signup</a>
-                    <a class="btn btn-warning btn-my" href="/login" role="button">Login</a>
+                    <a class="btn btn-warning btn-my" href="/profile" role="button">Profile</a>
+                    <a class="btn btn-warning btn-my" href="/auth/logout" role="button">Logout</a>
                 </form>
                 </div>
             </div>
         </nav>
-    <div class="container container-frm">
-        <form action="/login" method="post">
-            <div class="form-group">
-                <label for="email">Email address</label>
-                <input type="emails" class="form-control" id="emails" name="emails" placeholder="Enter email">
+    <div class="container">
+        <div class="row">
+            <div class="col-4">
+                <div class="card">
+                    <div class="avatar-ctn">
+                        <img src="/avatar.png" class="avatar" />
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{user.fname}}</h5>
+                        <p class="card-text">ajd xhkajn sg dfg dsfhujb hdufh sifbcv aoj iih sd sfscrv</p>
+                        <a href="#" class="btn btn-warning btn-my">{{user.email}}</a>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="Passwords">Password</label>
-                <input type="password" class="form-control" id="passwords" name="passwords" placeholder="Password">
+            <div class="col-8">
+                <div class="cart text-center">
+                    <div class="card-header">
+                        Profile Page
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Hey {{user.fname}} Welcome back!</h5>
+                        <p class="card-text">This is your profile page.</p>
+                        <a href="#" class="btn btn-warning btn-my">click here</a>
+                    </div>
+                    <div class="card-footer text-muted">
+                        MailerHeavy
+                    </div>
+                </div>
             </div>
-            <br />
-            <button type="submit" class="btn btn-primary">Login</button>
-        </form>
-        {{#if message}}
-            <h4 class="alert alert-danger m4-4">{{message}}</h4>
-        {{/if}}
+        </div>
     </div>
     <script src="jquery.js"></script>
     <script src="bootstrap.js"></script>
