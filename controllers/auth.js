@@ -158,7 +158,7 @@ exports.isLoggedIn = async (req, res, next) => {
             console.log("enter in undefined userkey cndition ");
             //  res.redirect("/login");
             var message = "hii";
-            res.render("login.ejs", { message });
+            res.render("login.hbs", { message });
           }
         }
       );
@@ -167,21 +167,20 @@ exports.isLoggedIn = async (req, res, next) => {
       console.log("enter in catch error ");
       console.log(error);
       var message = "hii";
-      res.render("login.ejs", { message });
+      res.render("login.hbs", { message });
     }
   } else {
     console.log("enter in cookiei not set  condition ");
     req.isloggedin = 0;
     var message = "hii";
-    res.render("login.ejs", { message });
+    res.render("login.hbs", { message });
   }
 };
 
 exports.logout = async (req, res) => {
   res.cookie("jwt", "logout", {
-    expires: new Date(Date.now() + 2 * 1000),
+    expires: new Date(Date.now()), //Date.now()+ 2 * 1000// some jwt error in this
     httpOnly: true,
   });
   res.status(200).redirect("/");
-  // res.status(200).render("index.ejs");
 };

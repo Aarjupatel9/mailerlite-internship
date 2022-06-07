@@ -79,18 +79,18 @@ app.get("/", authController.isLoggedIn, (req, res) => {
 
 app.get("/signup", (req, res) => {
   var message = "hii";
-  res.render("signup.ejs", { message });
+  res.render("signup.hbs", { message });
 });
 
 app.get("/login", (req, res) => {
   var message = "hii";
-  res.render("login.ejs", { message });
+  res.render("login.hbs", { message });
 });
 
 app.get("/profile", authController.isLoggedIn, (req, res) => {
   console.log(req.user);
   if (req.user) {
-    res.render("profile.ejs", {
+    res.render("profile.hbs", {
       user: req.user,
     });
   } else {

@@ -1,5 +1,5 @@
 li {
-  margin-bottom: 25px;
+  margin-bottom: 30px;
 }
 
 .conatainer {
@@ -11,10 +11,14 @@ li {
   padding-top: 10px;
   flex: 80;
   background-color: lightgray;
+  height: 100vh;
+  overflow-y: scroll;
   /* display: inline-block; */
 }
 .side_bar {
   flex: 20;
+  height: 100vh;
+  overflow-y: scroll;
   /* display: inline-block; */
   /* overflow-y: scroll; */
   /* white-space: nowrap; */
@@ -53,7 +57,7 @@ li {
 
 .work_area {
   width: 100%;
-  height: 100%;
+  height: auto;
 }
 
 .type_container {
