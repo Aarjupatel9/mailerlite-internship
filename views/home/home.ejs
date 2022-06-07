@@ -30,6 +30,9 @@
                         <div class="profile_container">
                             <div class="profile_info_name h5 ">
                                 <%=data.name%>
+                                <span><form action="/logout">
+                                    <button class="btn">logout</button>
+                                </form></span>
                             </div>
                             <div class="profile_info_email h5 ">
                                 <%=data.email%>
@@ -43,12 +46,12 @@
                     </div>
                     <div class="profile_info">
                         <form id="main_form" method="post" action="#">
-                            <button type="button" class="btn btn-success btn-lg">Create</button>
+                            <button type="button" class="btn btn-success btn-lg" style="display:none">Create</button>
                         </form>
                     </div>
                 </div>
             </div>
-            <div class="work_area">
+            <div class="work_area text-center " >
                 <div class="work_container text-center m-4 p-4">
                     <div class="row">
                         <div class="col-sm-6">
