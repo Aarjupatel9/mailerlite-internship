@@ -47,12 +47,48 @@
                 <div class="work_container m-4">
 
                     <form class="bg-light m-5" method="post" action="/campaigns/user/schedule">
-                        <label class="h2 m-4 p-2">This page is in development</label>
-                        <label class="h4 m-4 p-2">you can now schedual your campaigns</label>
-                    
+                        <div class="form-group col ">
+                            <label for="s_name">Sender's Name</label>
+                            <input type="text" name="s_name" class="form-control" id="s_name" value="<%=data.name%>"
+                                readonly>
+                        </div>
+                        <div class="form-group col ">
+                            <label for="s_name">Sender's Email Adress</label>
+                            <input type="s_email" name="s_email" class="form-control" id="s_email"
+                                value="<%=data.email%>" readonly>
+                        </div>
+                        <div class="form-group col ">
+                            <label for="s_name">Campaign Name</label>
+                            <input type="text" name="campaign_name" class="form-control" id="campaign_name"
+                                value="<%=data.campaign_name%>" readonly>
+                        </div>
+                        <div class="form-group col ">
+                            <label for="s_name">Campaign type</label>
+                            <input type="text" name="Campaign_type" class="form-control" id="Campaign_type"
+                                value="<%=data.campaign_type%>" readonly>
+                        </div>
+                        <div class="form-group col ">
+                            <label for="s_name">Subject</label>
+                            <input type="text" name="subject" class="form-control" id="subject"
+                                value="<%=data.subject%>" readonly>
+                        </div>
+                        <div class="form-group col ">
+                            <label for="s_name">Email Body</label>
+                            <input type="text" name="email_body" class="form-control" id="email_body"
+                                value="<%=data.email_body%>" readonly>
+                        </div>
+                        <div class="form-group purple-border">
+                            <label for="email_body">Email Body</label>
+                            <textarea class="form-control" name="email_body" id="email_body" rows="3"
+                                readonly><%=data.email_body%></textarea>
+                        </div>
+                        <div class="form-group col ">
+                            <label for="s_name">Whom to send</label>
+                            <input type="text" name="wts" class="form-control" id="wts" value="<%=data.wts%>" readonly>
+                        </div>
                         <hr>
                         <div class="pb-2 pl-4">
-                            <button type="submit" class=" btn btn-primary">Save & next for schedule</button>
+                            <button type="submit" class=" btn btn-primary">GO Next for schedule</button>
                         </div>
                     </form>
                 </div>

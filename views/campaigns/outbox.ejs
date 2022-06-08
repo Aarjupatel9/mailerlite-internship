@@ -56,7 +56,7 @@
                 }
                 // Fake api for making post requests
                 let fetchRes = fetch(
-                    "http://localhost:8080/cancel-set-campaign",
+                    "/cancel-set-campaign",
                     options);
                 fetchRes.then(res =>
                     res.json()).then(d => {
