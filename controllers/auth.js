@@ -27,7 +27,7 @@ exports.login = async (req, res) => {
           console.log(err);
         } else {
           if (results.length > 0) {
-            console.log(results);
+            // console.log(results);
             if (
               async (passwords) => {
                 await bcrypt.compare(passwords, results[0].pass);
@@ -66,7 +66,7 @@ exports.login = async (req, res) => {
       }
     );
   } catch (error) {
-    // console.log(error);
+    console.log(error);
   }
 };
 
@@ -123,7 +123,7 @@ exports.signup = (req, res) => {
 };
 
 exports.isLoggedIn = async (req, res, next) => {
-  console.log(req.cookies);
+  // console.log(req.cookies);
   if (req.cookies.jwt) {
     try {
       //1) verify the token
@@ -131,13 +131,13 @@ exports.isLoggedIn = async (req, res, next) => {
         req.cookies.jwt,
         process.env.JWT_SECRET
       );
-      console.log(decoded);
+      // console.log(decoded);
       //2) Check if the user still exists
       con.query(
         "SELECT * FROM users_details WHERE user_key = ?",
         [decoded.user_key],
         (error, result) => {
-          console.log(result);
+          // console.log(result);
           if (!result) {
             req.isloggedin = 2;
             console.log("enter in not result");
@@ -145,10 +145,10 @@ exports.isLoggedIn = async (req, res, next) => {
           }
 
           req.user = result[0];
-          console.log("user is", req.user);
+          // console.log("user is", req.user);
           console.log("user is", decoded.user_key);
           if (decoded.user_key) {
-            console.log("enter in exit condition");
+            console.log("enter in exist login condition");
             req.isloggedin = 1;
             req.user_key = decoded.user_key;
             return next();
@@ -165,7 +165,7 @@ exports.isLoggedIn = async (req, res, next) => {
     } catch (error) {
       req.isloggedin = 0;
       console.log("enter in catch error ");
-      console.log(error);
+      // console.log(error);
       var message = "hii";
       res.render("login.hbs", { message });
     }
