@@ -9,11 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-<<<<<<< HEAD
-    "cookie": "^0.5.0",
-=======
     "bcryptjs": "^2.4.3",
->>>>>>> 2da69fd4e0cd7a320b621b2c1018875588596b44
     "cookie-parser": "^1.4.6",
     "ejs": "^3.1.8",
     "express": "^4.18.1",
