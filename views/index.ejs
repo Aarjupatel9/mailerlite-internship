@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>index from ejs</title>
+    <link rel="stylesheet" href="/bootstrap.css">
+    <link rel="stylesheet" href="/mycss.css">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">MailerHeavy</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Dashbaord</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Campaigns</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/subscribers">Subscribers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Forms</a>
+                    </li>
+                </ul>
+                <form class="d-flex">
+                    
+                    <%if(user['access']){%>
+                        <a class="btn btn-warning btn-my" href="/profile" role="button">Profile</a>
+                        <a class="btn btn-warning btn-my" href="/logout" role="button">Logout</a>
+                   
+                    
+                        <a class="btn btn-warning btn-my" href="/signup" role="button">Signup</a>
+                        <a class="btn btn-warning btn-my" href="/login" role="button">Login</a>
+                    
+                    <%}%>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <div class="jumbotron container">
+        <h1 class="display-4">Welcome to MailerHeavy!</h1>
+        <p class="lead">This is a simple email automation tool for your business.</p>
+        <hr class="my-4">
+        <p>Sign-up now and explore everything and boost your products or services.</p>
+        <a class="btn btn-primary btn-lg" href="/signup" role="button">Learn more</a>
+    </div>
+
+</body>
+
+</html>

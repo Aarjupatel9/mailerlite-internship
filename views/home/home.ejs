@@ -30,6 +30,9 @@
                         <div class="profile_container">
                             <div class="profile_info_name h5 ">
                                 <%=data.name%>
+                                <span><form action="/logout">
+                                    <button class="btn">logout</button>
+                                </form></span>
                             </div>
                             <div class="profile_info_email h5 ">
                                 <%=data.email%>
@@ -43,54 +46,68 @@
                     </div>
                     <div class="profile_info">
                         <form id="main_form" method="post" action="#">
-                            <button type="button" class="btn btn-success btn-lg">Create</button>
+                            <button type="button" class="btn btn-success btn-lg" style="display:none">Create</button>
                         </form>
                     </div>
                 </div>
             </div>
-            <div class="work_area">
+            <div class="work_area text-center " >
                 <div class="work_container text-center m-4 p-4">
                     <div class="row">
                         <div class="col-sm-6">
-                            <a href="Campaigns/outbox" class="card no-link-highlight ">
-                                <div class="p-4">
-                                    <h3 class="card-title">Create campaign</h3>
-                                    <h6 class="card-text">build your unique and extra-ordinary campaign with coolest
-                                        editor</h6>
-                                    <h1><span class="badge badge-success">Continue</span></h1>
-                                </div>
-                            </a>
+                            <form class="card no-link-highlight " id="main_form" method="post"
+                                action="/campaigns/create">
+                                <a href="javascript:;" class="text-dark no-link-highlight"
+                                    onclick="parentNode.submit();">
+                                    <div class="p-4">
+                                        <h3 class="card-title">Create campaign</h3>
+                                        <h6 class="card-text">build your campaign with coolest
+                                            editor</h6>
+                                        <h1><span class="badge badge-success">continue</span></h1>
+                                    </div>
+                                </a>
+                            </form>
                         </div>
                         <div class="col-sm-6">
-                            <a href="form" class="card no-link-highlight ">
-                                <div class="p-4">
-                                    <h3 class="card-title">Create form</h3>
-                                    <h6 class="card-text">Add more subscribers by submit the forms</h6>
-                                    <h1><span class="badge badge-success">Continue</span></h1>
-                                </div>
-                            </a>
+                            <form class="card " id="main_form" method="post" action="forms">
+                                <a href="javascript:;" class="text-dark no-link-highlight"
+                                    onclick="parentNode.submit();">
+                                    <div class="p-4">
+                                        <h3 class="card-title">Create form</h3>
+                                        <h6 class="card-text">Add more subscribers by submit the forms</h6>
+                                        <h1><span class="badge badge-success">Continue</span></h1>
+                                    </div>
+                                </a>
+
+                            </form>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-6">
-                            <a href="#" class="card no-link-highlight ">
-                                <div class="p-4">
-                                    <h3 class="card-title">Create site</h3>
-                                    <h6 class="card-text">build your unique and extra-ordinary campaign with coolest
-                                        editor</h6>
-                                    <h1><span class="badge badge-success">Continue</span></h1>
-                                </div>
-                            </a>
+                            <form class="card " id="main_form" method="post" action="#">
+                                <a href="javascript:;" class="text-dark no-link-highlight"
+                                    onclick="parentNode.submit();">
+                                    <div class="p-4">
+                                        <h3 class="card-title">Create site</h3>
+                                        <h6 class="card-text">build your unique and extra-ordinary campaign with coolest
+                                            editor</h6>
+                                        <h1><span class="badge badge-success">Continue</span></h1>
+                                    </div>
+                                </a>
+                            </form>
                         </div>
                         <div class="col-sm-6">
-                            <a href="#" class="card no-link-highlight ">
-                                <div class="p-4">
-                                    <h3 class="card-title">Create Automation</h3>
-                                    <h6 class="card-text">build your unique and extra-ordinary campaign with coolest
-                                        editor</h6>
-                                    <h1><span class="badge badge-success">Continue</span></h1>
-                                </div>
-                            </a>
+                            <form class="card " id="main_form" method="post" action="#">
+                                <a href="javascript:;" class="text-dark no-link-highlight"
+                                    onclick="parentNode.submit();">
+                                    <div class="p-4">
+                                        <h3 class="card-title">Create Automation</h3>
+                                        <h6 class="card-text">build your unique and extra-ordinary campaign with coolest
+                                            editor</h6>
+                                        <h1><span class="badge badge-success">Continue</span></h1>
+                                    </div>
+                                </a>
+                            </form>
                         </div>
                     </div>
                 </div>

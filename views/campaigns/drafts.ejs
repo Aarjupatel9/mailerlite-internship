@@ -5,12 +5,40 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        th {
+            border: solid 1px rgb(22, 230, 101);
+        }
 
+        table {
+            border-collapse: collapse;
+            /* table-layout: fixed; */
+            /* width: 310px; */
+        }
+
+        /* th{
+            border: 1px;
+        } */
+
+        table td {
+            border: solid 1px rgb(22, 230, 101);
+            width: 100px;
+            word-wrap: break-word;
+        }
+
+        .no-border {
+            border: 0px;
+        }
+    </style>
+
+    <script>
+        function scheduleCampaign(campaign_key, campaign_name,subjectofemail , email_body, campaign_type, whomtosend ) {
+            console.log(campaign_name);
+        }
+    </script>
     <link href="/css-files/campaigns.css" rel="stylesheet" type="text/css">
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
     <title>campaigns ejs</title>
 </head>
 
@@ -55,14 +83,67 @@
 
             <div class="work_area">
                 <div class="work_container text-center m-4 p-4">
-                    <form id="main_form" method="post" action="/campaigns/create">
-                        <div class="mb-3" name="email">
-                            <label class="h3" for="exampleInputEmail1" class="form-label">Your drafts is Empty</label>
-                            <div id="emailHelp" class="form-text">Once you schedule your campaign, it will appear here.
-                            </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="h2  card-title">Drafts</h4>
+                            <p class="card-description"></p>
+                            <%if(data.draftdetails){%>
+                                <div class="table-responsive">
+                                    <table class="table" id="draft-table">
+                                        <thead>
+                                            <tr>
+                                                <th class="no-border">To Schedule Camp.</th>
+                                                <th>campaign name</th>
+                                                <th>subject of email</th>
+                                                <th>Email Body</th>
+                                                <th>Whom to send</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% for (var i=0; i < data.draftdetails.length; i++) { %>
+                                                <tr class="no-border">
+                                                    <td class="no-border">
+                                                        <input
+                                                            onclick="scheduleCampaign(`<%=data.draftdetails[i].campaign_key%>`,`<%=data.draftdetails[i].campaign_name%>`, `<%=data.draftdetails[i].subjectofemail%>`,`<%=data.draftdetails[i].email_body%>`,`<%=data.draftdetails[i].campaign_type%>`, `<%=data.draftdetails[i].whomtosend%>`)"
+                                                            type="button" value="Schedule">
+                                                    </td>
+                                                    <td>
+                                                        <%=data.draftdetails[i].campaign_name%>
+                                                    </td>
+                                                    <td>
+                                                        <%=data.draftdetails[i].subjectofemail%>
+                                                    </td>
+                                                    <td>
+                                                        <%=data.draftdetails[i].email_body%>
+                                                    </td>
+
+                                                    <td>
+                                                        <%=data.draftdetails[i].whomtosend%>
+                                                    </td>
+
+                                                </tr>
+                                                <%}%>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <%}%>
                         </div>
-                        <button type="submit" class="btn btn-primary">Create New Campaign</button>
-                    </form>
+                    </div>
+                    <%if(!data.draftdetails){%>
+                    <div class="card">
+                        <div class="card-body">
+                            <form id="main_form" method="post" action="/campaigns/create">
+                                <div class="mb-3" name="email">
+                                        <label class="h3" for="exampleInputEmail1" class="form-label">Your drafts is
+                                            Empty</label>
+                                            <div id="emailHelp" class="form-text h4">Once you schedule your campaign, it
+                                                will appear here.
+                                            </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <%}%>
                 </div>
             </div>
         </div>

@@ -19,6 +19,12 @@
     <%if(data.status=="scheduled" ){ %>
         <script>
             alert(`Your campaigns is sccheduled`);
+
+            // Fake api for making post requests
+            // fetch("http://localhost:8080/Campaigns/outbox")
+            //     .then(console.log("succes"));
+            // .then(json => console.log(json));
+            document.location.href = "http://localhost:8080/Campaigns/outbox";
         </script>
         <% } %>
             <div class="conatainer">

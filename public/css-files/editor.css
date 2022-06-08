@@ -16,16 +16,14 @@ section {
   margin-left: 0;
 }
 
-button {
+/* button {
   margin: 10px;
   border-color: #957dad !important;
   color: #888888 !important;
   margin-bottom: 25px;
-}
+} */
 
-button:hover {
-  background-color: #fec8d8 !important;
-}
+/* x */
 
 textarea {
   padding: 3%;

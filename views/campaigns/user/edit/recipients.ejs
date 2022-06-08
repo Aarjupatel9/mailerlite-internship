@@ -37,10 +37,12 @@
                         </div>
                     </div>
                 </div>
+                <hr>
                 <div class="state">
                     <%- include('../../../common/edit-navbar')%>
                 </div>
-                <div class="title_name h2">Recipients</div>
+                
+                <div class="title_name h2 ml-4">Recipients</div>
             </div>
 
             <div class="work_area">
@@ -49,9 +51,15 @@
                         <label class="h3 m-4 p-2">Select recipients of your campaign</label>
                         
                         <div class="form-check m-4 pl-2">
-                            <input class="form-check-input" type="radio" name="wtsoption" id="exampleRadios1" value="option1">
+                            <input class="form-check-input" type="radio" name="wtsoption" id="exampleRadios1" value="toall" checked >
                             <label class="form-check-label" for="exampleRadios1">
                             All active subscribers
+                            </label>
+                        </div>
+                        <div class="form-check m-4 pl-2">
+                            <input class="form-check-input" type="radio" name="wtsoption" id="exampleRadios1" value="tosomeone" disabled>
+                            <label class="form-check-label" for="exampleRadios1">
+                                to some one
                             </label>
                         </div>
 
