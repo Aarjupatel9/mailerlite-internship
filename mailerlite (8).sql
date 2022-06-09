@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 06, 2022 at 07:07 PM
+-- Generation Time: Jun 09, 2022 at 11:37 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -67,7 +67,20 @@ INSERT INTO `campaigns_details` (`campaign_key`, `user_key`, `campaigns_status`,
 (42, 10000001, 'draft', 'send mail test', 'option1', 'nfskfjav', 'AGFVJSFGKUYER', 'toall', '', ''),
 (43, 10000001, 's_later', 'internship', 'option1', 'information about conference', 'mnk', 'toall', 'Thu, 30 Jun 2022 22:41:00 GMT', 'Sat, 04 Jun 2022 22:41:50 GMT'),
 (44, 10000001, 'outbox', 'at 5-6', 'option1', 'test perpose', 'jrhfkajf', 'toall', 'Sat, 25 Jun 2022 21:41:00 GMT', 'Sun, 05 Jun 2022 21:41:16 GMT'),
-(45, 10000005, 'outbox', 'deven first campaign', 'option1', 'test perpose', 'hi njnjcnj', 'toall', 'Fri, 24 Jun 2022 22:03:00 GMT', 'Mon, 06 Jun 2022 22:01:21 GMT');
+(46, 10000001, 'outbox', 'internship', 'option1', 'internship', 'kflnkljsdf`', 'toall', 'Fri, 24 Jun 2022 12:26:00 GMT', 'Tue, 07 Jun 2022 12:27:03 GMT'),
+(47, 10000001, 'draft', 'deven first campaign', 'option1', 'test perpose', 'hi njnjcnj', 'toall', '', ''),
+(48, 10000005, 'draft', 'deven first campaign', 'option1', 'test perpose', 'hi njnjcnj', 'toall', '', ''),
+(49, 10000005, 'draft', 'deven first campaign', 'option1', 'test perpose', 'hi njnjcnj', 'toall', '', ''),
+(50, 10000005, 'outbox', 'deven secound campaigns', 'option1', 'nothing special', 'kjfjksfsfk', 'toall', 'Sat, 25 Jun 2022 21:18:00 GMT', 'Tue, 07 Jun 2022 18:18:22 GMT'),
+(51, 10000005, 'draft', 'deven secound campaigns', 'option1', 'test perpose', 'jhfkjs', 'toall', '', ''),
+(67, 10000005, 'draft', 'jkjsf', 'option1', 'sfnldk', 'lkasjkldl', 'toall', '', ''),
+(68, 10000005, 'draft', 'SGSG', 'option1', 'DKFNKLNSD', 'KALSFJAKL', 'toall', '', ''),
+(70, 10000005, 'draft', 'FSVDS', 'option1', 'DVXD', 'VXV', 'toall', '', ''),
+(71, 10000005, 'draft', 'FSVDS', 'option1', 'FVSFVD', 'FVDF', 'toall', '', ''),
+(72, 10000005, 'draft', 'FSVDS', 'option1', 'DVBDF', 'CVZXCVZXC', 'toall', '', ''),
+(73, 10000005, 'sent', 'ZSVSZ', 'option1', 'SDCVZX', 'ZCVXZC', 'toall', 'Thu, 09 Jun 2022 13:12:00 GMT', 'Thu, 09 Jun 2022 13:11:54 GMT'),
+(74, 10000005, 'sent', 'SFDVDS', 'option1', 'DSFVDS', 'SDBSDB', 'toall', 'Thu, 09 Jun 2022 13:26:00 GMT', 'Thu, 09 Jun 2022 13:25:06 GMT'),
+(75, 10000005, 'sent', 'crystal', 'option1', 'internship massage', 'zfvzv', 'toall', 'Thu, 09 Jun 2022 14:20:00 GMT', 'Thu, 09 Jun 2022 14:19:03 GMT');
 
 -- --------------------------------------------------------
 
@@ -92,6 +105,33 @@ INSERT INTO `subscriber_of_users` (`user_key`, `firstname`, `lastname`, `email`,
 (10000001, 'aman', 'boda', 'wwwaarjubodaaarjuboda@gmail.com', 1987687960),
 (10000005, 'deven', 'parmar', 'aarjupatel922003@gmail.com', 1234567788);
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users_details`
+--
+
+CREATE TABLE `users_details` (
+  `firstname` varchar(50) NOT NULL,
+  `lastname` varchar(50) NOT NULL,
+  `companyname` varchar(50) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `phonenumber` bigint(20) NOT NULL,
+  `user_key` int(11) NOT NULL,
+  `pass` varchar(256) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `users_details`
+--
+
+INSERT INTO `users_details` (`firstname`, `lastname`, `companyname`, `email`, `phonenumber`, `user_key`, `pass`) VALUES
+('aarju', 'patel', 'aman pvt limited', 'travelagency3111@gmail.com', 6353884460, 10000001, '$2a$08$HNg5HyL8V2aJHkK.HFq10eQ1PiBK2Ry.BpQ4wnx6xYxIvf474DquO'),
+('Aarju', 'Patel', 'xyzpvt ltd', 'aarjupatel922003@gmail.com', 6353884460, 10000003, '$2a$08$SoEhD5VITnHi.vNDUCWa7Ou8QWTBsEypCZLdg2sZA7f1l6thVLzHy'),
+('Aarju', 'Patel', 'Aarju pt. Lmt.', 'aarjubodaaarjuboda@gmail.com', 6353884460, 10000004, '$2a$08$HNg5HyL8V2aJHkK.HFq10eQ1PiBK2Ry.BpQ4wnx6xYxIvf474DquO'),
+('Deven', 'Parmar', 'dvd pvt ltd', 'deven@gmail.com', 9999999999, 10000005, '$2a$08$uP4jaEVw1X3nEY6e.n0cq.n91Hu3Q7N3SfKc9ITX420sR4vj5pH/S'),
+('aman', 'patel', 'aman  Lmt.', 'aman@gmail.com', 6353884460, 10000006, '$2a$08$RKYGtzEC3Fd/XMC4tmNANe6Ndb6PxfWuy3sdkj6shRM7f9BD/HT96');
+
 --
 -- Indexes for dumped tables
 --
@@ -110,6 +150,12 @@ ALTER TABLE `subscriber_of_users`
   ADD KEY `user_key` (`user_key`);
 
 --
+-- Indexes for table `users_details`
+--
+ALTER TABLE `users_details`
+  ADD PRIMARY KEY (`user_key`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -117,7 +163,13 @@ ALTER TABLE `subscriber_of_users`
 -- AUTO_INCREMENT for table `campaigns_details`
 --
 ALTER TABLE `campaigns_details`
-  MODIFY `campaign_key` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `campaign_key` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
+
+--
+-- AUTO_INCREMENT for table `users_details`
+--
+ALTER TABLE `users_details`
+  MODIFY `user_key` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10000007;
 
 --
 -- Constraints for dumped tables
