@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
     <style>
         th {
             border: solid 1px rgb(22, 230, 101);
@@ -32,8 +33,84 @@
     </style>
 
     <script>
-        function scheduleCampaign(campaign_key, campaign_name,subjectofemail , email_body, campaign_type, whomtosend ) {
-            console.log(campaign_name);
+        function removeDraft(campaign_key, campaign_name, subjectofemail, email_body, campaign_type, whomtosend) {
+            console.log("from remove ", campaign_name);
+            if (!window.confirm("are you sure to remove this draft?")) {
+                console.log("no");
+            } else {
+                console.log('yes');
+                //now i will send request to delete the campaign from scheduling and save as draafts
+                var cdetails = {
+                    "campaign_key": `${campaign_key}`,
+                }
+                console.log(cdetails);
+                let options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type':
+                            'application/json;charset=utf-8'
+                    },
+                    body: JSON.stringify(cdetails)
+                }
+                // api for making post requests
+                let fetchRes = fetch(
+                    "/Remove-Draft",
+                    options);
+                fetchRes.then(res =>
+                    res.json()).then(d => {
+                        console.log(d);
+                        if (d.response_status == "1") {
+                            document.location.reload();
+                        } else {
+                            window.alert("Can not remove this campaign Now , due to server error");
+                        }
+                    })
+            }
+        }
+        function scheduleDraft(campaign_key, campaign_name, subjectofemail, email_body, campaign_type, whomtosend) {
+            console.log("from schedule ", campaign_name);
+            if (!window.confirm("To Schedule This Draft Press Yes!")) {
+                console.log("no");
+            } else {
+                console.log('yes');
+                //now i will send request to delete the campaign from scheduling and save as draafts
+                var cdetails = {
+                    "campaign_key": `${campaign_key}`,
+                }
+                console.log(cdetails);
+                let options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type':
+                            'application/json;charset=utf-8'
+                    },
+                    body: JSON.stringify(cdetails)
+                }
+                // api for making post requests
+                // let fetchRes = fetch(
+                //     "/Schedule-Draft",
+                //     options);
+                // fetchRes.then(res =>
+                //     res.json()).then(d => {
+                //         console.log(d);
+                //         if (d.response_status == "1") {
+                //             document.location.reload();
+                //         } else {
+                //             window.alert("Can not remove this campaign Now , due to server error");
+                //         }
+                //     })
+                const urlis = "/campaigns/user/review_email"
+                console.log(urlis);
+                $.ajax({
+                    method: 'post',
+                    url: urlis,
+                    data: cdetails,
+                    success: (res) => {
+                        // do something
+                        console.log(res);
+                    }
+                });
+            }
         }
     </script>
     <link href="/css-files/campaigns.css" rel="stylesheet" type="text/css">
@@ -102,25 +179,31 @@
                                         <tbody>
                                             <% for (var i=0; i < data.draftdetails.length; i++) { %>
                                                 <tr class="no-border">
-                                                    <td class="no-border">
-                                                        <input
-                                                            onclick="scheduleCampaign(`<%=data.draftdetails[i].campaign_key%>`,`<%=data.draftdetails[i].campaign_name%>`, `<%=data.draftdetails[i].subjectofemail%>`,`<%=data.draftdetails[i].email_body%>`,`<%=data.draftdetails[i].campaign_type%>`, `<%=data.draftdetails[i].whomtosend%>`)"
-                                                            type="button" value="Schedule">
-                                                    </td>
-                                                    <td>
-                                                        <%=data.draftdetails[i].campaign_name%>
-                                                    </td>
-                                                    <td>
-                                                        <%=data.draftdetails[i].subjectofemail%>
-                                                    </td>
-                                                    <td>
-                                                        <%=data.draftdetails[i].email_body%>
-                                                    </td>
+                                                    <form action="/Schedule-Draft" metho="post">
+                                                        <td class="no-border">
+                                                            <input
+                                                                onclick="scheduleDraft(`<%=data.draftdetails[i].campaign_key%>`,`<%=data.draftdetails[i].campaign_name%>`, `<%=data.draftdetails[i].subjectofemail%>`,`<%=data.draftdetails[i].email_body%>`,`<%=data.draftdetails[i].campaign_type%>`, `<%=data.draftdetails[i].whomtosend%>`)"
+                                                                type="button" value="Schedule">
+                                                        </td>
+                                                        <td>
+                                                            <%=data.draftdetails[i].campaign_name%>
+                                                        </td>
+                                                        <td>
+                                                            <%=data.draftdetails[i].subjectofemail%>
+                                                        </td>
+                                                        <td>
+                                                            <%=data.draftdetails[i].email_body%>
+                                                        </td>
 
-                                                    <td>
-                                                        <%=data.draftdetails[i].whomtosend%>
-                                                    </td>
-
+                                                        <td>
+                                                            <%=data.draftdetails[i].whomtosend%>
+                                                        </td>
+                                                        <td class="no-border">
+                                                            <input
+                                                                onclick="removeDraft(`<%=data.draftdetails[i].campaign_key%>`,`<%=data.draftdetails[i].campaign_name%>`, `<%=data.draftdetails[i].subjectofemail%>`,`<%=data.draftdetails[i].email_body%>`,`<%=data.draftdetails[i].campaign_type%>`, `<%=data.draftdetails[i].whomtosend%>`)"
+                                                                type="button" value="remove">
+                                                        </td>
+                                                    </form>
                                                 </tr>
                                                 <%}%>
                                         </tbody>
@@ -130,20 +213,20 @@
                         </div>
                     </div>
                     <%if(!data.draftdetails){%>
-                    <div class="card">
-                        <div class="card-body">
-                            <form id="main_form" method="post" action="/campaigns/create">
-                                <div class="mb-3" name="email">
+                        <div class="card">
+                            <div class="card-body">
+                                <form id="main_form" method="post" action="/campaigns/create">
+                                    <div class="mb-3" name="email">
                                         <label class="h3" for="exampleInputEmail1" class="form-label">Your drafts is
                                             Empty</label>
-                                            <div id="emailHelp" class="form-text h4">Once you schedule your campaign, it
-                                                will appear here.
-                                            </div>
-                                </div>
-                            </form>
+                                        <div id="emailHelp" class="form-text h4">Once you schedule your campaign, it
+                                            will appear here.
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                    </div>
-                    <%}%>
+                        <%}%>
                 </div>
             </div>
         </div>
