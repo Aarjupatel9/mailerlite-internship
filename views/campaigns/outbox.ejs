@@ -167,25 +167,25 @@
                                     </table>
                                 </div>
                                 <%}%>
+                                    <%if(!data.cdetails){%>
+                                        <form id="main_form" method="post" action="/campaigns/create">
+                                            <div class="mb-3" name="email">
+                                                <label class="h3" for="exampleInputEmail1" class="form-label">Your
+                                                    Outbox is
+                                                    Empty</label>
+                                                <div id="emailHelp" class="form-text">Once you schedule your campaign,
+                                                    it will
+                                                    appear here.
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Create New Campaign</button>
+                                        </form>
+                                        <%}%>
                         </div>
-
                     </div>
-                    <%if(!data.cdetails){%>
-                        <form id="main_form" method="post" action="/campaigns/create">
-                            <div class="mb-3" name="email">
-                                <label class="h3" for="exampleInputEmail1" class="form-label">Your Outbox is
-                                    Empty</label>
-                                <div id="emailHelp" class="form-text">Once you schedule your campaign, it will
-                                    appear here.
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Create New Campaign</button>
-                        </form>
-                        <%}%>
                 </div>
             </div>
         </div>
-    </div>
 
 
 </body>

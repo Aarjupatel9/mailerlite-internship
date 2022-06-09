@@ -881,7 +881,13 @@ app.get("/campaigns/drafts", authController.isLoggedIn, (req, res) => {
               console.log(err);
             } else {
               // console.log(result);
-              session_draft_details["draftdetails"] = result;
+              if (result.length > 0) {
+                // console.log(result[0].email_body);
+                session_draft_details["draftdetails"] = result;
+              } else {
+                session_draft_details["draftdetails"] = 0;
+              }
+
               // console.log(session_draft_details);
               const data = session_draft_details;
               res.render("campaigns/drafts.ejs", { data });

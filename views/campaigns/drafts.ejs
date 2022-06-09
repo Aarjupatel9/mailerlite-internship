@@ -210,23 +210,20 @@
                                     </table>
                                 </div>
                                 <%}%>
+                                <%if(!data.draftdetails){%>
+                                    <form id="main_form" method="post" action="/campaigns/create">
+                                        <div class="mb-3" name="email">
+                                            <label class="h3" for="exampleInputEmail1" class="form-label">Your drafts-box is
+                                                Empty</label>
+                                            
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Create New Campaign</button>
+                                    </form>
+                                    <%}%>
                         </div>
                     </div>
-                    <%if(!data.draftdetails){%>
-                        <div class="card">
-                            <div class="card-body">
-                                <form id="main_form" method="post" action="/campaigns/create">
-                                    <div class="mb-3" name="email">
-                                        <label class="h3" for="exampleInputEmail1" class="form-label">Your drafts is
-                                            Empty</label>
-                                        <div id="emailHelp" class="form-text h4">Once you schedule your campaign, it
-                                            will appear here.
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        <%}%>
+                    
+                        
                 </div>
             </div>
         </div>

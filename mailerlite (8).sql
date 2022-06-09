@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 09, 2022 at 10:55 AM
+-- Generation Time: Jun 09, 2022 at 11:37 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -73,9 +73,6 @@ INSERT INTO `campaigns_details` (`campaign_key`, `user_key`, `campaigns_status`,
 (49, 10000005, 'draft', 'deven first campaign', 'option1', 'test perpose', 'hi njnjcnj', 'toall', '', ''),
 (50, 10000005, 'outbox', 'deven secound campaigns', 'option1', 'nothing special', 'kjfjksfsfk', 'toall', 'Sat, 25 Jun 2022 21:18:00 GMT', 'Tue, 07 Jun 2022 18:18:22 GMT'),
 (51, 10000005, 'draft', 'deven secound campaigns', 'option1', 'test perpose', 'jhfkjs', 'toall', '', ''),
-(64, 10000005, 'draft', 'jkjsf', 'option1', 'sfnldk', 'lkasjkldl', 'toall', '', ''),
-(65, 10000005, 'draft', 'jkjsf', 'option1', 'sfnldk', 'lkasjkldl', 'toall', '', ''),
-(66, 10000005, 'draft', 'jkjsf', 'option1', 'sfnldk', 'lkasjkldl', 'toall', '', ''),
 (67, 10000005, 'draft', 'jkjsf', 'option1', 'sfnldk', 'lkasjkldl', 'toall', '', ''),
 (68, 10000005, 'draft', 'SGSG', 'option1', 'DKFNKLNSD', 'KALSFJAKL', 'toall', '', ''),
 (70, 10000005, 'draft', 'FSVDS', 'option1', 'DVXD', 'VXV', 'toall', '', ''),
@@ -132,7 +129,8 @@ INSERT INTO `users_details` (`firstname`, `lastname`, `companyname`, `email`, `p
 ('aarju', 'patel', 'aman pvt limited', 'travelagency3111@gmail.com', 6353884460, 10000001, '$2a$08$HNg5HyL8V2aJHkK.HFq10eQ1PiBK2Ry.BpQ4wnx6xYxIvf474DquO'),
 ('Aarju', 'Patel', 'xyzpvt ltd', 'aarjupatel922003@gmail.com', 6353884460, 10000003, '$2a$08$SoEhD5VITnHi.vNDUCWa7Ou8QWTBsEypCZLdg2sZA7f1l6thVLzHy'),
 ('Aarju', 'Patel', 'Aarju pt. Lmt.', 'aarjubodaaarjuboda@gmail.com', 6353884460, 10000004, '$2a$08$HNg5HyL8V2aJHkK.HFq10eQ1PiBK2Ry.BpQ4wnx6xYxIvf474DquO'),
-('Deven', 'Parmar', 'dvd pvt ltd', 'deven@gmail.com', 9999999999, 10000005, '$2a$08$uP4jaEVw1X3nEY6e.n0cq.n91Hu3Q7N3SfKc9ITX420sR4vj5pH/S');
+('Deven', 'Parmar', 'dvd pvt ltd', 'deven@gmail.com', 9999999999, 10000005, '$2a$08$uP4jaEVw1X3nEY6e.n0cq.n91Hu3Q7N3SfKc9ITX420sR4vj5pH/S'),
+('aman', 'patel', 'aman  Lmt.', 'aman@gmail.com', 6353884460, 10000006, '$2a$08$RKYGtzEC3Fd/XMC4tmNANe6Ndb6PxfWuy3sdkj6shRM7f9BD/HT96');
 
 --
 -- Indexes for dumped tables
@@ -171,7 +169,7 @@ ALTER TABLE `campaigns_details`
 -- AUTO_INCREMENT for table `users_details`
 --
 ALTER TABLE `users_details`
-  MODIFY `user_key` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10000006;
+  MODIFY `user_key` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10000007;
 
 --
 -- Constraints for dumped tables
