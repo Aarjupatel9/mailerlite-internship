@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 08, 2022 at 08:24 AM
+-- Generation Time: Jun 09, 2022 at 10:55 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -73,17 +73,17 @@ INSERT INTO `campaigns_details` (`campaign_key`, `user_key`, `campaigns_status`,
 (49, 10000005, 'draft', 'deven first campaign', 'option1', 'test perpose', 'hi njnjcnj', 'toall', '', ''),
 (50, 10000005, 'outbox', 'deven secound campaigns', 'option1', 'nothing special', 'kjfjksfsfk', 'toall', 'Sat, 25 Jun 2022 21:18:00 GMT', 'Tue, 07 Jun 2022 18:18:22 GMT'),
 (51, 10000005, 'draft', 'deven secound campaigns', 'option1', 'test perpose', 'jhfkjs', 'toall', '', ''),
-(53, 10000005, 'draft', 'deven secound campaigns', 'option1', 'test perpose', 'jhfkjs', 'toall', '', ''),
-(54, 10000005, 'draft', 'intern', 'option1', 'internship massage', 'kmk', 'toall', '', ''),
-(55, 10000005, 'draft', 'intern', 'option1', 'internship massage', 'kmk', 'toall', '', ''),
-(56, 10000005, 'draft', 'intern', 'option1', 'internship massage', 'kmk', 'toall', '', ''),
-(57, 10000005, 'draft', 'intern', 'option1', 'internship massage', 'kmk', 'toall', '', ''),
-(58, 10000005, 'draft', 'intern', 'option1', 'internship massage', 'kmk', 'toall', '', ''),
-(59, 10000005, 'draft', 'intern', 'option1', 'internship massage', 'kmk', 'toall', '', ''),
-(60, 10000005, 'draft', 'intern', 'option1', 'internship massage', 'kmk', 'toall', '', ''),
-(61, 10000005, 'draft', 'intern', 'option1', 'internship massage', 'kmk', 'toall', '', ''),
-(62, 10000005, 'draft', 'intern', 'option1', 'internship massage', 'kmk', 'toall', '', ''),
-(63, 10000005, 'draft', 'intern', 'option1', 'internship massage', 'kmk', 'toall', '', '');
+(64, 10000005, 'draft', 'jkjsf', 'option1', 'sfnldk', 'lkasjkldl', 'toall', '', ''),
+(65, 10000005, 'draft', 'jkjsf', 'option1', 'sfnldk', 'lkasjkldl', 'toall', '', ''),
+(66, 10000005, 'draft', 'jkjsf', 'option1', 'sfnldk', 'lkasjkldl', 'toall', '', ''),
+(67, 10000005, 'draft', 'jkjsf', 'option1', 'sfnldk', 'lkasjkldl', 'toall', '', ''),
+(68, 10000005, 'draft', 'SGSG', 'option1', 'DKFNKLNSD', 'KALSFJAKL', 'toall', '', ''),
+(70, 10000005, 'draft', 'FSVDS', 'option1', 'DVXD', 'VXV', 'toall', '', ''),
+(71, 10000005, 'draft', 'FSVDS', 'option1', 'FVSFVD', 'FVDF', 'toall', '', ''),
+(72, 10000005, 'draft', 'FSVDS', 'option1', 'DVBDF', 'CVZXCVZXC', 'toall', '', ''),
+(73, 10000005, 'sent', 'ZSVSZ', 'option1', 'SDCVZX', 'ZCVXZC', 'toall', 'Thu, 09 Jun 2022 13:12:00 GMT', 'Thu, 09 Jun 2022 13:11:54 GMT'),
+(74, 10000005, 'sent', 'SFDVDS', 'option1', 'DSFVDS', 'SDBSDB', 'toall', 'Thu, 09 Jun 2022 13:26:00 GMT', 'Thu, 09 Jun 2022 13:25:06 GMT'),
+(75, 10000005, 'sent', 'crystal', 'option1', 'internship massage', 'zfvzv', 'toall', 'Thu, 09 Jun 2022 14:20:00 GMT', 'Thu, 09 Jun 2022 14:19:03 GMT');
 
 -- --------------------------------------------------------
 
@@ -165,7 +165,7 @@ ALTER TABLE `users_details`
 -- AUTO_INCREMENT for table `campaigns_details`
 --
 ALTER TABLE `campaigns_details`
-  MODIFY `campaign_key` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `campaign_key` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT for table `users_details`

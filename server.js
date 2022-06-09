@@ -22,6 +22,7 @@ const { use } = require("express/lib/application");
 const { time } = require("console");
 
 var con = require("./module/mysqlconn");
+const { read } = require("fs");
 con.connect(function (err) {
   if (err) console.log(err);
 });
@@ -73,18 +74,31 @@ app.post("/login", urlencodedparser, authController.login);
 app.get("/logout", authController.logout);
 
 //function use in the app
-function sendEmailOfCampaigns(session_draft_details) {
-  console.log("send email  function inside", session_draft_details);
-  console.log(
-    "session_draft_details.campaign_name : ",
-    session_draft_details.campaign_name
-  );
+function sendEmailOfCampaigns(user_key, campaign_key) {
+  console.log("send email  function inside", user_key, campaign_key);
+  // return;
+  //NOW WI HAVE TO FETCH DRAFT DETAILS FROM DATABASE THROUGH CAMPAIGN_KEY
+  var draftdetails = [];
+  const fetchingdraftdetails =
+    "SELECT * FROM `campaigns_details` WHERE `campaign_key`='" +
+    campaign_key +
+    "'";
+  con.query(fetchingdraftdetails, function (err, result, field) {
+    if (err) {
+      console.log(err);
+    } else {
+      draftdetails["campaign_name"] = result[0].campaign_name;
+      draftdetails["campaign_type"] = result[0].campaign_type;
+      draftdetails["subjectofemail"] = result[0].subjectofemail;
+      draftdetails["whomtosend"] = result[0].whomtosend;
+      draftdetails["email_body"] = result[0].email_body;
+    }
+  });
   //we have to find user key of the user from database but now declare statisllyu here
-  var userkey = 10000001;//req.user_key; //for user travelagency3111@gmail.com
+  //req.user_key; //for user travelagency3111@gmail.com
   //fetch the subscribers email from database
-  var table_name = "subscriber_of_users";
   con.query(
-    "SELECT * FROM `" + table_name + "` WHERE `user_key`=" + userkey + "",
+    "SELECT * FROM `subscriber_of_users` WHERE `user_key`=" + user_key + "",
     function (err, result, fields) {
       if (err) {
         console.log(err);
@@ -104,8 +118,8 @@ function sendEmailOfCampaigns(session_draft_details) {
           var mailOptions = {
             from: "travelagency3111@gmail.com",
             to: `${email}`,
-            subject: `${session_draft_details.subject}`,
-            text: `${session_draft_details.email_body}`,
+            subject: `${draftdetails["subjectofemail"]}`,
+            text: `${draftdetails["email_body"]}`,
           };
           transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
@@ -114,10 +128,10 @@ function sendEmailOfCampaigns(session_draft_details) {
               console.log("Email sent : " + info.response);
               console.log("enter in send email section , email is in progress");
               var campaign_update_query =
-                "UPDATE `campaigns_details` SET `campaigns_status`='sent' WHERE `user_key`= '10000001' AND `subjectofemail`='" +
-                session_draft_details.subject +
-                "' AND `campaign_name`='" +
-                session_draft_details.campaign_name +
+                "UPDATE `campaigns_details` SET `campaigns_status`='sent' WHERE `user_key`= '" +
+                user_key +
+                "' AND `campaign_key`='" +
+                campaign_key +
                 "'";
               con.query(campaign_update_query, function (err, result) {
                 if (err) {
@@ -134,7 +148,7 @@ function sendEmailOfCampaigns(session_draft_details) {
   );
 }
 
-function saveDraftsOfCampaigns(user_key, session_draft_details) {
+async function saveDraftsOfCampaigns(user_key, session_draft_details) {
   console.log("user key is : ", user_key);
 
   console.log("enter in save drafts");
@@ -321,6 +335,48 @@ app.post(
         });
       }
     });
+  }
+);
+app.post(
+  "/Remove-Draft",
+  authController.isLoggedIn,
+  urlencodedparser,
+  (req, res) => {
+    console.log("enter in api");
+    const user_key = req.user_key;
+    const campaign_key = req.body.campaign_key;
+
+    //now we will remove it from draft box
+    var removefromdraftboxquery =
+      "DELETE FROM `campaigns_details` WHERE `campaigns_status`='draft' AND `campaign_key` ='" +
+      campaign_key +
+      "' ";
+    con.query(removefromdraftboxquery, function (err, result) {
+      if (err) {
+        res.send({ response_status: "0" });
+        console.log(err);
+      } else {
+        res.send({ response_status: "1" });
+        console.log(
+          "remove query from remove draft - affect row: ",
+          result.affectedRows
+        );
+      }
+    });
+  }
+);
+
+app.post(
+  "/Schedule-Draft",
+  authController.isLoggedIn,
+  urlencodedparser,
+  (req, res) => {
+    console.log("enter in api");
+    const user_key = req.body.user_key;
+    const campaign_key = req.body.campaign_key;
+
+    //now we will remove it from draft box
+    res.redirect("/campaigns/user/review_email");
   }
 );
 
@@ -548,17 +604,85 @@ app.post(
   authController.isLoggedIn,
   (req, res) => {
     const user_key = req.user_key;
-    var session_draft_details = session_storage.getItem(
-      "session_draft_details_" + user_key + ""
-    );
-    session_draft_details["wts"] = req.body.wtsoption;
-    saveDraftsOfCampaigns(user_key, session_draft_details);
-    console.log(
-      "session_draft_details into review_email handler",
-      session_draft_details
-    );
-    const data = session_draft_details;
-    res.render("campaigns/user/edit/review_email.ejs", { data });
+    const campaign_key = req.body.campaign_key;
+    console.log("user_key in schedue email from draft", user_key);
+    console.log("campaign_key in schedue email from draft", campaign_key);
+    if (req.body.campaign_key === undefined) {
+      console.log("ENTER IN IF CONDITION");
+      const user_key = req.user_key;
+      var session_draft_details = session_storage.getItem(
+        "session_draft_details_" + user_key + ""
+      );
+      session_draft_details["wts"] = req.body.wtsoption;
+      console.log(
+        "session_draft_details into review_email handler",
+        session_draft_details
+      );
+      saveDraftsOfCampaigns(user_key, session_draft_details);
+
+      // now we have to fetch campaign_key and all other data from the database
+      const fetchdraftdetails =
+        "SELECT * FROM `campaigns_details`  WHERE `user_key` ='" +
+        user_key +
+        "' AND `campaigns_status` = 'draft' ORDER BY `campaign_key` DESC";
+      con.query(fetchdraftdetails, function (err, result, field) {
+        if (err) {
+          console.log(err);
+        } else {
+          const data = [];
+          data["campaign_key"] = result[0].campaign_key;
+          data["s_name"] = result[0].firstname + " " + result[0].lastname;
+          data["email"] = result[0].email;
+          data["companyname"] = result[0].companyname;
+          data["campaign_name"] = result[0].campaign_name;
+          data["campaign_type"] = result[0].campaign_type;
+          data["subject"] = result[0].subjectofemail;
+          data["wts"] = result[0].whomtosend;
+          data["email_body"] = result[0].email_body;
+          con.query(
+            "SELECT * FROM users_details WHERE `user_key`='" + user_key + "'",
+            function (err, result1, fields) {
+              if (err) {
+                console.log(err);
+              } else {
+                data["name"] = result1[0].firstname + " " + result1[0].lastname;
+                data["email"] = result1[0].email;
+                data["companyname"] = result1[0].companyname;
+
+                res.render("campaigns/user/edit/review_email.ejs", { data });
+              }
+            }
+          );
+        }
+      });
+      // const data = session_draft_details;
+    } else {
+      console.log("enter in schedue email from draft", user_key);
+      const fetchingdraftdetails =
+        "SELECT * FROM `campaigns_details` INNER JOIN `users_details` ON `campaigns_details`.`user_key`=`users_details`.`user_key` WHERE `campaign_key`='" +
+        campaign_key +
+        "'";
+      con.query(fetchingdraftdetails, function (err, result, field) {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(result);
+          var data = [];
+          data["s_name"] = result[0].firstname + " " + result[0].lastname;
+          data["email"] = result[0].email;
+          data["companyname"] = result[0].companyname;
+          data["campaign_name"] = result[0].campaign_name;
+          data["campaign_type"] = result[0].campaign_type;
+          data["subject"] = result[0].subjectofemail;
+          data["wts"] = result[0].whomtosend;
+          data["email_body"] = result[0].email_body;
+          console.log("data set from else review email condition : ", data);
+
+          res.render("campaigns/user/edit/review_email.ejs", { data });
+          // res.send({ name: "hello" });
+        }
+      });
+    }
   }
 );
 
@@ -568,23 +692,36 @@ app.post(
   authController.isLoggedIn,
   (req, res) => {
     const user_key = req.user_key;
-    var session_draft_details = session_storage.getItem(
-      "session_draft_details_" + user_key + ""
-    );
+    // var session_draft_details = session_storage.getItem(
+    //   "session_draft_details_" + user_key + ""
+    // );
     //here nothing to add into session_draft_details for now
-    session_draft_details["time"] = NULL;
-    session_draft_details["status"] = "";
-    session_draft_details["timer"] = null;
-    session_storage.setItem(
-      "session_draft_details_" + user_key + "",
-      session_draft_details
-    );
+    // session_draft_details["time"] = NULL;
+    // session_draft_details["status"] = "";
+    // session_draft_details["timer"] = null;
+    // session_storage.setItem(
+    //   "session_draft_details_" + user_key + "",
+    //   session_draft_details
+    // );
 
-    console.log(
-      "session_draft_details into schedule handler",
-      session_storage.getItem("session_draft_details_" + user_key + "")
-    );
-    const data = session_draft_details;
+    // console.log(
+    //   "session_draft_details into schedule handler",
+    //   session_storage.getItem("session_draft_details_" + user_key + "")
+    // );
+    // const data = session_draft_details;
+    var data = [];
+    data["campaign_key"] = req.body.campaign_key;
+    data["name"] = req.body.s_name;
+    data["email"] = req.body.email;
+    data["campaign_name"] = req.body.campaign_name;
+    data["campaign_type"] = req.body.campaign_type;
+    data["subject"] = req.body.subject;
+    data["email_body"] = req.body.email_body;
+    data["wts"] = req.body.wts;
+    data["time"] = NULL;
+    data["status"] = "";
+    data["timer"] = null;
+
     res.render("campaigns/user/edit/schedule_email.ejs", { data }); //schedule_email;
   }
 );
@@ -595,9 +732,10 @@ app.post(
   authController.isLoggedIn,
   (req, res) => {
     var user_key = req.user_key;
-    var session_draft_details = session_storage.getItem(
-      "session_draft_details_" + user_key + ""
-    );
+    var campaign_key = req.body.campaign_key;
+    // var session_draft_details = session_storage.getItem(
+    //   "session_draft_details_" + user_key + ""
+    // );
     var user_provided_time = req.body.time;
     var user_provided_time1 = new Date(
       user_provided_time.slice(0, 4),
@@ -617,23 +755,20 @@ app.post(
     console.log(current_local_time);
     console.log("current local time", current_local_time.toUTCString());
     var timer = time_to_schedule_email - current_local_time;
-    session_draft_details["time"] = time_to_schedule_email;
-    session_draft_details["current_time"] = current_local_time;
+    // session_draft_details["time"] = time_to_schedule_email;
+    // session_draft_details["current_time"] = current_local_time;
     console.log(
       "user_provided_time is  : ",
       time_to_schedule_email,
       "   currrenttime is : ",
       current_local_time
     );
-    console.log(
-      "defference is : ",
-      time_to_schedule_email - current_local_time
-    );
+    console.log("defference is : ", timer);
 
     if (timer < 2147483646) {
       setTimeout(() => {
         console.log("settime function inside");
-        sendEmailOfCampaigns(session_draft_details);
+        sendEmailOfCampaigns(user_key, campaign_key);
       }, timer);
       var schedule_status = "outbox";
     } else {
@@ -641,50 +776,33 @@ app.post(
     }
 
     var sqlquery =
-      "INSERT INTO `campaigns_details`(`user_key`,`campaigns_status`, `campaign_name`, `campaign_type`, `subjectofemail`, `email_body`, `whomtosend`, `timeofsend`, `timeofscheduled`) VALUES ('" +
-      user_key +
-      "','" +
+      "UPDATE `campaigns_details` SET `campaigns_status`='" +
       schedule_status +
-      "','" +
-      session_draft_details.campaign_name +
-      "','" +
-      session_draft_details.campaign_type +
-      "','" +
-      session_draft_details.subject +
-      "','" +
-      session_draft_details.email_body +
-      "','" +
-      session_draft_details.wts +
-      "','" +
-      session_draft_details.time.toUTCString() +
-      "','" +
-      session_draft_details.current_time.toUTCString() +
-      "')";
-    console.log(
-      "database saved time : ",
-      session_draft_details.time.toUTCString(),
-      "   And current time is :  ",
-      session_draft_details.current_time.toUTCString()
-    );
-
+      "', `timeofsend`='" +
+      time_to_schedule_email.toUTCString() +
+      "',`timeofscheduled`='" +
+      current_local_time.toUTCString() +
+      "' WHERE `campaign_key`='" +
+      campaign_key +
+      "'";
     con.query(sqlquery, function (err, result) {
       if (err) console.log(err);
       console.log("Number of records inserted: " + result.affectedRows);
     });
-
-    session_draft_details["status"] = "scheduled";
-    session_draft_details["timer"] = timer;
-    session_storage.setItem(
-      "session_draft_details_" + user_key + "",
-      session_draft_details
-    );
+    const data = [];
+    data["status"] = "scheduled";
+    data["timer"] = timer;
+    // session_storage.setItem(
+    //   "session_draft_details_" + user_key + "",
+    //   session_draft_details
+    // );
     console.log(
       session_storage.getItem("session_draft_details_" + user_key + "")
     );
     // if (session_draft_details.status == "scheduled") {
     //   res.render("campaigns/outbox", {data});
     // } else {
-    const data = session_draft_details;
+    // const data = session_draft_details;
     res.render("campaigns/user/edit/schedule_email.ejs", { data });
     // res.send("campaigns is scheduled");
     // }
@@ -792,6 +910,7 @@ app.get("/automation", authController.isLoggedIn, (req, res) => {
 });
 
 app.get("*", (req, res) => {
+  console.log("enter in 404 error page");
   res.sendFile(`${ERRORFILEPATH}/error404.html`);
 });
 
@@ -830,19 +949,15 @@ app.listen(port, () => {
           console.log("current local time : ", current_local_time);
           console.log(timer);
           //make object for sending email
-          const cdetails = {
-            userkey: `${result[i].user_key}`,
-            campaign_name: `${result[i].campaign_name}`,
-            subject: `${result[i].subjectofemail}`,
-            email_body: `${result[i].email_body}`,
-            wts: `${result[i].whomtosend}`,
-            campaign_type: `${result[i].campaign_type}`,
-          };
+
+          const user_key = result[i].user_key;
+          const campaign_key = result[i].campaign_key;
+
           // console.log(cdetails);
           if (timer) {
             setTimeout(() => {
               console.log("settime function inside at server starrt");
-              sendEmailOfCampaigns(cdetails);
+              sendEmailOfCampaigns(user_key, campaign_key);
             }, timer);
           } else {
             console.log("timer error at starting");
@@ -852,9 +967,3 @@ app.listen(port, () => {
     }
   );
 });
-
-
-// i have to fetch data draft data from database and then desplay into the review page and go for the schedule
-// i saved draft at before review page 
-// and fetch data from reviw page for schedule and also have to make changes in the for that drft into the databse
-//for scheduling data come from the review page

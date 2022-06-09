@@ -48,14 +48,20 @@
 
                     <form class="bg-light m-5" method="post" action="/campaigns/user/schedule">
                         <div class="form-group col ">
-                            <label for="s_name">Sender's Name</label>
+                            <label for="s_name">Your's Name</label>
                             <input type="text" name="s_name" class="form-control" id="s_name" value="<%=data.name%>"
                                 readonly>
                         </div>
                         <div class="form-group col ">
-                            <label for="s_name">Sender's Email Adress</label>
+                            <label for="s_name">Your's Email Adress</label>
                             <input type="s_email" name="s_email" class="form-control" id="s_email"
                                 value="<%=data.email%>" readonly>
+                        </div>
+
+                        <div class="form-group col " style="display: none;">
+                            <label for="campaign_key">Campaign KEY</label>
+                            <input  type="text" name="campaign_key" class="form-control" id="campaign_key"
+                                value="<%=data.campaign_key%>" readonly>
                         </div>
                         <div class="form-group col ">
                             <label for="s_name">Campaign Name</label>
@@ -72,12 +78,8 @@
                             <input type="text" name="subject" class="form-control" id="subject"
                                 value="<%=data.subject%>" readonly>
                         </div>
-                        <div class="form-group col ">
-                            <label for="s_name">Email Body</label>
-                            <input type="text" name="email_body" class="form-control" id="email_body"
-                                value="<%=data.email_body%>" readonly>
-                        </div>
-                        <div class="form-group purple-border">
+                        
+                        <div class="form-group col purple-border">
                             <label for="email_body">Email Body</label>
                             <textarea class="form-control" name="email_body" id="email_body" rows="3"
                                 readonly><%=data.email_body%></textarea>
