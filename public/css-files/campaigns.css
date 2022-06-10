@@ -1,0 +1,81 @@
+li {
+  margin-bottom: 30px;
+}
+
+@media screen and (max-width: 800px) {
+  .side_bar {
+    display: none;
+    /* float:left; */
+  }
+}
+/* nav div ul li a:hover {
+  text-decoration: solid navy 10px;
+} */
+
+.conatainer {
+  display: flex;
+  /* overflow-y: scroll; */
+  /* white-space: nowrap; */
+}
+.main_area {
+  padding-top: 10px;
+  flex: 80vw;
+  background-color: lightgray;
+  height: 100vh;
+  overflow-y: scroll;
+
+  /* display: inline-block; */
+}
+.side_bar {
+  flex: 20vw;
+  height: 100vh;
+  /* display: inline-block; */
+  overflow-y: scroll;
+  /* white-space: nowrap; */
+}
+
+.title_name {
+  margin: 5px 1px 1px 0px;
+}
+
+.camp_heading {
+  margin: 20px 20px 20px 20px;
+  display: flex;
+}
+.camp_heading2 {
+  margin: 10px 10px 10px 10px;
+  display: flex;
+}
+.profile_plan {
+  flex: 1;
+}
+.profile_info {
+  float: right;
+  flex: 1;
+}
+/* .profile_container{
+  display: flex;
+  float: right;
+} */
+/* .profile_info_name{
+  float: right;
+}
+.profile_info_email{
+  float: right;
+} */
+
+.work_area {
+  width: 100%;
+  height: auto;
+}
+
+.type_container {
+  border: 1px solid lightgreen;
+}
+.type_container hr {
+  border: 1px solid lightgreen;
+}
+
+.add_border {
+  border: 1px solid black;
+}
