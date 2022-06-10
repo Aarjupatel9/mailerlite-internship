@@ -87,29 +87,29 @@
                     body: JSON.stringify(cdetails)
                 }
                 // api for making post requests
-                // let fetchRes = fetch(
-                //     "/Schedule-Draft",
-                //     options);
-                // fetchRes.then(res =>
-                //     res.json()).then(d => {
-                //         console.log(d);
-                //         if (d.response_status == "1") {
-                //             document.location.reload();
-                //         } else {
-                //             window.alert("Can not remove this campaign Now , due to server error");
-                //         }
-                //     })
-                const urlis = "/campaigns/user/review_email"
-                console.log(urlis);
-                $.ajax({
-                    method: 'post',
-                    url: urlis,
-                    data: cdetails,
-                    success: (res) => {
-                        // do something
-                        console.log(res);
-                    }
-                });
+                let fetchRes = fetch(
+                    "/campaigns/user/review_email",
+                    options);
+                fetchRes.then(res =>
+                    res.json()).then(d => {
+                        console.log(d);
+                        if (d.response_status == "1") {
+                            document.location.reload();
+                        } else {
+                            window.alert("Can not remove this campaign Now , due to server error");
+                        }
+                    })
+                // const urlis = "/campaigns/user/review_email"
+                // console.log(urlis);
+                // $.ajax({
+                //     method: 'post',
+                //     url: urlis,
+                //     data: cdetails,
+                //     success: (res) => {
+                //         // do something
+                //         console.log(res);
+                //     }
+                // });
             }
         }
     </script>
@@ -179,51 +179,55 @@
                                         <tbody>
                                             <% for (var i=0; i < data.draftdetails.length; i++) { %>
                                                 <tr class="no-border">
-                                                    <form action="/Schedule-Draft" metho="post">
-                                                        <td class="no-border">
-                                                            <input
-                                                                onclick="scheduleDraft(`<%=data.draftdetails[i].campaign_key%>`,`<%=data.draftdetails[i].campaign_name%>`, `<%=data.draftdetails[i].subjectofemail%>`,`<%=data.draftdetails[i].email_body%>`,`<%=data.draftdetails[i].campaign_type%>`, `<%=data.draftdetails[i].whomtosend%>`)"
-                                                                type="button" value="Schedule">
-                                                        </td>
-                                                        <td>
-                                                            <%=data.draftdetails[i].campaign_name%>
-                                                        </td>
-                                                        <td>
-                                                            <%=data.draftdetails[i].subjectofemail%>
-                                                        </td>
-                                                        <td>
-                                                            <%=data.draftdetails[i].email_body%>
-                                                        </td>
+                                                    <td class="no-border">
+                                                        <form action="/campaigns/user/review_email" method="post">
+                                                            <div class="form-group col " style="display: none;">
+                                                                <label for="campaign_key">Campaign KEY</label>
+                                                                <input type="text" name="campaign_key" class="form-control" id="campaign_key" value="<%=data.draftdetails[i].campaign_key%>"
+                                                                    readonly>
+                                                            </div>
+                                                            <input type="submit" value="Schedule">
+                                                        </form>
+                                                    </td>
+                                                    <td>
+                                                        <%=data.draftdetails[i].campaign_name%>
+                                                    </td>
+                                                    <td>
+                                                        <%=data.draftdetails[i].subjectofemail%>
+                                                    </td>
+                                                    <td>
+                                                        <%=data.draftdetails[i].email_body%>
+                                                    </td>
 
-                                                        <td>
-                                                            <%=data.draftdetails[i].whomtosend%>
-                                                        </td>
-                                                        <td class="no-border">
-                                                            <input
-                                                                onclick="removeDraft(`<%=data.draftdetails[i].campaign_key%>`,`<%=data.draftdetails[i].campaign_name%>`, `<%=data.draftdetails[i].subjectofemail%>`,`<%=data.draftdetails[i].email_body%>`,`<%=data.draftdetails[i].campaign_type%>`, `<%=data.draftdetails[i].whomtosend%>`)"
-                                                                type="button" value="remove">
-                                                        </td>
-                                                    </form>
+                                                    <td>
+                                                        <%=data.draftdetails[i].whomtosend%>
+                                                    </td>
+                                                    <td class="no-border">
+                                                        <input
+                                                            onclick="removeDraft(`<%=data.draftdetails[i].campaign_key%>`,`<%=data.draftdetails[i].campaign_name%>`, `<%=data.draftdetails[i].subjectofemail%>`,`<%=data.draftdetails[i].email_body%>`,`<%=data.draftdetails[i].campaign_type%>`, `<%=data.draftdetails[i].whomtosend%>`)"
+                                                            type="button" value="remove">
+                                                    </td>
                                                 </tr>
                                                 <%}%>
                                         </tbody>
                                     </table>
                                 </div>
                                 <%}%>
-                                <%if(!data.draftdetails){%>
-                                    <form id="main_form" method="post" action="/campaigns/create">
-                                        <div class="mb-3" name="email">
-                                            <label class="h3" for="exampleInputEmail1" class="form-label">Your drafts-box is
-                                                Empty</label>
-                                            
-                                        </div>
-                                        <button type="submit" class="btn btn-primary">Create New Campaign</button>
-                                    </form>
-                                    <%}%>
+                                    <%if(!data.draftdetails){%>
+                                        <form id="main_form" method="post" action="/campaigns/create">
+                                            <div class="mb-3" name="email">
+                                                <label class="h3" for="exampleInputEmail1" class="form-label">Your
+                                                    drafts-box is
+                                                    Empty</label>
+
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Create New Campaign</button>
+                                        </form>
+                                        <%}%>
                         </div>
                     </div>
-                    
-                        
+
+
                 </div>
             </div>
         </div>

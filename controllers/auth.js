@@ -15,9 +15,9 @@ exports.login = async (req, res) => {
     // console.log(req.body.emails);
     // console.log(emails);
     if (!emails || !passwords) {
-      return res.status(400).render("login.hbs", {
-        message: "Please provide an email and password",
-      });
+      var data = [];
+      data['message'] = 0;
+      return res.status(400).render("auth/login.ejs", { data });
     }
 
     con.query(
@@ -33,15 +33,14 @@ exports.login = async (req, res) => {
                 await bcrypt.compare(passwords, results[0].pass);
               }
             ) {
+              console.log("oassword is ", passwords);
+              console.log("oassword is ", results[0].pass);
               console.log("login successful");
               const user_key = results[0].user_key;
-
               const token = jwt.sign({ user_key }, process.env.JWT_SECRET, {
                 expiresIn: process.env.JWT_EXPIRES_IN,
               });
-
               console.log("The token is: " + token);
-
               const cookieOptions = {
                 expires: new Date(
                   Date.now() +
@@ -49,18 +48,17 @@ exports.login = async (req, res) => {
                 ),
                 httpOnly: true,
               };
-
               res.cookie("jwt", token, cookieOptions);
               res.status(200).redirect("/");
             } else {
-              res.status(401).render("login.hbs", {
-                message: "Email or Password is incorrect",
-              });
+              var data = [];
+              data["message"] = 1 ;
+              res.status(401).render("auth/login.ejs", { data });
             }
           } else {
-            res.status(401).render("login.hbs", {
-              message: "Email or Password is incorrect",
-            });
+            var data = [];
+            data["message"] = 2;
+            res.status(401).render("auth/login.ejs", { data });
           }
         }
       }
@@ -85,13 +83,13 @@ exports.signup = (req, res) => {
       }
 
       if (results.length > 0) {
-        return res.render("signup.hbs", {
-          message: "That email is already in use",
-        });
+        var data = [];
+            data["message"] = 2;
+        return res.render("auth/signup.ejs", { data });
       } else if (passwords !== repasswords) {
-        return res.render("signup.hbs", {
-          message: "Passwords do not match",
-        });
+        var data = [];
+        data["message"] = 0;
+        return res.render("auth/signup.ejs", { data });
       }
 
       let hashedPassword = await bcrypt.hash(passwords, 8);
@@ -112,9 +110,9 @@ exports.signup = (req, res) => {
             console.log(error);
           } else {
             console.log(results);
-            return res.render("signup.hbs", {
-              message: "User registered",
-            });
+            var data = [];
+            data["message"] = 1;
+            return res.render("auth/signup.ejs", { data });
           }
         }
       );
@@ -157,8 +155,9 @@ exports.isLoggedIn = async (req, res, next) => {
             res.redirect("/login");
             console.log("enter in undefined userkey cndition ");
             //  res.redirect("/login");
-            var message = "hii";
-            res.render("login.hbs", { message });
+            var data = [];
+            data["message"] = 4;
+            res.render("auth/login.ejs", { data });
           }
         }
       );
@@ -166,14 +165,16 @@ exports.isLoggedIn = async (req, res, next) => {
       req.isloggedin = 0;
       console.log("enter in catch error ");
       // console.log(error);
-      var message = "hii";
-      res.render("login.hbs", { message });
+      var data = [];
+      data["message"] = 4;
+      res.render("auth/login.ejs", { data });
     }
   } else {
     console.log("enter in cookiei not set  condition ");
     req.isloggedin = 0;
-    var message = "hii";
-    res.render("login.hbs", { message });
+    var data = [];
+    data["message"] = "4";
+    res.render("auth/login.ejs", { data });
   }
 };
 
