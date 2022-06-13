@@ -1,5 +1,6 @@
-function cancleCampaign(campaign_key) {
-  if (!window.confirm("are you sure to remove this campaign?")) {
+function removeDraft(campaign_key) {
+  console.log("from remove ", campaign_key);
+  if (!window.confirm("are you sure to remove this draft?")) {
     console.log("no");
   } else {
     console.log("yes");
@@ -15,8 +16,8 @@ function cancleCampaign(campaign_key) {
       },
       body: JSON.stringify(cdetails),
     };
-    // Fake api for making post requests
-    let fetchRes = fetch("/cancel-set-campaign", options);
+    // api for making post requests
+    let fetchRes = fetch("/Remove-Draft", options);
     fetchRes
       .then((res) => res.json())
       .then((d) => {
@@ -31,3 +32,4 @@ function cancleCampaign(campaign_key) {
       });
   }
 }
+

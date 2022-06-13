@@ -5,9 +5,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link href="/css-files/campaigns.css" rel="stylesheet" type="text/css">
+    <script src="/js-files/common.js"></script>
+    <link href="/css-files/box.css" rel="stylesheet" type="text/css">
     <link href="/css-files/widgit.css" rel="stylesheet" type="text/css">
+    <link href="/css-files/campaigns.css" rel="stylesheet" type="text/css">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -22,31 +23,17 @@
         </div>
         <div class="main_area">
             <div class="main_header">
-                <div class="camp_heading">
-                    <div class="profile_plan h3 ">
-                        <%=data.c_name%>
-                    </div>
-                    <div class="profile_info">
-                        <div class="profile_container">
-                            <div class="profile_info_name h5 ">
-                                <%=data.name%>
-                            </div>
-                            <div class="profile_info_email h5 ">
-                                <%=data.email%>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="state">
+                <%- include('../../../common/user_details')%>
+                <div class="row ml-3 mt-3">
                     <%- include('../../../common/edit-navbar')%>
                 </div>
-                <div class="title_name h2">Review page</div>
+                <div class="row ml-4 h2">Review page</div>
             </div>
 
             <div class="work_area">
                 <div class="work_container m-4">
 
-                    <form class="bg-light m-5" method="post" action="/campaigns/user/schedule">
+                    <form class="bg-light m-5">
                         <div class="form-group col ">
                             <label for="s_name">Your's Name</label>
                             <input type="text" name="s_name" class="form-control" id="s_name" value="<%=data.name%>"
@@ -60,7 +47,7 @@
 
                         <div class="form-group col " style="display: none;">
                             <label for="campaign_key">Campaign KEY</label>
-                            <input  type="text" name="campaign_key" class="form-control" id="campaign_key"
+                            <input type="text" name="campaign_key" class="form-control" id="campaign_key"
                                 value="<%=data.campaign_key%>" readonly>
                         </div>
                         <div class="form-group col ">
@@ -78,19 +65,33 @@
                             <input type="text" name="subject" class="form-control" id="subject"
                                 value="<%=data.subject%>" readonly>
                         </div>
-                        
+
                         <div class="form-group col purple-border">
                             <label for="email_body">Email Body</label>
-                            <textarea class="form-control" name="email_body" id="email_body" rows="3"
+                            <textarea class="form-control " name="email_body" id="email_body" rows="3"
                                 readonly><%=data.email_body%></textarea>
                         </div>
                         <div class="form-group col ">
-                            <label for="s_name">Whom to send</label>
-                            <input type="text" name="wts" class="form-control" id="wts" value="<%=data.wts%>" readonly>
+                            <label for="wts">Whom to send</label>
+                            <%if(!data.group_extra_things){%>
+                                <input type="text" name="wts" class="form-control" id="wts" value="<%=data.wts%>"
+                                    readonly>
+                                <%}else{%>
+                                    <textarea class="form-control text-area" name="wts" id="wts" rows="3"
+                                        readonly><%=data.wts%></textarea>
+                                    <%}%>
                         </div>
                         <hr>
-                        <div class="pb-2 pl-4">
-                            <button type="submit" class=" btn btn-primary">GO Next for schedule</button>
+                        <div class="row">
+                            <div class="col pb-2 pl-4">
+                                <button type="submit" formmethod="post" formaction="/campaigns/user/schedule"
+                                    class=" btn btn-primary">GO
+                                    Next for schedule</button>
+                            </div>
+                            <div class="col pb-2 pl-4">
+                                <button type="submit" formmethod="get" formaction="/Campaigns/drafts"
+                                    class=" btn btn-primary">schedule later from draft</button>
+                            </div>
                         </div>
                     </form>
                 </div>
