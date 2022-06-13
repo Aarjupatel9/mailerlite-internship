@@ -174,8 +174,6 @@ function databaseFetch(sql) {
   });
 }
 
-let mypromise = function getGroupDetails(user_key) {};
-
 const router = express.Router();
 
 router.get("/outbox", authController.isLoggedIn, (req, res) => {
@@ -434,9 +432,6 @@ router.post(
         } else {
           const data = [];
           data["campaign_key"] = result[0].campaign_key;
-          data["s_name"] = result[0].firstname + " " + result[0].lastname;
-          data["email"] = result[0].email;
-          data["companyname"] = result[0].companyname;
           data["campaign_name"] = result[0].campaign_name;
           data["campaign_type"] = result[0].campaign_type;
           data["subject"] = result[0].subjectofemail;
@@ -444,8 +439,6 @@ router.post(
           //now we have to set the whom to send field
           if (result[0].whomtosend == "toall") {
             data["wts"] = result[0].whomtosend;
-            console.log("data set from else review email condition : ", data);
-            res.render("campaigns/user/edit/review_email.ejs", { data });
             con.query(
               "SELECT * FROM users_details WHERE `user_key`='" + user_key + "'",
               function (err, result1, fields) {
@@ -455,8 +448,11 @@ router.post(
                   data["name"] =
                     result1[0].firstname + " " + result1[0].lastname;
                   data["email"] = result1[0].email;
-                  data["companyname"] = result1[0].companyname;
-
+                  data["c_name"] = result1[0].companyname;
+                  console.log(
+                    "data set from else review email condition : ",
+                    data
+                  );
                   res.render("campaigns/user/edit/review_email.ejs", { data });
                 }
               }
@@ -502,7 +498,7 @@ router.post(
                       data["name"] =
                         result1[0].firstname + " " + result1[0].lastname;
                       data["email"] = result1[0].email;
-                      data["companyname"] = result1[0].companyname;
+                      data["c_name"] = result1[0].companyname;
                       console.log(
                         "data set from else review email condition : ",
                         data
@@ -539,7 +535,7 @@ router.post(
           var data = [];
           data["name"] = result[0].firstname + " " + result[0].lastname;
           data["email"] = result[0].email;
-          data["companyname"] = result[0].companyname;
+          data["c_name"] = result[0].companyname;
           data["campaign_name"] = result[0].campaign_name;
           data["campaign_key"] = campaign_key;
           data["campaign_type"] = result[0].campaign_type;
@@ -601,25 +597,42 @@ router.post(
   (req, res) => {
     const user_key = req.user_key;
 
-    var data = [];
-    console.log(
-      "campaign key in scheduler handler is : ",
-      req.body.campaign_key
-    );
+    function getUserDeatails(user_key) {
+      return new Promise(function (resolve, reject) {
+        const sql = "SELECT * FROM `users_details` WHERE `user_key`='" + user_key + "'";
+        con.query(sql, function (err, result, field) {
+          if (err) {
+            console.log(err);
+            reject(err);
+          } else {
+            resolve(result);
+          }
+        })
+      })
+    }
 
-    data["campaign_key"] = req.body.campaign_key;
-    data["name"] = req.body.s_name;
-    data["email"] = req.body.email;
-    data["campaign_name"] = req.body.campaign_name;
-    data["campaign_type"] = req.body.campaign_type;
-    data["subject"] = req.body.subject;
-    data["email_body"] = req.body.email_body;
-    data["wts"] = req.body.wts;
-    data["time"] = NULL;
-    data["status"] = "";
-    data["timer"] = null;
+    getUserDeatails(user_key).then((result) => {
+      var data = [];
+      console.log(
+        "campaign key in scheduler handler is : ",
+        req.body.campaign_key
+      );
 
-    res.render("campaigns/user/edit/schedule_email.ejs", { data }); //schedule_email;
+      data["c_name"] = result[0].companyname;
+      data["campaign_key"] = req.body.campaign_key;
+      data["name"] = req.body.s_name;
+      data["email"] = result[0].email;
+      data["campaign_name"] = req.body.campaign_name;
+      data["campaign_type"] = req.body.campaign_type;
+      data["subject"] = req.body.subject;
+      data["email_body"] = req.body.email_body;
+      data["wts"] = req.body.wts;
+      data["time"] = NULL;
+      data["status"] = "";
+      data["timer"] = null;
+
+      res.render("campaigns/user/edit/schedule_email.ejs", { data }); //schedule_email;
+    });
   }
 );
 
@@ -734,7 +747,6 @@ router.get("/sent", authController.isLoggedIn, (req, res) => {
   );
 });
 
-
 router.get("/drafts", authController.isLoggedIn, (req, res) => {
   var user_key = req.user_key;
   con.query(
@@ -778,7 +790,7 @@ router.get("/drafts", authController.isLoggedIn, (req, res) => {
                       if (result[j].whomtosend == "toall") {
                         re_data[j]["whomtosend"] = result[j].whomtosend;
                         result_length--;
-                      }else{
+                      } else {
                         var str = result[j].whomtosend;
                         var sql =
                           "SELECT `group_name` FROM `group_details` WHERE `group_key`='";
@@ -827,7 +839,6 @@ router.get("/drafts", authController.isLoggedIn, (req, res) => {
                 const data = session_draft_details;
                 res.render("campaigns/drafts.ejs", { data });
               }
-              
             }
           }
         );
