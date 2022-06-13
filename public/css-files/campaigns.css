@@ -11,7 +11,9 @@ li {
 /* nav div ul li a:hover {
   text-decoration: solid navy 10px;
 } */
-
+.text-area {
+   resize: none;
+}
 .conatainer {
   display: flex;
   /* overflow-y: scroll; */

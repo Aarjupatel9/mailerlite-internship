@@ -6,113 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
-    <style>
-        th {
-            border: solid 1px rgb(22, 230, 101);
-        }
+    <script src="/js-files/common.js"></script>
+    <script src="/js-files/draft.js"></script>
+    <link href="/css-files/box.css" rel="stylesheet" type="text/css">
+    <link href="/css-files/widgit.css" rel="stylesheet" type="text/css">
 
-        table {
-            border-collapse: collapse;
-            /* table-layout: fixed; */
-            /* width: 310px; */
-        }
-
-        /* th{
-            border: 1px;
-        } */
-
-        table td {
-            border: solid 1px rgb(22, 230, 101);
-            width: 100px;
-            word-wrap: break-word;
-        }
-
-        .no-border {
-            border: 0px;
-        }
-    </style>
-
-    <script>
-        function removeDraft(campaign_key) {
-            console.log("from remove ", campaign_key);
-            if (!window.confirm("are you sure to remove this draft?")) {
-                console.log("no");
-            } else {
-                console.log('yes');
-                //now i will send request to delete the campaign from scheduling and save as draafts
-                var cdetails = {
-                    "campaign_key": `${campaign_key}`,
-                }
-                console.log(cdetails);
-                let options = {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type':
-                            'application/json;charset=utf-8'
-                    },
-                    body: JSON.stringify(cdetails)
-                }
-                // api for making post requests
-                let fetchRes = fetch(
-                    "/Remove-Draft",
-                    options);
-                fetchRes.then(res =>
-                    res.json()).then(d => {
-                        console.log(d);
-                        if (d.response_status == "1") {
-                            document.location.reload();
-                        } else {
-                            window.alert("Can not remove this campaign Now , due to server error");
-                        }
-                    })
-            }
-        }
-        function scheduleDraft(campaign_key) {
-            console.log("from schedule ", campaign_name);
-            if (!window.confirm("To Schedule This Draft Press Yes!")) {
-                console.log("no");
-            } else {
-                console.log('yes');
-                //now i will send request to delete the campaign from scheduling and save as draafts
-                var cdetails = {
-                    "campaign_key": `${campaign_key}`,
-                }
-                console.log(cdetails);
-                let options = {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type':
-                            'application/json;charset=utf-8'
-                    },
-                    body: JSON.stringify(cdetails)
-                }
-                // api for making post requests
-                let fetchRes = fetch(
-                    "/campaigns/user/review_email",
-                    options);
-                fetchRes.then(res =>
-                    res.json()).then(d => {
-                        console.log(d);
-                        if (d.response_status == "1") {
-                            document.location.reload();
-                        } else {
-                            window.alert("Can not remove this campaign Now , due to server error");
-                        }
-                    })
-                // const urlis = "/campaigns/user/review_email"
-                // console.log(urlis);
-                // $.ajax({
-                //     method: 'post',
-                //     url: urlis,
-                //     data: cdetails,
-                //     success: (res) => {
-                //         // do something
-                //         console.log(res);
-                //     }
-                // });
-            }
-        }
-    </script>
+    
     <link href="/css-files/campaigns.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -126,36 +25,22 @@
         </div>
         <div class="main_area">
             <div class="main_header">
-                <div class="camp_heading w-100">
-                    <div class="profile_plan h3 ">
-                        <%=data.c_name%>
-                    </div>
-                    <div class="profile_info">
-                        <div class="profile_container">
-                            <div class="profile_info_name h5 ">
-                                <%=data.name%>
-                            </div>
-                            <div class="profile_info_email h5 ">
-                                <%=data.email%>
-                            </div>
+                <%- include('../common/user_details')%>
+                    <div class="row m-3">
+                        <div class="col h1 ">
+                            Campaigns
+                        </div>
+                        <div class="col">
+                            <form id="main_form" method="post" action="/campaigns/create">
+                                <button type="submit" class="btn btn-success float-right mr-lg-5">Create New
+                                    Campaign</button>
+                            </form>
                         </div>
                     </div>
-                </div>
-                <div class="camp_heading2 ml-4 w-100">
-                    <div class="profile_plan h2 ">
-                        Campaigns
+                    <!-- <div class="title_name ml-4 h2">Campaigns</div> -->
+                    <div class="state ml-4 mt-3 ">
+                        <%- include('../common/camp-navbar')%>
                     </div>
-                    <div class="profile_info">
-                        <form id="main_form" method="post" action="/campaigns/create">
-                            <button type="submit" class="btn btn-primary btn-lg">Create New Campaign</button>
-                        </form>
-                    </div>
-                </div>
-                <!-- <div class="title_name h2">Campaigns</div> -->
-                <div class="state ">
-                    <%- include('../common/camp-navbar')%>
-
-                </div>
             </div>
 
             <div class="work_area">
@@ -183,10 +68,12 @@
                                                         <form action="/campaigns/user/review_email" method="post">
                                                             <div class="form-group col " style="display: none;">
                                                                 <label for="campaign_key">Campaign KEY</label>
-                                                                <input type="text" name="campaign_key" class="form-control" id="campaign_key" value="<%=data.draftdetails[i].campaign_key%>"
+                                                                <input type="text" name="campaign_key"
+                                                                    class="form-control" id="campaign_key"
+                                                                    value="<%=data.draftdetails[i].campaign_key%>"
                                                                     readonly>
                                                             </div>
-                                                            <input type="submit" value="Schedule">
+                                                            <input type="submit" class="btn" value="Schedule">
                                                         </form>
                                                     </td>
                                                     <td>
@@ -203,7 +90,7 @@
                                                         <%=data.draftdetails[i].whomtosend%>
                                                     </td>
                                                     <td class="no-border">
-                                                        <input
+                                                        <input class="btn"
                                                             onclick="removeDraft(`<%=data.draftdetails[i].campaign_key%>`)"
                                                             type="button" value="remove">
                                                     </td>
