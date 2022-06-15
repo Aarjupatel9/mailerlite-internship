@@ -17,6 +17,9 @@
 </head>
 
 <body>
+    <div class="horizontal_bar">
+        <%- include('../common/horizontal_bar')%>
+    </div>
     <div class="conatainer">
         <div class="side_bar bg-light">
             <%- include('../common/sidebar')%>
@@ -53,41 +56,40 @@
                             <%if(data.cdetails){%>
                                 <div class="table-responsive">
                                     <table class="table" id="draft-table">
-                                        <thead>
-                                            <tr>
-                                                <th class="no-border">To Remove</th>
-                                                <th>campaign name</th>
-                                                <th>subject of email</th>
-                                                <th>Email Body</th>
-                                                <th>time of send</th>
-                                                <th>Whom to send</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
                                             <% for (var i=0; i < data.cdetails.length; i++) { %>
-                                                <tr id="name[<%=i%>]" name="name[<%=i%>]" class="no-border">
-                                                    <td class="no-border">
-                                                        <input
-                                                            onclick="cancleCampaign(`<%=data.cdetails[i].campaign_key%>`)"
-                                                            type="button" value="remove">
-                                                    </td>
-                                                    <td>
-                                                        <%=data.cdetails[i].campaign_name%>
-                                                    </td>
-                                                    <td>
-                                                        <%=data.cdetails[i].subjectofemail%>
-                                                    </td>
-                                                    <td>
-                                                        <%=data.cdetails[i].email_body%>
-                                                    </td>
-                                                    <td>
-                                                        <%=data.cdetails[i].timeofsend%>
-                                                    </td>
-                                                    <td>
-                                                        <%=data.cdetails[i].whomtosend%>
-                                                    </td>
-
-                                                </tr>
+                                                <div class="row">
+                                                    <div class="col ml-3 p-3" style="max-width:200px;">
+                                                        <div class="card email_body_view" style="background-color:rgb(170, 68, 73);">
+                                                            <%=data.cdetails[i].email_body%>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col p-3">
+                                                        <div class="row h3">
+                                                            <%=data.cdetails[i].campaign_name%>
+                                                        </div>
+                                                        <div class="row">
+                                                            <b><h5>Created at : </h5></b>
+                                                            <%=data.cdetails[i].timeofschedule%>
+                                                        </div>
+                                                        <div class="row ">
+                                                            <b>subject : </b>
+                                                            <%=data.cdetails[i].subjectofemail%>
+                                                        </div>
+                                                        <div class="row ">
+                                                            <b>Send To : </b>
+                                                            <%=data.cdetails[i].whomtosend%>
+                                                        </div>
+                                                        <div class="row ">
+                                                            <b>Scheduled at :  </b>
+                                                            <%=data.cdetails[i].timeofsend%>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col p-5 ">
+                                                        <form action="/campaigns/user/review_email" method="post">
+                                                            <input onclick="cancleCampaign(`<%=data.cdetails[i].campaign_key%>`)" class="btn btn-success" type="button" value="remove">
+                                                        </form>
+                                                    </div>
+                                                </div>
                                                 <%}%>
                                         </tbody>
                                     </table>
