@@ -18,6 +18,9 @@
 </head>
 
 <body>
+    <div class="horizontal_bar">
+        <%- include('../common/horizontal_bar')%>
+    </div>
     <div class="conatainer">
         <div class="side_bar bg-light">
             <%- include('../common/sidebar')%>
@@ -54,37 +57,33 @@
                             <%if(data.cdetails){%>
                                 <div class="table-responsive">
                                     <table class="table" id="draft-table">
-                                        <thead>
-                                            <tr>
-                                                <th>campaign name</th>
-                                                <th>subject of email</th>
-                                                <th>Email Body</th>
-                                                <th>time of send</th>
-                                                <th>Whom to send</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <% for (var i=0; i < data.cdetails.length; i++) { %>
-                                                <tr class="no-border">
-
-                                                    <td>
-                                                        <%=data.cdetails[i].campaign_name%>
-                                                    </td>
-                                                    <td>
-                                                        <%=data.cdetails[i].subjectofemail%>
-                                                    </td>
-                                                    <td>
+                                        <% for (var i=0; i < data.cdetails.length; i++) { %>
+                                            <div class="row">
+                                                <div class="col ml-3 p-3" style="max-width:200px;">
+                                                    <div class="card email_body_view"
+                                                        style="background-color: rgb(170, 68, 73);">
                                                         <%=data.cdetails[i].email_body%>
-                                                    </td>
-                                                    <td>
-                                                        <%=data.cdetails[i].timeofsend%>
-                                                    </td>
-                                                    <td>
+                                                    </div>
+                                                </div>
+                                                <div class="col p-3">
+                                                    <div class="row h3">
+                                                        <%=data.cdetails[i].campaign_name%>
+                                                    </div>
+                                                    <div class="row ">
+                                                        <b>subject : </b>
+                                                        <%=data.cdetails[i].subjectofemail%>
+                                                    </div>
+                                                    <div class="row ">
+                                                        <b>Send To : </b>
                                                         <%=data.cdetails[i].whomtosend%>
-                                                    </td>
-                                                </tr>
-                                                <%}%>
-                                        </tbody>
+                                                    </div>
+                                                    <div class="row ">
+                                                        <b>Scheduled at : </b>
+                                                        <%=data.cdetails[i].timeofsend%>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <%}%>
                                     </table>
                                 </div>
                                 <%}%>

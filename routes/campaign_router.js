@@ -1,5 +1,5 @@
 //here we declare some variable name
-// for draft 0, sent 1 ,  outbox 2 , send_later 3,super-admin 4
+// for draft 0, sent 1 ,  outbox 2 , send_later 3, super-admin 4
 
 const express = require("express");
 const os = require("os");
@@ -15,82 +15,10 @@ var urlencodedparser = bodyParser.urlencoded({ extended: false });
 
 const authController = require("../controllers/auth");
 var con = require("../module/mysqlconn");
+var sendEmailOfCampaigns = require("../module/sendmail");
+
 const { start } = require("repl");
 const { render } = require("express/lib/response");
-
-function sendEmailOfCampaigns(user_key, campaign_key) {
-  console.log("send email  function inside", user_key, campaign_key);
-  // return;
-  //NOW WI HAVE TO FETCH DRAFT DETAILS FROM DATABASE THROUGH CAMPAIGN_KEY
-  var draftdetails = [];
-  const fetchingdraftdetails =
-    "SELECT * FROM `campaigns_details` WHERE `campaign_key`='" +
-    campaign_key +
-    "'";
-  con.query(fetchingdraftdetails, function (err, result, field) {
-    if (err) {
-      console.log(err);
-    } else {
-      draftdetails["campaign_name"] = result[0].campaign_name;
-      draftdetails["campaign_type"] = result[0].campaign_type;
-      draftdetails["subjectofemail"] = result[0].subjectofemail;
-      draftdetails["whomtosend"] = result[0].whomtosend;
-      draftdetails["email_body"] = result[0].email_body;
-    }
-  });
-  //we have to find user key of the user from database but now declare statisllyu here
-  //req.user_key; //for user travelagency3111@gmail.com
-  //fetch the subscribers email from database
-  con.query(
-    "SELECT * FROM `subscriber_of_users` WHERE `user_key`=" + user_key + "",
-    function (err, result, fields) {
-      if (err) {
-        console.log(err);
-      } else {
-        // console.log(result);
-        for (let i = 0; i < result.length; i++) {
-          var email = result[i].email;
-          console.log("subscriber's email id is : ", email);
-          //sending email to subscribers
-          var transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-              user: "travelagency3111@gmail.com",
-              pass: "ovuecqzzniieiynd",
-            },
-          });
-          var mailOptions = {
-            from: "travelagency3111@gmail.com",
-            to: `${email}`,
-            subject: `${draftdetails["subjectofemail"]}`,
-            text: `${draftdetails["email_body"]}`,
-          };
-          transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-              console.log(error);
-            } else {
-              console.log("Email sent : " + info.response);
-              console.log("enter in send email section , email is in progress");
-              var campaign_update_query =
-                "UPDATE `campaigns_details` SET `campaigns_status`='1' WHERE `user_key`= '" +
-                user_key +
-                "' AND `campaign_key`='" +
-                campaign_key +
-                "'";
-              con.query(campaign_update_query, function (err, result) {
-                if (err) {
-                  console.log(err);
-                } else {
-                  console.log(result);
-                }
-              });
-            }
-          });
-        }
-      }
-    }
-  );
-}
 
 async function saveDraftsOfCampaigns(user_key, session_draft_details) {
   console.log("user key is : ", user_key);
@@ -148,6 +76,65 @@ async function saveDraftsOfCampaigns(user_key, session_draft_details) {
   }
 }
 
+function resolveGroup(result) {
+  return new Promise(function (resolve, reject) {
+    console.log("result lenght  is : ", result.length);
+    var resolved_result = [];
+    var counter = 0;
+    var result_length1 = result.length;
+
+    for (let i = 0; i < result.length; i++) {
+      console.log("enter in foor loop");
+      resolved_result[i] = [];
+      resolved_result[i]["campaign_key"] = result[i].campaign_key;
+      resolved_result[i]["campaign_name"] = result[i].campaign_name;
+      resolved_result[i]["campaign_type"] = result[i].campaign_type;
+      resolved_result[i]["subjectofemail"] = result[i].subjectofemail;
+      resolved_result[i]["email_body"] = result[i].email_body;
+      resolved_result[i]["timeofsend"] = result[i].timeofsend;
+      resolved_result[i]["timeofschedule"] = result[i].timeofscheduled;
+
+      var str = result[i].whomtosend;
+      if (str == "toall") {
+        result_length1--;
+        // console.log("result length is : ", result_length1);
+        resolved_result[i]["whomtosend"] = result[i].whomtosend;
+      } else {
+        var sql =
+          "SELECT `group_name` FROM `group_details` WHERE `group_key`='";
+        for (let i = 0; i < str.length; i++) {
+          if (i + 2 < str.length) {
+            sql = sql + str[i] + "' OR `group_key`='";
+          } else {
+            sql = sql + str[i] + "'";
+          }
+          i++;
+        }
+        con.query(sql, function (err, result1, field) {
+          if (err) {
+            console.log(err);
+          } else {
+            var group_str = "group : ";
+            for (let i = 0; i < result1.length; i++) {
+              if (result1.length != i + 1) {
+                group_str = group_str + result1[i].group_name + "\ngroup : ";
+              } else {
+                group_str = group_str + result1[i].group_name;
+              }
+            }
+            resolved_result[i]["whomtosend"] = group_str;
+            counter++;
+            // console.log("counter is : ", counter);
+          }
+        });
+      }
+      if (result_length1 == counter) {
+        resolve(resolved_result);
+      }
+    }
+  });
+}
+
 function databaseFetch(sql) {
   return new Promise(function (resolve, reject) {
     con.query(sql, function (err, result, fields) {
@@ -165,9 +152,6 @@ function databaseFetch(sql) {
         }
         // re_data["group_extra_things"] = 1;
         console.log("group str into secound function : ", group_str);
-        // resolve(group_str);
-        console.log(group_str);
-        // re_data[j]["whomtosend"] = group_str;
         resolve(group_str);
       }
     });
@@ -178,6 +162,7 @@ const router = express.Router();
 
 router.get("/outbox", authController.isLoggedIn, (req, res) => {
   //fetching user data
+  console.log("ener in outbox ");
   var name, email, c_name;
   var user_key = req.user_key;
   con.query(
@@ -205,14 +190,21 @@ router.get("/outbox", authController.isLoggedIn, (req, res) => {
           } else {
             if (result.length > 0) {
               // console.log(result[0].email_body);
-              session_draft_details["cdetails"] = result;
+              resolveGroup(result)
+                .then((result) => {
+                  session_draft_details["cdetails"] = result;
+                  const data = session_draft_details;
+                  console.log("cdetails in .then cond. is  : ", data);
+                  res.render("campaigns/outbox.ejs", { data });
+                })
+                .catch((e) => {
+                  console.log(e);
+                });
             } else {
               session_draft_details["cdetails"] = 0;
+              const data = session_draft_details;
+              res.render("campaigns/outbox.ejs", { data });
             }
-            // console.log(session_draft_details);
-            const data = session_draft_details;
-
-            res.render("campaigns/outbox.ejs", { data });
           }
         });
       }
@@ -599,7 +591,8 @@ router.post(
 
     function getUserDeatails(user_key) {
       return new Promise(function (resolve, reject) {
-        const sql = "SELECT * FROM `users_details` WHERE `user_key`='" + user_key + "'";
+        const sql =
+          "SELECT * FROM `users_details` WHERE `user_key`='" + user_key + "'";
         con.query(sql, function (err, result, field) {
           if (err) {
             console.log(err);
@@ -607,8 +600,8 @@ router.post(
           } else {
             resolve(result);
           }
-        })
-      })
+        });
+      });
     }
 
     getUserDeatails(user_key).then((result) => {
@@ -644,6 +637,8 @@ router.post(
     var user_key = req.user_key;
     var campaign_key = req.body.campaign_key;
     console.log("campaign_key is : ", campaign_key);
+
+    // var h = new Date();
 
     var user_provided_time = req.body.time;
     var user_provided_time1 = new Date(
@@ -683,7 +678,18 @@ router.post(
     } else {
       schedule_status = "3";
     }
-
+    var duplicatesql =
+      "INSERT INTO `campaigns_details`  (`user_key`,`campaigns_status`,`campaign_name`,`campaign_type`,`subjectofemail`,`email_body`,`whomtosend`) SELECT `user_key`,'0',`campaign_name`,`campaign_type`,`subjectofemail`,`email_body`,`whomtosend` FROM `campaigns_details` WHERE  `campaign_key` = '" +
+      campaign_key +
+      "';";
+    con.query(duplicatesql, function (err, result, fields) {
+      if (err) {
+        console.log(err);
+        // throw err;
+      } else {
+        console.log("result of dulplicate query is : ", result);
+      }
+    });
     var sqlquery =
       "UPDATE `campaigns_details` SET `campaigns_status`='" +
       schedule_status +
@@ -702,6 +708,7 @@ router.post(
     const data = [];
     data["status"] = "scheduled";
     data["timer"] = timer;
+
     res.render("campaigns/user/edit/schedule_email.ejs", { data });
   }
 );
@@ -734,12 +741,20 @@ router.get("/sent", authController.isLoggedIn, (req, res) => {
           } else {
             if (result.length > 0) {
               // console.log(result[0].email_body);
-              session_draft_details["cdetails"] = result;
+              resolveGroup(result)
+                .then((result) => {
+                  session_draft_details["cdetails"] = result;
+                  const data = session_draft_details;
+                  res.render("campaigns/sent.ejs", { data });
+                })
+                .catch((e) => {
+                  console.log(e);
+                });
             } else {
               session_draft_details["cdetails"] = 0;
+              const data = session_draft_details;
+              res.render("campaigns/sent.ejs", { data });
             }
-            const data = session_draft_details;
-            res.render("campaigns/sent.ejs", { data });
           }
         });
       }
@@ -782,20 +797,23 @@ router.get("/drafts", authController.isLoggedIn, (req, res) => {
                     console.log("reult in promice ", result_length);
                     for (let j = 0; j < result.length; j++) {
                       re_data[j] = [];
-                      console.log(result[j].whomtosend);
+
                       re_data[j]["campaign_key"] = result[j].campaign_key;
                       re_data[j]["campaign_name"] = result[j].campaign_name;
                       re_data[j]["subjectofemail"] = result[j].subjectofemail;
                       re_data[j]["email_body"] = result[j].email_body;
-                      if (result[j].whomtosend == "toall") {
+                      var str = result[j].whomtosend;
+                      // console.log("whom to send is fvjfvh : ", str);
+                      // console.log(str);
+                      // console.log(str.length);
+
+                      if (str == "toall") {
+                        // console.log('enter in toall if cond.');
                         re_data[j]["whomtosend"] = result[j].whomtosend;
                         result_length--;
                       } else {
-                        var str = result[j].whomtosend;
                         var sql =
                           "SELECT `group_name` FROM `group_details` WHERE `group_key`='";
-                        // console.log(str);
-                        // console.log(str.length);
                         for (let i = 0; i < str.length; i++) {
                           if (i + 2 < str.length) {
                             sql = sql + str[i] + "' OR `group_key`='";
@@ -805,14 +823,13 @@ router.get("/drafts", authController.isLoggedIn, (req, res) => {
                           i++;
                         }
                         console.log(sql);
-
                         databaseFetch(sql)
                           .then((group_str) => {
                             counter++;
-                            console.log("counter value is : ", counter);
+                            // console.log("counter value is : ", counter);
                             re_data[j]["whomtosend"] = group_str;
                             if (counter == result_length) {
-                              console.log("enter in if condi. ", re_data);
+                              // console.log("enter in if condi. ", re_data);
                               resolve(re_data);
                             }
                           })

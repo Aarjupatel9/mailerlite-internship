@@ -2,17 +2,34 @@ li {
   margin-bottom: 30px;
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 1024px) {
   .side_bar {
-    display: none;
-    /* float:left; */
+    display: none !important;
   }
+  .horizontal_bar {
+    display: block !important;
+  }
+}
+.email_body_view {
+  
+  height: 200px;
+  width: 150px;
+  overflow-y: scroll;
+}
+.horizontal_bar {
+  display: none;
+  z-index: 1;
+  overflow: hidden;
+  background-color: #333;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
 }
 /* nav div ul li a:hover {
   text-decoration: solid navy 10px;
 } */
 .text-area {
-   resize: none;
+  resize: none;
 }
 .conatainer {
   display: flex;

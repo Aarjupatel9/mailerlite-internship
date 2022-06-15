@@ -1,34 +1,24 @@
 //here we declare some variable alias
 // for draft 0, sent 1 ,  outbox 2 , send_later 3, super-admin 4
 
-
 const express = require("express");
 const os = require("os");
 const path = require("path");
 const dotenv = require("dotenv");
-var nodemailer = require("nodemailer");
-var navigator = require("navigator");
 const cookieParser = require("cookie-parser");
-const session_storage = require("node-sessionstorage");
 
 var bodyParser = require("body-parser");
 var urlencodedparser = bodyParser.urlencoded({ extended: false });
 const authController = require("./controllers/auth.js");
 
-const mysql = require("mysql");
-const request = require("request");
-const response = require("express/lib/response");
-
 const app = express();
-const { NULL } = require("mysql/lib/protocol/constants/types");
-const { name } = require("ejs");
-const { use } = require("express/lib/application");
-const { time } = require("console");
 
 var con = require("./module/mysqlconn");
-const { read } = require("fs");
+var sendEmailOfCampaigns = require("./module/sendmail");
 con.connect(function (err) {
-  if (err) console.log(err);
+  if (err) {
+    console.log(err);
+  }
 });
 
 port = process.env.port || 8080;
@@ -80,79 +70,7 @@ app.get("/profile", authController.isLoggedIn, (req, res) => {
 });
 
 //function use in the app
-function sendEmailOfCampaigns(user_key, campaign_key) {
-  console.log("send email  function inside", user_key, campaign_key);
-  // return;
-  //NOW WI HAVE TO FETCH DRAFT DETAILS FROM DATABASE THROUGH CAMPAIGN_KEY
-  var draftdetails = [];
-  const fetchingdraftdetails =
-    "SELECT * FROM `campaigns_details` WHERE `campaign_key`='" +
-    campaign_key +
-    "'";
-  con.query(fetchingdraftdetails, function (err, result, field) {
-    if (err) {
-      console.log(err);
-    } else {
-      draftdetails["campaign_name"] = result[0].campaign_name;
-      draftdetails["campaign_type"] = result[0].campaign_type;
-      draftdetails["subjectofemail"] = result[0].subjectofemail;
-      draftdetails["whomtosend"] = result[0].whomtosend;
-      draftdetails["email_body"] = result[0].email_body;
-    }
-  });
-  //we have to find user key of the user from database but now declare statisllyu here
-  //req.user_key; //for user travelagency3111@gmail.com
-  //fetch the subscribers email from database
-  con.query(
-    "SELECT * FROM `subscriber_of_users` WHERE `user_key`=" + user_key + "",
-    function (err, result, fields) {
-      if (err) {
-        console.log(err);
-      } else {
-        // console.log(result);
-        for (let i = 0; i < result.length; i++) {
-          var email = result[i].email;
-          console.log("subscriber's email id is : ", email);
-          //sending email to subscribers
-          var transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-              user: "travelagency3111@gmail.com",
-              pass: "ovuecqzzniieiynd",
-            },
-          });
-          var mailOptions = {
-            from: "travelagency3111@gmail.com",
-            to: `${email}`,
-            subject: `${draftdetails["subjectofemail"]}`,
-            text: `${draftdetails["email_body"]}`,
-          };
-          transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-              console.log(error);
-            } else {
-              console.log("Email sent : " + info.response);
-              console.log("enter in send email section , email is in progress");
-              var campaign_update_query =
-                "UPDATE `campaigns_details` SET `campaigns_status`='1' WHERE `user_key`= '" +
-                user_key +
-                "' AND `campaign_key`='" +
-                campaign_key +
-                "'";
-              con.query(campaign_update_query, function (err, result) {
-                if (err) {
-                  console.log(err);
-                } else {
-                  console.log(result);
-                }
-              });
-            }
-          });
-        }
-      }
-    }
-  );
-}
+
 
 function getMounthNumber(mounthname) {
   if (mounthname == "Jan") {
@@ -216,21 +134,13 @@ app.post(
       campaign_key +
       "' ";
 
-    con.query(outboxtodrafftquery, function (err, result) {
+    con.query(removefromoutboxquery, function (err, result) {
       if (err) {
         res.send({ response_status: "0" });
         console.log(err);
       } else {
-        console.log("save as draft query affect row : ", result.affectedRows);
-        con.query(removefromoutboxquery, function (err, result) {
-          if (err) {
-            res.send({ response_status: "0" });
-            console.log(err);
-          } else {
-            res.send({ response_status: "1" });
-            console.log("remove query affect row: ", result.affectedRows);
-          }
-        });
+        res.send({ response_status: "1" });
+        console.log("remove query affect row: ", result.affectedRows);
       }
     });
   }
