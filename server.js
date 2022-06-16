@@ -128,11 +128,11 @@ app.post(
     //now we will remove it from outbox and set as draft
 
     var removefromoutboxquery =
-      "UPDATE  `campaigns_details` SET `campaigns_status`= '0',`timeofsend`='',`timeofscheduled`='' WHERE `user_key`='" +
+      "UPDATE  `campaigns_details` SET `campaigns_status`= '6' WHERE `user_key`='" + //`timeofsend`='',`timeofscheduled`=''
       user_key +
       "' AND `campaign_key` ='" +
       campaign_key +
-      "' ";
+      "'";
 
     con.query(removefromoutboxquery, function (err, result) {
       if (err) {
@@ -157,7 +157,7 @@ app.post(
 
     //now we will remove it from draft box
     var removefromdraftboxquery =
-      "DELETE FROM `campaigns_details` WHERE `campaigns_status`='0' AND `campaign_key` ='" +
+      "UPDATE `campaigns_details` SET `campaigns_status`= '5' WHERE `campaigns_status`='0' AND `campaign_key` ='" +
       campaign_key +
       "' ";
     con.query(removefromdraftboxquery, function (err, result) {
