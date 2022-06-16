@@ -99,6 +99,9 @@ function resolveGroup(result) {
         result_length1--;
         // console.log("result length is : ", result_length1);
         resolved_result[i]["whomtosend"] = result[i].whomtosend;
+        if (result_length1 == counter) {
+          resolve(resolved_result);
+        }
       } else {
         var sql =
           "SELECT `group_name` FROM `group_details` WHERE `group_key`='";
@@ -125,12 +128,13 @@ function resolveGroup(result) {
             resolved_result[i]["whomtosend"] = group_str;
             counter++;
             // console.log("counter is : ", counter);
+            if (result_length1 == counter) {
+              resolve(resolved_result);
+            }
           }
         });
       }
-      if (result_length1 == counter) {
-        resolve(resolved_result);
-      }
+      // console.log("counter is : ", counter);
     }
   });
 }
@@ -189,16 +193,75 @@ router.get("/outbox", authController.isLoggedIn, (req, res) => {
             console.log(err);
           } else {
             if (result.length > 0) {
-              // console.log(result[0].email_body);
+              var counter = 0;
+              function resolveGroup(result) {
+                // console.log('reult in function ', result);
+                return new Promise(function (resolve, reject) {
+                  var resolved_result = [];
+                  var result_length = result.length;
+                  console.log("reult in promice ", result_length);
+                  for (let j = 0; j < result.length; j++) {
+                    resolved_result[j] = [];
+                    resolved_result[j]["campaign_key"] = result[j].campaign_key;
+                    resolved_result[j]["campaign_name"] =
+                      result[j].campaign_name;
+                    resolved_result[j]["campaign_type"] =
+                      result[j].campaign_type;
+                    resolved_result[j]["subjectofemail"] =
+                      result[j].subjectofemail;
+                    resolved_result[j]["email_body"] = result[j].email_body;
+                    resolved_result[j]["timeofsend"] = result[j].timeofsend;
+                    resolved_result[j]["timeofschedule"] =
+                      result[j].timeofscheduled;
+
+                    // console.log("whom to send is fvjfvh : ", str);
+                    // console.log(str);
+                    // console.log(str.length);
+                    var str = result[j].whomtosend;
+
+                    if (str == "toall") {
+                      // console.log('enter in toall if cond.');
+                      resolved_result[j]["whomtosend"] = result[j].whomtosend;
+                      result_length--;
+                    } else {
+                      var sql =
+                        "SELECT `group_name` FROM `group_details` WHERE `group_key`='";
+                      for (let i = 0; i < str.length; i++) {
+                        if (i + 2 < str.length) {
+                          sql = sql + str[i] + "' OR `group_key`='";
+                        } else {
+                          sql = sql + str[i] + "'";
+                        }
+                        i++;
+                      }
+                      console.log(sql);
+                      databaseFetch(sql)
+                        .then((group_str) => {
+                          counter++;
+                          // console.log("counter value is : ", counter);
+                          resolved_result[j]["whomtosend"] = group_str;
+                          if (counter == result_length) {
+                            // console.log("enter in if condi. ", resolved_result);
+                            resolve(resolved_result);
+                          }
+                        })
+                        .catch((err) => {
+                          console.log(err);
+                        });
+                    }
+                  }
+                });
+              }
+
               resolveGroup(result)
-                .then((result) => {
-                  session_draft_details["cdetails"] = result;
+                .then((resolved_result) => {
+                  // console.log("resoveData .then condition ", resolved_result);
+                  session_draft_details["cdetails"] = resolved_result;
                   const data = session_draft_details;
-                  console.log("cdetails in .then cond. is  : ", data);
                   res.render("campaigns/outbox.ejs", { data });
                 })
-                .catch((e) => {
-                  console.log(e);
+                .catch((err) => {
+                  console.log(err);
                 });
             } else {
               session_draft_details["cdetails"] = 0;
@@ -211,6 +274,7 @@ router.get("/outbox", authController.isLoggedIn, (req, res) => {
     }
   );
 });
+
 
 router.post(
   "/create",
@@ -740,15 +804,75 @@ router.get("/sent", authController.isLoggedIn, (req, res) => {
             console.log(err);
           } else {
             if (result.length > 0) {
-              // console.log(result[0].email_body);
+              var counter = 0;
+              function resolveGroup(result) {
+                // console.log('reult in function ', result);
+                return new Promise(function (resolve, reject) {
+                  var resolved_result = [];
+                  var result_length = result.length;
+                  console.log("reult in promice ", result_length);
+                  for (let j = 0; j < result.length; j++) {
+                    resolved_result[j] = [];
+                    resolved_result[j]["campaign_key"] = result[j].campaign_key;
+                    resolved_result[j]["campaign_name"] =
+                      result[j].campaign_name;
+                    resolved_result[j]["campaign_type"] =
+                      result[j].campaign_type;
+                    resolved_result[j]["subjectofemail"] =
+                      result[j].subjectofemail;
+                    resolved_result[j]["email_body"] = result[j].email_body;
+                    resolved_result[j]["timeofsend"] = result[j].timeofsend;
+                    resolved_result[j]["timeofschedule"] =
+                      result[j].timeofscheduled;
+
+                    // console.log("whom to send is fvjfvh : ", str);
+                    // console.log(str);
+                    // console.log(str.length);
+                    var str = result[j].whomtosend;
+
+                    if (str == "toall") {
+                      // console.log('enter in toall if cond.');
+                      resolved_result[j]["whomtosend"] = result[j].whomtosend;
+                      result_length--;
+                    } else {
+                      var sql =
+                        "SELECT `group_name` FROM `group_details` WHERE `group_key`='";
+                      for (let i = 0; i < str.length; i++) {
+                        if (i + 2 < str.length) {
+                          sql = sql + str[i] + "' OR `group_key`='";
+                        } else {
+                          sql = sql + str[i] + "'";
+                        }
+                        i++;
+                      }
+                      console.log(sql);
+                      databaseFetch(sql)
+                        .then((group_str) => {
+                          counter++;
+                          // console.log("counter value is : ", counter);
+                          resolved_result[j]["whomtosend"] = group_str;
+                          if (counter == result_length) {
+                            // console.log("enter in if condi. ", resolved_result);
+                            resolve(resolved_result);
+                          }
+                        })
+                        .catch((err) => {
+                          console.log(err);
+                        });
+                    }
+                  }
+                });
+              }
+
               resolveGroup(result)
-                .then((result) => {
-                  session_draft_details["cdetails"] = result;
-                  const data = session_draft_details;
-                  res.render("campaigns/sent.ejs", { data });
+                .then((resolved_result) => {
+                  // console.log("resoveData .then condition ", resolved_result);
+                  session_draft_details["cdetails"] = resolved_result;
+              const data = session_draft_details;
+              res.render("campaigns/sent.ejs", { data });
                 })
-                .catch((e) => {
-                  console.log(e);
+                .catch((err) => {
+                  console.log(err);
                 });
             } else {
               session_draft_details["cdetails"] = 0;
@@ -843,7 +967,7 @@ router.get("/drafts", authController.isLoggedIn, (req, res) => {
 
                 resolveData(result)
                   .then((re_data) => {
-                    console.log("resoveData .then condition ", re_data);
+                    // console.log("resoveData .then condition ", re_data);
                     session_draft_details["draftdetails"] = re_data;
                     const data = session_draft_details;
                     res.render("campaigns/drafts.ejs", { data });

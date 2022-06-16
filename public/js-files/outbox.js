@@ -22,7 +22,7 @@ function cancleCampaign(campaign_key) {
       .then((d) => {
         console.log(d);
         if (d.response_status == "1") {
-          document.location.reload();
+          document.location.reload(true);
         } else {
           window.alert(
             "Can not remove this campaign Now , due to server error"
