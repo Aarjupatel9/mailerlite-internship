@@ -155,7 +155,7 @@ function databaseFetch(sql) {
           }
         }
         // re_data["group_extra_things"] = 1;
-        console.log("group str into secound function : ", group_str);
+        // console.log("group str into secound function : ", group_str);
         resolve(group_str);
       }
     });
@@ -214,15 +214,17 @@ router.get("/outbox", authController.isLoggedIn, (req, res) => {
                     resolved_result[j]["timeofschedule"] =
                       result[j].timeofscheduled;
 
+                    var str = result[j].whomtosend;
                     // console.log("whom to send is fvjfvh : ", str);
                     // console.log(str);
                     // console.log(str.length);
-                    var str = result[j].whomtosend;
-
                     if (str == "toall") {
                       // console.log('enter in toall if cond.');
                       resolved_result[j]["whomtosend"] = result[j].whomtosend;
                       result_length--;
+                      if (j + 1 == result.length) {
+                            resolve(resolved_result);
+                      }
                     } else {
                       var sql =
                         "SELECT `group_name` FROM `group_details` WHERE `group_key`='";
@@ -274,7 +276,6 @@ router.get("/outbox", authController.isLoggedIn, (req, res) => {
     }
   );
 });
-
 
 router.post(
   "/create",
@@ -834,6 +835,9 @@ router.get("/sent", authController.isLoggedIn, (req, res) => {
                       // console.log('enter in toall if cond.');
                       resolved_result[j]["whomtosend"] = result[j].whomtosend;
                       result_length--;
+                      if (j + 1 == result.length) {
+                        resolve(resolved_result);
+                      }
                     } else {
                       var sql =
                         "SELECT `group_name` FROM `group_details` WHERE `group_key`='";
@@ -845,7 +849,7 @@ router.get("/sent", authController.isLoggedIn, (req, res) => {
                         }
                         i++;
                       }
-                      console.log(sql);
+                      // console.log(sql);
                       databaseFetch(sql)
                         .then((group_str) => {
                           counter++;
@@ -863,13 +867,12 @@ router.get("/sent", authController.isLoggedIn, (req, res) => {
                   }
                 });
               }
-
               resolveGroup(result)
                 .then((resolved_result) => {
                   // console.log("resoveData .then condition ", resolved_result);
                   session_draft_details["cdetails"] = resolved_result;
-              const data = session_draft_details;
-              res.render("campaigns/sent.ejs", { data });
+                  const data = session_draft_details;
+                  res.render("campaigns/sent.ejs", { data });
                 })
                 .catch((err) => {
                   console.log(err);
@@ -935,6 +938,9 @@ router.get("/drafts", authController.isLoggedIn, (req, res) => {
                         // console.log('enter in toall if cond.');
                         re_data[j]["whomtosend"] = result[j].whomtosend;
                         result_length--;
+                        if (j + 1 == result.length) {
+                          resolve(resolved_result);
+                        }
                       } else {
                         var sql =
                           "SELECT `group_name` FROM `group_details` WHERE `group_key`='";
@@ -946,7 +952,7 @@ router.get("/drafts", authController.isLoggedIn, (req, res) => {
                           }
                           i++;
                         }
-                        console.log(sql);
+                        // console.log(sql);
                         databaseFetch(sql)
                           .then((group_str) => {
                             counter++;
