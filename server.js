@@ -10,19 +10,24 @@ const cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
 var urlencodedparser = bodyParser.urlencoded({ extended: false });
 const authController = require("./controllers/auth.js");
+var multer = require("multer");
+tmp_dir = path.join(__dirname, "/public/temp");
+var upload = multer({ dest: tmp_dir });
+var fs = require("fs");
 
 const app = express();
 
 var con = require("./module/mysqlconn");
 var sendEmailOfCampaigns = require("./module/sendmail");
-con.connect(function (err) {
-  if (err) {
-    console.log(err);
-  }
-});
-
+// con.connect(function (err) {
+//   if (err) {
+//     console.log(err);
+//   }
+// });
+ 
 port = process.env.port || 8080;
 
+const  TYNIMCEPATH = path.join(__dirname, "node_modules/tinymce");
 const SRCPATH = path.join(__dirname, "src");
 const ERRORFILEPATH = path.join(__dirname, "errorfiles");
 const EDITORFILEPATH = path.join(__dirname, "text-editor");
@@ -31,6 +36,8 @@ const PUBLICPATH = path.join(__dirname, "/public");
 dotenv.config({ path: "./.env" });
 
 app.use(express.static(PUBLICPATH));
+app.use(express.static(TYNIMCEPATH));
+
 app.use(cookieParser());
 app.use(express.json());
 
@@ -71,7 +78,6 @@ app.get("/profile", authController.isLoggedIn, (req, res) => {
 
 //function use in the app
 
-
 function getMounthNumber(mounthname) {
   if (mounthname == "Jan") {
     return 0;
@@ -85,7 +91,7 @@ function getMounthNumber(mounthname) {
     return 4;
   } else if (mounthname == "Jun") {
     return 5;
-  } else if (mounthname == "July") {
+  } else if (mounthname == "Jul") {
     return 6;
   } else if (mounthname == "Aug") {
     return 7;
@@ -102,16 +108,102 @@ function getMounthNumber(mounthname) {
 
 //for trial this request handler is used
 app.get("/try.html", (req, res) => {
-  res.sendFile(`${SRCPATH}/try.ejs`);
+  res.sendFile(`${SRCPATH}/test2.html`);
 });
 app.get("/try.ejs", (req, res) => {
-  res.render("campaigns/try");
+  res.render("test2.html");
 });
 app.post("/get-tryal-json-object", (req, res) => {
   res.send({ name: "aarju patel from json object" });
 });
 app.get("/text-editor", (req, res) => {
   res.sendFile(`${EDITORFILEPATH}/editor.html`);
+});
+
+
+
+
+app.get("/email-builder", authController.isLoggedIn, (req, res) => {
+  console.log("enrter in / page ");
+  console.log(req.isloggedin, " ", req.user_key);
+  var name, email, c_name;
+  con.query(
+    "SELECT * FROM users_details WHERE `user_key`='" + req.user_key + "'",
+    function (err, result, fields) {
+      if (err) {
+        console.log(err);
+      } else {
+        name = result[0].firstname + " " + result[0].lastname;
+        email = result[0].email;
+        c_name = result[0].companyname;
+        const session_draft_details = {
+          name: `${name}`,
+          email: `${email}`,
+          c_name: `${c_name}`,
+          // dbrowser:`${detectBrowser()}`
+        };
+        // console.log(session_draft_details);
+        const data = session_draft_details;
+        const image_folder =
+          __dirname + "/public/user_uploaded_image_for_email_body/";
+        var image_Data = [];
+        var counter = 0;
+        function readDir() {
+          return new Promise(function (resolve, reject) {
+            fs.readdir(image_folder, (err, files) => {
+              files.forEach((file) => {
+                image_Data[counter] = "/user_uploaded_image_for_email_body/"+file;
+                counter++;
+                console.log(file);
+              });
+              resolve(image_Data)
+            });
+          });
+        }
+        readDir().then(d => {
+          console.log("image_data : ", d);
+          var image_Data = d; 
+          res.render("campaigns/email-body-builder.ejs", {data,  image_Data });
+        })
+        
+      }
+    }
+  );
+});
+
+
+
+app.post("/image_upload_for_email_body", upload.single("file"), (req, res) => {
+  var storage_path = __dirname + "/public/user_uploaded_image_for_email_body/";
+  var file =
+    __dirname +
+    "/public/user_uploaded_image_for_email_body/" +
+    req.file.originalname;
+  fs.readFile(req.file.path, function (err, data) {
+    console.log(req.file.path);
+    fs.writeFile(file, data, function (err) {
+      if (err) {
+        console.error(err);
+        response = {
+          message: "Sorry, file couldn't be uploaded.",
+          filename: req.file.originalname,
+        };
+      res.end(JSON.stringify(response));
+      } else {
+        response = {
+          message: "File uploaded successfully",
+          filename: req.file.originalname,
+        };
+
+        fs.renameSync(
+          file,
+          storage_path +  "10000001_" + Date.now() + path.extname(file)
+        );
+        
+        res.redirect("/email-builder");
+      }
+    });
+  });
 });
 
 //api for deal with request from web-app
@@ -236,8 +328,9 @@ app.listen(port, () => {
         for (let i = 0; i < result.length; i++) {
           // console.log("enter in for loop");
           console.log(result[i].timeofsend);
+          console.log(result[i].campaign_key);
           var time_to_send = result[i].timeofsend;
-          console.log(getMounthNumber(time_to_send.slice(8, 11)));
+          // console.log(getMounthNumber(time_to_send.slice(8, 11)));
           var time_to_send1 = new Date(
             time_to_send.slice(12, 16),
             getMounthNumber(time_to_send.slice(8, 11)),
@@ -246,12 +339,14 @@ app.listen(port, () => {
             time_to_send.slice(20, 22)
           );
           var time_to_send2 = new Date(time_to_send1.getTime() + 3600000 * 5.5);
+          // console.log("per : ", time_to_send.slice(8, 11));
           // console.log("per : ", getMounthNumber(time_to_send.slice(8, 11)));
           var current_time = new Date();
           var current_local_time = new Date(
             current_time.getTime() + 3600000 * 5.5
           );
           var timer = time_to_send2 - current_local_time;
+          // console.log("time to send : ", time_to_send1.toLocaleString());
           console.log("time to send : ", time_to_send2);
           console.log("current local time : ", current_local_time);
           console.log(timer);

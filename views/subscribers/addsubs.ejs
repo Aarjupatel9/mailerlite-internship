@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
+    <script src="/js-files/common.js"></script>
+    <script src="/js-files/draft.js"></script>
+    <link href="/css-files/box.css" rel="stylesheet" type="text/css">
+    <link href="/css-files/widgit.css" rel="stylesheet" type="text/css">
+
+
+    <link href="/css-files/campaigns.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Groups</title>
+    <script>
+        function addsub() {
+            var firstname = document.getElementById("firstname").value;
+            var lastname = document.getElementById("lastname").value;
+            var email = document.getElementById("email").value;
+            var mobile = document.getElementById("mobile").value;
+            var groupname1 = document.getElementsByName("groupname");
+            for (i = 0; i < groupname1.length; i++) {
+                if (groupname1[i].checked)
+                    groupname = groupname1[i].value;
+            }
+
+            console.log(firstname);
+            var sdetails = {
+                firstname: `${firstname}`,
+                lastname: `${lastname}`,
+                email: `${email}`,
+                mobile: `${mobile}`,
+                groupname: `${groupname1}`,
+
+                // firstname: `${document.getElementByName(firstname).value}`,
+                // lastname: `${document.getElementByName(lastname).value}`,
+                // email: `${document.getElementByName(email).value}`,
+                // mobile: `${document.getElementByName(mobile).value}`,
+                // groupname: `${document.getElementByName(groupname).value}`,
+            };
+            console.log(sdetails);
+            let options = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json;charset=utf-8",
+                },
+                body: JSON.stringify(sdetails),
+            };
+            //Fake api for making post requests
+            let fetchRes = fetch("/subscribers/addsubsapi", options);
+            fetchRes
+                .then((res) => res.json())
+                .then((d) => {
+                    console.log(d);
+                    if (d.response_status == "1") {
+                        window.alert(
+                            "Added new subscriber"
+                        );
+                        document.location.reload();
+                    } else {
+                        window.alert(
+                            "Can not added new subscriber Now , due to server error"
+                        );
+                    }
+                });
+        }
+
+    </script>
+</head>
+
+<body>
+    <%if(response_status=='1'){ %>
+        <script> alert("subscriber is added succesfully");</script>
+        <%} else if(response_status=='0' ){%>
+            <script> alert("subscriber not added, server error ");
+            </script>
+            <%}%>
+                <div class=" conatainer">
+                    <div class="side_bar bg-light">
+                        <%- include('../common/sidebar')%>
+                    </div>
+                    <div class="main_area">
+                        <div class="main_header">
+                            <%- include('../common/user_details')%>
+                                <div class="row m-3">
+                                    <div class="col h1 ">
+                                        Subscribers
+                                    </div>
+                                    <div class="col">
+                                        <form id="main_form" method="post" action="/subscribers/create">
+                                            <button type="submit" class="btn btn-success float-right mr-lg-5">Add
+                                                Subscribers</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <!-- <div class="title_name ml-4 h2">Campaigns</div> -->
+                                <div class="state ml-4 mt-3 ">
+                                    <%- include('../common/subs-navbar')%>
+                                </div>
+                        </div>
+
+                        <div class="work_area">
+                            <div class="work_container text-center m-4 p-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="h2  card-title">Add New Subscribers</h4>
+                                        <p class="card-description"></p>
+                                        <div class="work_area">
+                                            <div class="work_container m-4 p-4">
+                                                <form class="bg-light m-5" action="/subscribers/addsubsapi" ,
+                                                    method="post">
+                                                    <label class="h2 m-4 p-2">Subscriber details</label>
+
+                                                    <div class="form-group m-4 pl-2 ">
+                                                        <label for="exampleInputEmail1">First Name</label>
+                                                        <input type="text" name="firstname" id="firstname"
+                                                            class="form-control" required>
+                                                    </div>
+                                                    <div class="form-group m-4 pl-2 ">
+                                                        <label for="exampleInputEmail1">Last Name</label>
+                                                        <input type="text" name="lastname" id="lastname"
+                                                            class="form-control" required>
+                                                    </div>
+                                                    <div class="form-group m-4 pl-2 ">
+                                                        <label for="exampleInputEmail1">Email</label>
+                                                        <input type="text" name="email" id="email" class="form-control"
+                                                            required>
+                                                    </div>
+                                                    <div class="form-group m-4 pl-2 ">
+                                                        <label for="exampleInputEmail1">Mobile Number</label>
+                                                        <input type="text" name="mobile" id="mobile"
+                                                            class="form-control" required>
+                                                    </div>
+
+                                                    <div class="form-group m-4 pl-2 ">
+                                                        <% for (var i=0; i < data.groupdata.length; i++) { %>
+                                                            <div class="form-check ml-5 h5">
+                                                                <input class="form-check-input h5" type="checkbox"
+                                                                    value="`<%=data.groupdata[i].group_key %>`"
+                                                                    id="`<%=data.groupdata[i].group_key%>`"
+                                                                    name="groupsname">
+                                                                <label class="form-check-label"
+                                                                    for="`<%=data.groupdata[i].group_key%>`">
+                                                                    <%=data.groupdata[i].group_name %>
+                                                                </label>
+                                                            </div>
+                                                            <%}%>
+                                                    </div>
+
+                                                    <div class="text-center">
+                                                        <button type="submit" class=" btn btn-success btn-lg">Add
+                                                            subscriber</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+</body>
+
+</html>

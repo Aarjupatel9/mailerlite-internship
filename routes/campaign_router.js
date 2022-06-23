@@ -223,7 +223,9 @@ router.get("/outbox", authController.isLoggedIn, (req, res) => {
                       resolved_result[j]["whomtosend"] = result[j].whomtosend;
                       result_length--;
                       if (j + 1 == result.length) {
-                            resolve(resolved_result);
+                        setTimeout(() => {
+                          resolve(resolved_result);
+                        }, 100);
                       }
                     } else {
                       var sql =
@@ -243,7 +245,7 @@ router.get("/outbox", authController.isLoggedIn, (req, res) => {
                           // console.log("counter value is : ", counter);
                           resolved_result[j]["whomtosend"] = group_str;
                           if (counter == result_length) {
-                            // console.log("enter in if condi. ", resolved_result);
+                            console.log("enter in if condi. ", resolved_result);
                             resolve(resolved_result);
                           }
                         })
@@ -257,7 +259,7 @@ router.get("/outbox", authController.isLoggedIn, (req, res) => {
 
               resolveGroup(result)
                 .then((resolved_result) => {
-                  // console.log("resoveData .then condition ", resolved_result);
+                  console.log("resoveData .then condition ", resolved_result);
                   session_draft_details["cdetails"] = resolved_result;
                   const data = session_draft_details;
                   res.render("campaigns/outbox.ejs", { data });
@@ -331,15 +333,15 @@ router.post(
           };
           // console.log(session_draft_details);
           session_storage.setItem(
-            "session_draft_details_" + user_key + "",
+            "session_draft_details_" + user_key + "", // "session_draft_details_10000001"
             session_draft_details
           );
           console.log(
             "set sesssion storege before edit page",
             session_storage.getItem("session_draft_details_" + user_key + "")
           );
-          const data = session_draft_details;
 
+          const data = session_draft_details;
           res.render("campaigns/user/edit/edit.ejs", { data });
         }
       }
@@ -438,7 +440,6 @@ router.post(
   (req, res) => {
     const user_key = req.user_key;
     const campaign_key = req.body.campaign_key;
-
     if (req.body.campaign_key === undefined) {
       console.log("ENTER IN IF CONDITION");
       const user_key = req.user_key;
@@ -459,7 +460,6 @@ router.post(
           " and length is  : ",
           smn.length
         );
-
         if (smn[0].length === 3) {
           var j_object = [];
           for (let i = 0; i < smn.length; i++) {
@@ -477,6 +477,7 @@ router.post(
         "session_draft_details into review_email handler",
         session_draft_details
       );
+
       saveDraftsOfCampaigns(user_key, session_draft_details);
       // now we have to fetch campaign_key and all other data from the database
       const fetchdraftdetails =

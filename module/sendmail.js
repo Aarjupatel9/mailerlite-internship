@@ -1,6 +1,7 @@
 var nodemailer = require("nodemailer");
 var con = require("./mysqlconn");
 const dotenv = require("dotenv");
+const res = require("express/lib/response");
 dotenv.config({ path: "../.env" });
 
 con.connect(function (err) {
@@ -9,44 +10,45 @@ con.connect(function (err) {
   }
 });
 
-function emailsender(i,draftdetails, email, user_key, campaign_key) {
-    var transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.OFFICIAL_EMAIL_ID,
-        pass: process.env.OFFICIAL_EMAIL_ID_PASS,
-      },
-    });
-    var mailOptions = {
-      from: "travelagency3111@gmail.com",
-      to: `${email}`,
-      subject: `${draftdetails["subjectofemail"]}`,
-      text: `${draftdetails["email_body"]}`,
-    };
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log("Email sent : " + info.response);
-        console.log("enter in send email section , email is in progress");
-        if (i == 0) {
-          var campaign_update_query =
-            "UPDATE `campaigns_details` SET `campaigns_status`='1' WHERE `user_key`= '" +
-            user_key +
-            "' AND `campaign_key`='" +
-            campaign_key +
-            "'";
-          con.query(campaign_update_query, function (err, result) {
-            if (err) {
-              console.log(err);
-            } else {
-              console.log("update query result : ", result);
-            }
-          });
-        }
+function emailsender(i, draftdetails, email, user_key, campaign_key) {
+  console.log("emailsender inside");
+
+  var transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.OFFICIAL_EMAIL_ID,
+      pass: process.env.OFFICIAL_EMAIL_ID_PASS,
+    },
+  });
+  var mailOptions = {
+    from: "travelagency3111@gmail.com",
+    to: `${email}`,
+    subject: `${draftdetails["subjectofemail"]}`,
+    html: `${draftdetails["email_body"]}`,
+  };
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent : " + info.response);
+      console.log("enter in send email section , email is in progress");
+      if (i == 0) {
+        var campaign_update_query =
+          "UPDATE `campaigns_details` SET `campaigns_status`='1' WHERE `user_key`= '" +
+          user_key +
+          "' AND `campaign_key`='" +
+          campaign_key +
+          "'";
+        con.query(campaign_update_query, function (err, result) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log("update query result : ", result);
+          }
+        });
       }
-    });
-    
+    }
+  });
 }
 
 function sendEmailOfCampaigns(user_key, campaign_key) {
@@ -71,9 +73,6 @@ function sendEmailOfCampaigns(user_key, campaign_key) {
 
       console.log(draftdetails["whomtosend"]);
       if (draftdetails["whomtosend"] == "toall") {
-        //we have to find user key of the user from database but now declare statisllyu here
-        //req.user_key; //for user travelagency3111@gmail.com
-        //fetch the subscribers email from database
         con.query(
           "SELECT * FROM `subscriber_of_users` WHERE `user_key`=" +
             user_key +
@@ -82,15 +81,12 @@ function sendEmailOfCampaigns(user_key, campaign_key) {
             if (err) {
               console.log(err);
             } else {
-              // console.log(result);
+              console.log(result.length);
               for (let i = 0; i < result.length; i++) {
                 var email = result[i].email;
+                // console.log(email);
                 console.log("subscriber's email id is : ", email);
-                // //sending email to subscribers
-                //   console.log("email id is ", process.env.OFFICIAL_EMAIL_ID);
-                //   console.log("email id is ", process.env.OFFICIAL_EMAIL_ID_PASS);
-
-                  emailsender(i,draftdetails, email,user_key,campaign_key);
+                emailsender(i, draftdetails, email, user_key, campaign_key);
               }
             }
           }
@@ -110,14 +106,17 @@ function sendEmailOfCampaigns(user_key, campaign_key) {
           }
           i++;
         }
+
+        console.log(sql);
+
         con.query(sql, function (err, result, field) {
           if (err) {
             console.log(err);
           } else {
-              for (let i = 0; i < result.length; i++) {
-                  var email = result[i].email;
-                console.log("email is ", result[i].email);
-                emailsender(i, draftdetails, email, user_key,campaign_key);
+            for (let i = 0; i < result.length; i++) {
+              var email = result[i].email;
+              console.log("email is ", result[i].email);
+              emailsender(i, draftdetails, email, user_key, campaign_key);
             }
           }
         });
