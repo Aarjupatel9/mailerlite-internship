@@ -1,0 +1,49 @@
+<div class="sidebar   p-3 text-dark bg-light">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auhref text-dark text-decoration-none">
+        <svg class="bi me-2" width="40" height="32">
+            <use href="/"></use>
+        </svg>
+        <span class="fs-4 h2 text-success my-3">Mailerlite</span>
+    </a>
+    <hr>
+    <ul class="nav nav-pills align-items-center text-center flex-column mb-auhref">
+        <img id="drag1" src="/user_uploaded_image_for_email_body/10000001_1655523922505.jpg" draggable="true" ondragstart="drag(event)" width="336" height="69">
+        <% for (var i=0; i < image_Data.length; i++) { %>
+            <li class="nav-item text-center">
+                <div class="text-field text-center" id="text-area1" draggable="true" ondragstart="drag(event)">
+                    <img id="image[<%=i%>]" src="<%=image_Data[i]%>" draggable="true" ondragstart="drag(event)" width="336" height="69">
+                </div>
+            </li>
+            <%}%>
+                <li class="nav-item text-center">
+                    <div class="text-field text-center" id="text-area1" draggable="true" ondragstart="drag(event)">
+                        <textarea name="text-area" class="text-area" cols="25" rows="3">text area</textarea>
+                    </div>
+                </li>
+                <li class="nav-item text-center">
+                    <div class="text-field text-center" id="text-area2" draggable="true" ondragstart="drag_t(event)">
+                        <textarea name="text-area2" class="text-area" cols="25" rows="3">djcnjksc   area</textarea>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="text-field text-center" id="text-area2" draggable="true" ondragstart="drag_t(event)">
+                        <input type="text" placeholder="text - area" readonly>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="text-field text-center" id="image" draggable="true" ondragstart="drag_t(event)">
+                        <input type="text" placeholder="for image " readonly>
+                    </div>
+                </li>
+                <li class="nav-item text-center">
+                    <form action="/image_upload_for_email_body" method="post" enctype="multipart/form-data">
+                        <div class="text-field text-center" id="image">
+                            <input id="image_upload" name="file" type="file" placeholder="add image" readonly>
+                            <button type="submit">Upload</button>
+                        </div>
+                    </form>
+                </li>
+
+    </ul>
+    <hr />
+</div>
