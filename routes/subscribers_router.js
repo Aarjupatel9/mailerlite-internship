@@ -368,6 +368,7 @@ router.post("/group", authController.isLoggedIn, (req, res) => {
                   group_d[i] = [];
                   group_d[i]["groupcounter"] = 0;
                   group_d[i]["group_key"] = result1[i].group_key;
+                  group_d[i]["time_of_edit"] = result1[i].time_of_edit;
                   group_d[i]["group_name"] = result1[i].group_name;
                 }
                 console.log("before", group_d);
@@ -381,7 +382,7 @@ router.post("/group", authController.isLoggedIn, (req, res) => {
                   } else {
 
                     console.log("result2 is", result2);
-                    
+
                     for (let i = 0; i < result2.length; i++) {
                       var group = result2[i].group_key; ///1,4
                       console.log("geoup is ", group);
