@@ -1,1 +1,0 @@
-# mailerlite-internship
