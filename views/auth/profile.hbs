@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
+    <link rel="stylesheet" href="/bootstrap.css">
+    <link rel="stylesheet" href="/mycss.css">
+</head>
+
+<body>
+    
+      
+    <div class="container m-5 p-5">
+        <div class="row">
+            <div class="col-4">
+                <div class="card">
+                    <div class="avatar-ctn">
+                        <img src="/avatar.png" class="avatar" />
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{user.fname}}</h5>
+                        <a href="#" class="btn btn-warning btn-my">{{user.email}}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="cart text-center">
+                    <div class="card-header">
+                        Profile Page
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Hey {{user.fname}} Welcome back!</h5>
+                        <p class="card-text">This is your profile page.</p>
+                        <a href="#" class="btn btn-warning btn-my">click here</a>
+                    </div>
+                    <div class="card-footer text-muted">
+                        MailerHeavy
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

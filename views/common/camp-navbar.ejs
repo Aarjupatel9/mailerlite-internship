@@ -1,0 +1,32 @@
+<!-- <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link text-dark font-weight-bold h4" href="/Campaigns/sent">Sent Box <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item ">
+                <a class="nav-link text-dark font-weight-bold h4" href="/Campaigns/drafts">Drafts</a>
+            </li>
+            <li class="nav-item ">
+                <a class="nav-link text-dark font-weight-bold h4" href="/Campaigns/outbox">Outbox</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<hr> -->
+
+
+<form style="background-color: lightgray;">
+    <div class="camp-navbar-row row" style="max-width: 500px;">
+        <div class="col"> <input class="form-control" type="submit" formaction="/Campaigns/sent" formmethod="get"
+                value="Sent Box">
+        </div>
+        <div class="col">
+            <input class="form-control" type="submit" formaction="/Campaigns/drafts" formmethod="get" value="Draft Box">
+        </div>
+        <div class="col">
+            <input class="form-control" type="submit" formaction="/Campaigns/outbox" formmethod="get" value="Out Box">
+        </div>
+    </div>
+
+</form>

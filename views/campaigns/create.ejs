@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="/js-files/common.js"></script>
+    <link href="/css-files/box.css" rel="stylesheet" type="text/css">
+    <link href="/css-files/widgit.css" rel="stylesheet" type="text/css">
+    <link href="/css-files/campaigns.css" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>New Campaigns</title>
+</head>
+
+<body>
+    <div class="horizontal_bar">
+        <%- include('../common/horizontal_bar')%>
+    </div>
+    <div class="conatainer">
+        <div class="side_bar bg-light">
+            <%- include('../common/sidebar')%>
+        </div>
+        <div class="main_area">
+            <div class="main_header">
+                <%- include('../common/user_details')%>
+                    <div class="row m-4 mt-5 h1">New Campaigns</div>
+            </div>
+
+            <div class="work_area">
+                <div class="work_container m-4 p-4">
+                    <form class="bg-light m-5" method="post" action="/campaigns/user/edit/">
+                        <label class="h2 m-4 p-2">Campaign Details</label>
+                        <label class="h5 ml-4 pl-2">Start a new campaign by entering the name and choosing the campaign
+                            type.</label>
+
+                        <div class="form-group m-4 pl-2 ">
+                            <label for="exampleInputEmail1">Campaign Name</label>
+                            <input type="text" name="campaigns_name" class="form-control"
+                                placeholder="New campaigns name" required>
+                        </div>
+
+                        <label class="h5 ml-4 pl-2">type</label>
+                        <div class="type_container m-4 p-2">
+                            <div class="form-check m-4 pl-2">
+                                <input class="form-check-input" type="radio" name="type" id="exampleRadios1"
+                                    value="option1" checked>
+                                <label class="form-check-label" for="exampleRadios1">
+                                    Reguler Campaign
+                                </label>
+                                <label class="form-check-label" for="exampleRadios1">
+                                    Reguler Campaign
+                                </label>
+                            </div>
+                            <hr>
+                            <div class="form-check m-4 pl-2">
+                                <input class="form-check-input" type="radio" name="type" id="exampleRadios1"
+                                    value="option2">
+                                <label class="form-check-label" for="exampleRadios1">
+                                    A/B split campaign
+                                </label>
+                            </div>
+                            <hr>
+                            <div class="form-check m-4 pl-2">
+                                <input class="form-check-input" type="radio" name="type" id="exampleRadios1"
+                                    value="option3">
+                                <label class="form-check-label" for="exampleRadios1">
+                                    RSS campaign
+                                </label>
+                            </div>
+                            <hr>
+                            <div class="form-check m-4 pl-2">
+                                <input class="form-check-input" type="radio" name="type" id="exampleRadios1"
+                                    value="option4">
+                                <label class="form-check-label" for="exampleRadios1">
+                                    Auto resend
+                                </label>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="text-center">
+                            <button type="submit" class=" btn btn-success btn-lg">save & next</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>

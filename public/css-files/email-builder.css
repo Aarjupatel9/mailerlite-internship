@@ -1,0 +1,98 @@
+li {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+@media screen and (max-width: 1024px) {
+    .side_bar {
+        display: none !important;
+    }
+    .horizontal_bar{
+      display: inline;
+    }
+}
+
+.horizontal_bar {
+  /* display: none; */
+  z-index: 1;
+  overflow: hidden;
+  background-color: #333;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+.conatainer {
+  display: flex;
+  /* overflow-y: scroll; */
+  /* white-space: nowrap; */
+}
+.main_area {
+  padding-top: 10px;
+  min-width: 80vw;
+  flex: 80;
+  height: 100vh;
+  overflow-y: scroll;
+  /* display: inline-block; */
+}
+.side_bar {
+  flex: 20;
+  min-width: 20vw;
+  height: 100vh;
+  overflow-y: scroll;
+}
+
+.email-body{
+  min-height: 90vh;
+  height: auto;
+  padding: 5px;
+  width: 55vw;
+  text-align: center;
+  margin-top: 1vh;
+  /* background-color: red; */
+   border: 1px solid black
+
+}
+.text-area {
+  resize: none;
+}
+.no-link-highlight{
+    color: black;
+    text-align-last: center;
+}
+.no-link-highlight:hover{
+    color: black;
+    text-decoration-line: none;
+    background-color: whitesmoke;
+    font-weight: bolder;
+}
+
+.title_name {
+  margin: 5px 1px 1px 0px;
+}
+
+.camp_heading {
+  margin: 20px 20px 20px 20px;
+  display: flex;
+}
+.camp_heading2 {
+  margin: 10px 10px 10px 10px;
+  display: flex;
+}
+.profile_plan {
+  flex: 1;
+}
+.profile_info {
+  float: right;
+  flex: 1;
+}
+
+.work_area {
+  width: 100%;
+  height: auto;
+}
+
+.type_container {
+  border: 1px solid lightgreen;
+}
+.type_container hr {
+  border: 1px solid lightgreen;
+}

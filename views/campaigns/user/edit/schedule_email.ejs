@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js-files/common.js"></script>
+    <link href="/css-files/box.css" rel="stylesheet" type="text/css">
+    <link href="/css-files/widgit.css" rel="stylesheet" type="text/css">
+    <link href="/css-files/campaigns.css" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>campaigns ejs</title>
+</head>
+
+<body>
+    <%if(data.status=="scheduled" ){ %>
+        <script>
+            alert(`Your campaigns is sccheduled`);
+            document.location.href = "/Campaigns/outbox";
+        </script>
+        <% } %>
+            <div class="conatainer">
+
+                <div class="side_bar overflow-auto flex-column bg-light">
+                    <%- include('../../../common/sidebar')%>
+                </div>
+                <div class="main_area">
+                    <div class="main_header">
+                        <%- include('../../../common/user_details')%>
+                            <div class="row ml-3 mt-3">
+                                <%- include('../../../common/edit-navbar')%>
+                            </div>
+                            <div class="row ml-4 h2">schedual Your Campaign</div>
+                    </div>
+
+                    <div class="work_area">
+                        <div class="work_container m-4">
+                            <form class="bg-light m-5" method="post" action="/campaigns/user/campaign_status">
+                                <label class="h3 m-4 p-2">Set time to send Email of your campaign</label>
+                                <div class="form-check m-4 pl-2">
+                                    <label class="form-check-label" for="exampleRadios1">
+                                        select time and date for sending email
+                                    </label>
+                                    <input type="datetime-local" id="time" name="time">
+                                </div>
+                                <div class="form-group col " style="display: none;">
+                                    <label for="campaign_key">Campaign KEY</label>
+                                    <input type="text" name="campaign_key" class="form-control" id="campaign_key"
+                                        value="<%=data.campaign_key%>" readonly>
+                                </div>
+                                <hr>
+                                <div class="pb-2 pl-4">
+                                    <button type="submit" class=" btn btn-primary">Save & next for review</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+</body>
+
+</html>
