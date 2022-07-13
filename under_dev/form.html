@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="./public/style.css">
+    <title>Drag and Drop form builder</title>
+</head>
+
+<body>
+    <div class="wrapper">
+        <nav class="navbar navbar-light">
+            <h3>Drag & Drop Form Builder</h3>
+        </nav>
+        <div class="builder-wrapper">
+            <!-- <div class="name_wrapper">
+                <label for="form_name">Form name</label>
+                <input type="text" name="form_name" id="form_name" class="form-control">
+            </div> -->
+            <div id="fb-editor"></div>
+            <div class="action_btns text-center">
+                <button class="btn bg-danger" id="clear">Clear</button>
+                <button class="btn bg-info" id="preview">Preview</button>
+                <button class="btn bg-success" id="save">Save</button>
+            </div>
+        </div>
+        <div class="render-wrap"></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script src="https://formbuilder.online/assets/js/form-builder.min.js"></script>
+    <script src="./node_modules/formBuilder/dist/form-render.min.js"></script>
+    <script src="./src/form.js"></script>
+</body>
+
+</html>
