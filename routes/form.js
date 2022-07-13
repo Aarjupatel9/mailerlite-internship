@@ -351,6 +351,7 @@ router.post("/:form_id/group_edit", authController.isLoggedIn, urlencodedParser,
                     name: `${name}`,
                     email: `${email}`,
                     c_name: `${c_name}`,
+                    form_id: req.params.form_id
                 };
             }
         }
