@@ -1,6 +1,6 @@
 //here we declare some variable alias
 // for draft 0, sent 1 ,  outbox 2 , send_later 3, super-admin 4
-
+const cors = require('cors');
 const express = require("express");
 const os = require("os");
 const path = require("path");
@@ -19,6 +19,9 @@ const app = express();
 
 var con = require("./module/mysqlconn");
 var sendEmailOfCampaigns = require("./module/sendmail");
+
+var emailTemplateBuilder = require("email-template-builder");
+
 // con.connect(function (err) {
 //   if (err) {
 //     console.log(err);
@@ -28,6 +31,7 @@ var sendEmailOfCampaigns = require("./module/sendmail");
 port = process.env.port || 8080;
 
 const  TYNIMCEPATH = path.join(__dirname, "node_modules/tinymce");
+const userimagepath = path.join(__dirname, "public");
 const SRCPATH = path.join(__dirname, "src");
 const ERRORFILEPATH = path.join(__dirname, "errorfiles");
 const EDITORFILEPATH = path.join(__dirname, "text-editor");
@@ -37,6 +41,8 @@ dotenv.config({ path: "./.env" });
 
 app.use(express.static(PUBLICPATH));
 app.use(express.static(TYNIMCEPATH));
+app.use(express.static(userimagepath));
+app.use(cors());
 
 app.use(cookieParser());
 app.use(express.json());
@@ -166,6 +172,53 @@ app.get("/email-builder", authController.isLoggedIn, (req, res) => {
           res.render("campaigns/email-body-builder.ejs", {data,  image_Data });
         })
         
+      }
+    }
+  );
+});
+app.get("/email-builder-24-4", authController.isLoggedIn, (req, res) => {
+  console.log("enrter in / page ");
+  console.log(req.isloggedin, " ", req.user_key);
+  var name, email, c_name;
+  con.query(
+    "SELECT * FROM users_details WHERE `user_key`='" + req.user_key + "'",
+    function (err, result, fields) {
+      if (err) {
+        console.log(err);
+      } else {
+        name = result[0].firstname + " " + result[0].lastname;
+        email = result[0].email;
+        c_name = result[0].companyname;
+        const session_draft_details = {
+          name: `${name}`,
+          email: `${email}`,
+          c_name: `${c_name}`,
+          // dbrowser:`${detectBrowser()}`
+        };
+        // console.log(session_draft_details);
+        const data = session_draft_details;
+        const image_folder =
+          __dirname + "/public/user_uploaded_image_for_email_body/";
+        var image_Data = [];
+        var counter = 0;
+        function readDir() {
+          return new Promise(function (resolve, reject) {
+            fs.readdir(image_folder, (err, files) => {
+              files.forEach((file) => {
+                image_Data[counter] =
+                  "/user_uploaded_image_for_email_body/" + file;
+                counter++;
+                console.log(file);
+              });
+              resolve(image_Data);
+            });
+          });
+        }
+        readDir().then((d) => {
+          console.log("image_data : ", d);
+          var image_Data = d;
+          res.render("campaigns/test.hbs", { data, image_Data });
+        });
       }
     }
   );

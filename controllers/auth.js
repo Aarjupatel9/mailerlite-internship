@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { promisify } = require("util");
 
-var con = require("../module/mysqlconn_deven");
+var con = require("../module/mysqlconn");
 const { decode } = require("punycode");
 con.connect(function (err) {
   if (err) console.log(err);

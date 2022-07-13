@@ -4,12 +4,6 @@ const dotenv = require("dotenv");
 const res = require("express/lib/response");
 dotenv.config({ path: "../.env" });
 
-con.connect(function (err) {
-  if (err) {
-    console.log(err);
-  }
-});
-
 function emailsender(i, draftdetails, email, user_key, campaign_key) {
   console.log("emailsender inside");
 
@@ -25,6 +19,7 @@ function emailsender(i, draftdetails, email, user_key, campaign_key) {
     to: `${email}`,
     subject: `${draftdetails["subjectofemail"]}`,
     html: `${draftdetails["email_body"]}`,
+    
   };
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
@@ -113,10 +108,16 @@ function sendEmailOfCampaigns(user_key, campaign_key) {
           if (err) {
             console.log(err);
           } else {
-            for (let i = 0; i < result.length; i++) {
-              var email = result[i].email;
-              console.log("email is ", result[i].email);
-              emailsender(i, draftdetails, email, user_key, campaign_key);
+            if (result.length > 0) {
+              for (let i = 0; i < result.length; i++) {
+                var email = result[i].email;
+                console.log("email is ", result[i].email);
+                emailsender(i, draftdetails, email, user_key, campaign_key);
+              }
+            }
+            else {
+              console.log('enter in , not subscriber condition');
+              con.query("update `campaigns_details` set `campaigns_status`='1', where `campaign_key`='"+campaign_key+"'")
             }
           }
         });
