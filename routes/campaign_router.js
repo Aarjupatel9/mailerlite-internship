@@ -270,7 +270,7 @@ router.get("/outbox", authController.isLoggedIn, (req, res) => {
             } else {
               session_draft_details["cdetails"] = 0;
               const data = session_draft_details;
-              res.render("campaigns/outbox.ejs", { data });
+              res.render("campaigns/outbox.ejs", { data }); 
             }
           }
         });
@@ -404,6 +404,7 @@ router.post(
   authController.isLoggedIn,
   (req, res) => {
     const user_key = req.user_key;
+
     var session_draft_details = session_storage.getItem(
       "session_draft_details_" + user_key + ""
     );
@@ -413,7 +414,7 @@ router.post(
       "session_draft_details into recipients handler",
       session_draft_details
     );
-
+    
     const getgroupdetails =
       "SELECT * FROM `group_details` WHERE `user_key`='" + user_key + "'";
 

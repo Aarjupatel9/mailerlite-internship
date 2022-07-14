@@ -6,12 +6,12 @@ li {
         display: none !important;
     }
     .horizontal_bar{
-      display: inline;
+      display: inline !important ;
     }
 }
 
 .horizontal_bar {
-  /* display: none; */
+  display: none;
   z-index: 1;
   overflow: hidden;
   background-color: #333;
