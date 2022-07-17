@@ -9,6 +9,9 @@ const session_storage = require("node-sessionstorage");
 const { NULL } = require("mysql/lib/protocol/constants/types");
 
 const authController = require("../controllers/auth");
+// const dotenv = require("dotenv");
+dotenv.config({ path: "../.env" });
+
 
 // sagar's code
 
@@ -40,7 +43,8 @@ router.get("/", authController.isLoggedIn, function (req, res, next) {
                     name: `${name}`,
                     email: `${email}`,
                     c_name: `${c_name}`,
-                    user_key: req.user_key
+                    user_key: req.user_key,
+                    WEB_HOST: process.env.WEB_HOST
                 };
             }
         }
@@ -86,6 +90,7 @@ router.get("/form_name", authController.isLoggedIn, function (req, res, next) {
                     name: `${name}`,
                     email: `${email}`,
                     c_name: `${c_name}`,
+                    WEB_HOST: process.env.WEB_HOST
                 };
                 res.render("forms/form_name.ejs", { user_details: user });
             }
@@ -111,7 +116,7 @@ router.post("/name", authController.isLoggedIn, urlencodedParser, function (req,
 
         const form_id = result.insertId;
 
-        res.redirect(307, "http://localhost:8080/form/" + form_id + "/form_group");
+        res.redirect(307, "http://" + process.env.WEB_HOST + ":8080/form/" + form_id + "/form_group");
     });
 });
 
@@ -131,7 +136,8 @@ router.post("/:form_id/form_group", authController.isLoggedIn, urlencodedParser,
                     name: `${name}`,
                     email: `${email}`,
                     c_name: `${c_name}`,
-                    form_id: req.params.form_id
+                    form_id: req.params.form_id,
+                    WEB_HOST: process.env.WEB_HOST
                 };
             }
         }
@@ -177,7 +183,7 @@ router.post("/:form_id/submit_form_group", authController.isLoggedIn, urlencoded
 
     res.redirect(
         307,
-        "http://localhost:8080/form/" + req.params.form_id + "/create_form"
+        "http://" + process.env.WEB_HOST + ":8080/form/" + req.params.form_id + "/create_form"
     );
 });
 
@@ -198,7 +204,8 @@ router.post("/:form_id/create_form", authController.isLoggedIn, urlencodedParser
         res.render("forms/create_forms.ejs", {
             data: result[0].formSchema,
             form_id: req.params.form_id,
-            user: req.user_key
+            user: req.user_key,
+            WEB_HOST: process.env.WEB_HOST
         });
     });
 });
@@ -281,7 +288,8 @@ router.get('/:form_id/form_overview', authController.isLoggedIn, function (req, 
                     name: `${name}`,
                     email: `${email}`,
                     c_name: `${c_name}`,
-                    user_key: req.user_key
+                    user_key: req.user_key,
+                    WEB_HOST: process.env.WEB_HOST
                 };
             }
         }
@@ -328,7 +336,7 @@ router.get('/:form_id/share', authController.isLoggedIn, function (req, res, nex
         }
         console.log(result);
         // res.render("form", { data: result, user_details: user });
-        res.render('forms/share_form.ejs', { data: result, user: req.user_key });
+        res.render('forms/share_form.ejs', { data: result, user: req.user_key, WEB_HOST: process.env.WEB_HOST });
     });
 });
 
@@ -351,7 +359,8 @@ router.post("/:form_id/group_edit", authController.isLoggedIn, urlencodedParser,
                     name: `${name}`,
                     email: `${email}`,
                     c_name: `${c_name}`,
-                    form_id: req.params.form_id
+                    form_id: req.params.form_id,
+                    WEB_HOST: process.env.WEB_HOST
                 };
             }
         }
@@ -396,7 +405,7 @@ router.post("/:form_id/save_edit", authController.isLoggedIn, urlencodedParser, 
     });
 
     res.redirect(
-        "http://localhost:8080/form/" + req.params.form_id + "/form_overview"
+        "http://" + process.env.WEB_HOST + ":8080/form/" + req.params.form_id + "/form_overview"
     );
 });
 

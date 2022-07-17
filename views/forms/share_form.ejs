@@ -28,10 +28,11 @@
         data = '<%= data[0].formSchema%>';
         form_id = '<%=data[0].form_id%>';
         user = '<%= user %>';
+        domain = '<%= WEB_HOST %>';
         form_data = data.replace(/&#34;/g, "\"");
     </script>
     <script src="/javascripts/form_share.js"></script>
-    <script src="http://localhost:8080/static/form_response_handler.js"></script>
+    <script src="http://<%= WEB_HOST %>:8080/static/form_response_handler.js"></script>
 </body>
 
 </html>
