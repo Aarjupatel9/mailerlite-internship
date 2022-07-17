@@ -19,7 +19,7 @@ function emailsender(i, draftdetails, email, user_key, campaign_key) {
     to: `${email}`,
     subject: `${draftdetails["subjectofemail"]}`,
     html: `${draftdetails["email_body"]}`,
-    
+
   };
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
@@ -70,8 +70,8 @@ function sendEmailOfCampaigns(user_key, campaign_key) {
       if (draftdetails["whomtosend"] == "toall") {
         con.query(
           "SELECT * FROM `subscriber_of_users` WHERE `user_key`=" +
-            user_key +
-            "",
+          user_key +
+          "",
           function (err, result, fields) {
             if (err) {
               console.log(err);
@@ -117,7 +117,11 @@ function sendEmailOfCampaigns(user_key, campaign_key) {
             }
             else {
               console.log('enter in , not subscriber condition');
-              con.query("update `campaigns_details` set `campaigns_status`='1', where `campaign_key`='"+campaign_key+"'")
+              con.query("update `campaigns_details` set `campaigns_status`='1' where `campaign_key`='" + campaign_key + "'", function (err, result) {
+                if (err) {
+                  console.log(err);
+                }
+              })
             }
           }
         });

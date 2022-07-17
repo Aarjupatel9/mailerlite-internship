@@ -80,10 +80,10 @@ router.post(
   (req, res) => {
     con.query(
       "INSERT INTO `group_details`( `user_key`,`group_name`) VALUES ('" +
-        req.user_key +
-        "','" +
-        req.body.group_name +
-        "')",
+      req.user_key +
+      "','" +
+      req.body.group_name +
+      "')",
       function (err, result) {
         if (err) {
           res.send({ response_status: "0" });
@@ -120,8 +120,8 @@ router.post(
           con.query(
             // "SELECT * FROM `subscriber_of_users` INNER JOIN `group_details` ON `subscriber_of_users`.`user_key` = `group_details`.`user_key`  WHERE `subscriber_of_users`.`user_key`='" + req.user_key + "'",
             "SELECT * FROM `group_details` WHERE `user_key`='" +
-              req.user_key +
-              "'",
+            req.user_key +
+            "'",
             function (err, result) {
               if (err) {
                 console.log(err);
@@ -132,7 +132,7 @@ router.post(
                 data["groupdata"] = result;
                 var response_status = 3;
                 // console.log(session_draft_details);
-                res.render("subscribers/addsubs.ejs", { data , response_status });
+                res.render("subscribers/addsubs.ejs", { data, response_status });
               }
             }
           );
@@ -168,18 +168,18 @@ router.post(
 
     con.query(
       "INSERT INTO `subscriber_of_users`( `user_key`, `group_key`, `firstname`, `lastname`, `email`, `phonenumber`) VALUES ('" +
-        req.user_key +
-        "','" +
-        group_name +
-        "','" +
-        req.body.firstname +
-        "','" +
-        req.body.lastname +
-        "','" +
-        req.body.email +
-        "','" +
-        req.body.mobile +
-        "')",
+      req.user_key +
+      "','" +
+      group_name +
+      "','" +
+      req.body.firstname +
+      "','" +
+      req.body.lastname +
+      "','" +
+      req.body.email +
+      "','" +
+      req.body.mobile +
+      "')",
       function (err, result) {
         if (err) {
           var response_status = 0;
@@ -189,8 +189,8 @@ router.post(
           var name, email, c_name;
           con.query(
             "SELECT * FROM users_details WHERE `user_key`='" +
-              req.user_key +
-              "'",
+            req.user_key +
+            "'",
             function (err, result, fields) {
               if (err) {
                 console.log(err);
@@ -207,8 +207,8 @@ router.post(
                 con.query(
                   // "SELECT * FROM `subscriber_of_users` INNER JOIN `group_details` ON `subscriber_of_users`.`user_key` = `group_details`.`user_key`  WHERE `subscriber_of_users`.`user_key`='" + req.user_key + "'",
                   "SELECT * FROM `group_details` WHERE `user_key`='" +
-                    req.user_key +
-                    "'",
+                  req.user_key +
+                  "'",
                   function (err, result) {
                     if (err) {
                       console.log(err);
@@ -218,7 +218,7 @@ router.post(
                       const data = session_draft_details;
                       data["groupdata"] = result;
                       // console.log(session_draft_details);
-                      res.render("subscribers/addsubs.ejs", { data , response_status});
+                      res.render("subscribers/addsubs.ejs", { data, response_status });
                     }
                   }
                 );
@@ -252,8 +252,8 @@ router.get("/allsubs", authController.isLoggedIn, (req, res) => {
         };
         con.query(
           "SELECT * FROM `subscriber_of_users` WHERE `user_key`='" +
-            req.user_key +
-            "'",
+          req.user_key +
+          "'",
           function (err, result1, fields) {
             if (err) {
               console.log(err);
@@ -303,10 +303,10 @@ router.post(
           };
           con.query(
             "SELECT * FROM `subscriber_of_users` WHERE `email`='" +
-              req.body.email +
-              "' `user_key`='" +
-              req.user_key +
-              "'",
+            req.body.email +
+            "' `user_key`='" +
+            req.user_key +
+            "'",
             function (err, result1, fields) {
               if (err) {
                 console.log(err);
@@ -354,8 +354,8 @@ router.post("/group", authController.isLoggedIn, (req, res) => {
         };
         con.query(
           "SELECT * FROM `group_details` WHERE `user_key`='" +
-            req.user_key +
-            "'",
+          req.user_key +
+          "'",
           function (err, result1, fields) {
             if (err) {
               console.log(err);

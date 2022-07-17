@@ -228,17 +228,58 @@ router.get("/outbox", authController.isLoggedIn, (req, res) => {
                         }, 100);
                       }
                     } else {
+                      // var sql =
+                      //   "SELECT `group_name` FROM `group_details` WHERE `group_key`='";
+                      // for (let i = 0; i < str.length; i++) {
+                      //   if (i + 2 < str.length) {
+                      //     sql = sql + str[i] + "' OR `group_key`='";
+                      //   } else {
+                      //     sql = sql + str[i] + "'";
+                      //   }
+                      //   i++;
+                      // }
+                      // let str = "'1','12','4',6'";
+
+                      let string1 = [];
+                      let counter_gep = 0;
+                      let n = str.length;
+                      for (let i = 0; i < n; i++) {
+                        for (let j = 0; j < n - i; j++) {
+                          var want_str = str.slice(i, n - j);
+                          console.log("want str is : ", want_str);
+                          if (!want_str.includes("'")) {
+                            if (!want_str.includes(",")) {
+                              if (!want_str.includes("`")) {
+                                // console.log(
+                                //   "want str which is mached is : ",
+                                //   want_str
+                                // );
+                                var matched_l = want_str.length;
+                                for (let k = 0; k < matched_l - 1; k++) {
+                                  j++;
+                                  i++;
+                                }
+                                string1[counter_gep] = want_str;
+                                counter_gep++;
+                              }
+                            }
+                          }
+                        }
+                      }
+                      console.log("nummber is : ", string1[0]);
+                      console.log("counter is : ", counter_gep);
+
                       var sql =
                         "SELECT `group_name` FROM `group_details` WHERE `group_key`='";
-                      for (let i = 0; i < str.length; i++) {
-                        if (i + 2 < str.length) {
-                          sql = sql + str[i] + "' OR `group_key`='";
+                      for (let i = 0; i < counter_gep; i++) {
+                        if (i + 1 < counter_gep) {
+                          sql = sql + string1[i] + "' OR `group_key`='";
                         } else {
-                          sql = sql + str[i] + "'";
+                          sql = sql + string1[i] + "'";
                         }
-                        i++;
                       }
-                      console.log(sql);
+
+                      console.log("sql is : ", sql);
                       databaseFetch(sql)
                         .then((group_str) => {
                           counter++;
@@ -270,7 +311,7 @@ router.get("/outbox", authController.isLoggedIn, (req, res) => {
             } else {
               session_draft_details["cdetails"] = 0;
               const data = session_draft_details;
-              res.render("campaigns/outbox.ejs", { data }); 
+              res.render("campaigns/outbox.ejs", { data });
             }
           }
         });
@@ -414,7 +455,7 @@ router.post(
       "session_draft_details into recipients handler",
       session_draft_details
     );
-    
+
     const getgroupdetails =
       "SELECT * FROM `group_details` WHERE `user_key`='" + user_key + "'";
 
@@ -461,17 +502,50 @@ router.post(
           " and length is  : ",
           smn.length
         );
-        if (smn[0].length === 3) {
-          var j_object = [];
-          for (let i = 0; i < smn.length; i++) {
-            j_object[i] = smn[i][1];
+        let str = smn.toString();
+        let string1 = [];
+        let counter_gep = 0;
+        let n = str.length;
+        for (let i = 0; i < n; i++) {
+          for (let j = 0; j < n - i; j++) {
+            var want_str = str.slice(i, n - j);
+            console.log("want str is : ", want_str);
+            want_str.includes("'") && want_str.includes(",");
+            if (!want_str.includes("'")) {
+              if (!want_str.includes(",")) {
+                if (!want_str.includes("`")) {
+                  var matched_l = want_str.length;
+                  console.log(
+                    "want str which is mached is : ",
+                    want_str,
+                    " and it's length is : ",
+                    matched_l
+                  );
+                  for (let k = 0; k < matched_l - 1; k++) {
+                    j++;
+                    i++;
+                  }
+                  string1[counter_gep] = want_str;
+                  counter_gep++;
+                }
+              }
+            }
           }
-          console.log(j_object);
-          session_draft_details["wts"] = j_object;
-        } else {
-          console.log("enter in length is not 3 cond.");
-          session_draft_details["wts"] = smn[1];
         }
+        console.log("all gropup nummber is : ", string1);
+        console.log("counter is : ", counter_gep);
+        session_draft_details["wts"] = string1;
+        // if (smn[0].length === 3) {
+        //   var j_object = [];
+        //   for (let i = 0; i < smn.length; i++) {
+        //     j_object[i] = smn[i][1];
+        //   }
+        //   console.log(j_object);
+        //   session_draft_details["wts"] = j_object;
+        // } else {
+        //   console.log("enter in length is not 3 cond.");
+        //   session_draft_details["wts"] = smn[1];
+        // }
       }
 
       console.log(
@@ -518,17 +592,49 @@ router.post(
             );
           } else {
             var str = result[0].whomtosend;
+
+            let string1 = [];
+            let counter_gep = 0;
+            let n = str.length;
+            for (let i = 0; i < n; i++) {
+              for (let j = 0; j < n - i; j++) {
+                var want_str = str.slice(i, n - j);
+                console.log("want str is : ", want_str);
+                want_str.includes("'") && want_str.includes(",");
+                if (!want_str.includes("'")) {
+                  if (!want_str.includes(",")) {
+                    if (!want_str.includes("`")) {
+                      var matched_l = want_str.length;
+                      console.log(
+                        "want str which is mached is : ",
+                        want_str,
+                        " and it's length is : ",
+                        matched_l
+                      );
+                      for (let k = 0; k < matched_l - 1; k++) {
+                        j++;
+                        i++;
+                      }
+                      string1[counter_gep] = want_str;
+                      counter_gep++;
+                    }
+                  }
+                }
+              }
+            }
+            console.log("all gropup nummber is : ", string1);
+            console.log("counter is : ", counter_gep);
+
             var sql =
               "SELECT `group_name` FROM `group_details` WHERE `group_key`='";
             // console.log(str);
             // console.log(str.length);
-            for (let i = 0; i < str.length; i++) {
-              if (i + 2 < str.length) {
-                sql = sql + str[i] + "' OR `group_key`='";
+            for (let i = 0; i < counter_gep; i++) {
+              if (i + 1 < counter_gep) {
+                sql = sql + string1[i] + "' OR `group_key`='";
               } else {
-                sql = sql + str[i] + "'";
+                sql = sql + string1[i] + "'";
               }
-              i++;
             }
             console.log(sql);
             con.query(sql, function (err, result, fields) {
@@ -573,7 +679,6 @@ router.post(
           }
         }
       });
-      // const data = session_draft_details;
 
       //this else cond. for draft scheduling
     } else {
@@ -607,18 +712,51 @@ router.post(
             res.render("campaigns/user/edit/review_email.ejs", { data });
           } else {
             var str = result[0].whomtosend;
+
+            let string1 = [];
+            let counter_gep = 0;
+            let n = str.length;
+            for (let i = 0; i < n; i++) {
+              for (let j = 0; j < n - i; j++) {
+                var want_str = str.slice(i, n - j);
+                console.log("want str is : ", want_str);
+                want_str.includes("'") && want_str.includes(",");
+                if (!want_str.includes("'")) {
+                  if (!want_str.includes(",")) {
+                    if (!want_str.includes("`")) {
+                      var matched_l = want_str.length;
+                      console.log(
+                        "want str which is mached is : ",
+                        want_str,
+                        " and it's length is : ",
+                        matched_l
+                      );
+                      for (let k = 0; k < matched_l - 1; k++) {
+                        j++;
+                        i++;
+                      }
+                      string1[counter_gep] = want_str;
+                      counter_gep++;
+                    }
+                  }
+                }
+              }
+            }
+            console.log("all gropup nummber is : ", string1);
+            console.log("counter is : ", counter_gep);
+
             var sql =
               "SELECT `group_name` FROM `group_details` WHERE `group_key`='";
             // console.log(str);
             // console.log(str.length);
-            for (let i = 0; i < str.length; i++) {
-              if (i + 2 < str.length) {
-                sql = sql + str[i] + "' OR `group_key`='";
+            for (let i = 0; i < counter_gep; i++) {
+              if (i + 1 < counter_gep) {
+                sql = sql + string1[i] + "' OR `group_key`='";
               } else {
-                sql = sql + str[i] + "'";
+                sql = sql + string1[i] + "'";
               }
-              i++;
             }
+
             console.log(sql);
             con.query(sql, function (err, result, fields) {
               if (err) {
@@ -841,16 +979,54 @@ router.get("/sent", authController.isLoggedIn, (req, res) => {
                         resolve(resolved_result);
                       }
                     } else {
+                      let string1 = [];
+                      let counter_gep = 0;
+                      let n = str.length;
+                      for (let i = 0; i < n; i++) {
+                        for (let j = 0; j < n - i; j++) {
+                          var want_str = str.slice(i, n - j);
+                          // console.log("want str is : ", want_str);
+                          want_str.includes("'") && want_str.includes(",");
+                          if (!want_str.includes("'")) {
+                            if (!want_str.includes(",")) {
+                              // console.log(
+                              //   "want str which is mached is : ",
+                              //   want_str
+                              // );
+                              var matched_l = want_str.length;
+                              for (let k = 0; k < matched_l - 1; k++) {
+                                j++;
+                                i++;
+                              }
+                              string1[counter_gep] = want_str;
+                              counter_gep++;
+                            }
+                          }
+                        }
+                      }
+                      console.log("all gropup nummber is : ", string1);
+                      console.log("counter is : ", counter_gep);
+
                       var sql =
                         "SELECT `group_name` FROM `group_details` WHERE `group_key`='";
-                      for (let i = 0; i < str.length; i++) {
-                        if (i + 2 < str.length) {
-                          sql = sql + str[i] + "' OR `group_key`='";
+                      for (let i = 0; i < counter_gep; i++) {
+                        if (i + 1 < counter_gep) {
+                          sql = sql + string1[i] + "' OR `group_key`='";
                         } else {
-                          sql = sql + str[i] + "'";
+                          sql = sql + string1[i] + "'";
                         }
-                        i++;
                       }
+
+                      // var sql =
+                      //   "SELECT `group_name` FROM `group_details` WHERE `group_key`='";
+                      // for (let i = 0; i < str.length; i++) {
+                      //   if (i + 2 < str.length) {
+                      //     sql = sql + str[i] + "' OR `group_key`='";
+                      //   } else {
+                      //     sql = sql + str[i] + "'";
+                      //   }
+                      //   i++;
+                      // }
                       // console.log(sql);
                       databaseFetch(sql)
                         .then((group_str) => {
@@ -944,16 +1120,54 @@ router.get("/drafts", authController.isLoggedIn, (req, res) => {
                           resolve(resolved_result);
                         }
                       } else {
+                        let string1 = [];
+                        let counter_gep = 0;
+                        let n = str.length;
+                        for (let i = 0; i < n; i++) {
+                          for (let j = 0; j < n - i; j++) {
+                            var want_str = str.slice(i, n - j);
+                            // console.log("want str is : ", want_str);
+                            want_str.includes("'") && want_str.includes(",");
+                            if (!want_str.includes("'")) {
+                              if (!want_str.includes(",")) {
+                                // console.log(
+                                //   "want str which is mached is : ",
+                                //   want_str
+                                // );
+                                var matched_l = want_str.length;
+                                for (let k = 0; k < matched_l - 1; k++) {
+                                  j++;
+                                  i++;
+                                }
+                                string1[counter_gep] = want_str;
+                                counter_gep++;
+                              }
+                            }
+                          }
+                        }
+                        console.log("all gropup nummber is : ", string1);
+                        console.log("counter is : ", counter_gep);
+
                         var sql =
                           "SELECT `group_name` FROM `group_details` WHERE `group_key`='";
-                        for (let i = 0; i < str.length; i++) {
-                          if (i + 2 < str.length) {
-                            sql = sql + str[i] + "' OR `group_key`='";
+                        for (let i = 0; i < counter_gep; i++) {
+                          if (i + 1 < counter_gep) {
+                            sql = sql + string1[i] + "' OR `group_key`='";
                           } else {
-                            sql = sql + str[i] + "'";
+                            sql = sql + string1[i] + "'";
                           }
-                          i++;
                         }
+
+                        // var sql =
+                        //   "SELECT `group_name` FROM `group_details` WHERE `group_key`='";
+                        // for (let i = 0; i < str.length; i++) {
+                        //   if (i + 2 < str.length) {
+                        //     sql = sql + str[i] + "' OR `group_key`='";
+                        //   } else {
+                        //     sql = sql + str[i] + "'";
+                        //   }
+                        //   i++;
+                        // }
                         // console.log(sql);
                         databaseFetch(sql)
                           .then((group_str) => {

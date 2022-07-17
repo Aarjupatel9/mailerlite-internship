@@ -22,15 +22,10 @@ var sendEmailOfCampaigns = require("./module/sendmail");
 
 var emailTemplateBuilder = require("email-template-builder");
 
-// con.connect(function (err) {
-//   if (err) {
-//     console.log(err);
-//   }
-// });
- 
+
 port = process.env.port || 8080;
 
-const  TYNIMCEPATH = path.join(__dirname, "node_modules/tinymce");
+const TYNIMCEPATH = path.join(__dirname, "node_modules/tinymce");
 const userimagepath = path.join(__dirname, "public");
 const SRCPATH = path.join(__dirname, "src");
 const ERRORFILEPATH = path.join(__dirname, "errorfiles");
@@ -38,6 +33,8 @@ const EDITORFILEPATH = path.join(__dirname, "text-editor");
 const PUBLICPATH = path.join(__dirname, "/public");
 
 dotenv.config({ path: "./.env" });
+
+app.use('/static', express.static(path.join(__dirname, 'assets')))
 
 app.use(express.static(PUBLICPATH));
 app.use(express.static(TYNIMCEPATH));
@@ -53,7 +50,7 @@ app.set("view engine", "hbs");
 //define router
 app.use("/campaigns", require("./routes/campaign_router"));
 app.use("/subscribers", require("./routes/subscribers_router"));
-app.use("/form", require("./routes/forms_router"));
+app.use("/form", require("./routes/form"));
 
 //experimental area
 
@@ -158,7 +155,7 @@ app.get("/email-builder", authController.isLoggedIn, (req, res) => {
           return new Promise(function (resolve, reject) {
             fs.readdir(image_folder, (err, files) => {
               files.forEach((file) => {
-                image_Data[counter] = "/user_uploaded_image_for_email_body/"+file;
+                image_Data[counter] = "/user_uploaded_image_for_email_body/" + file;
                 counter++;
                 console.log(file);
               });
@@ -168,10 +165,10 @@ app.get("/email-builder", authController.isLoggedIn, (req, res) => {
         }
         readDir().then(d => {
           console.log("image_data : ", d);
-          var image_Data = d; 
-          res.render("campaigns/email-body-builder.ejs", {data,  image_Data });
+          var image_Data = d;
+          res.render("campaigns/email-body-builder.ejs", { data, image_Data });
         })
-        
+
       }
     }
   );
@@ -241,7 +238,7 @@ app.post("/image_upload_for_email_body", upload.single("file"), (req, res) => {
           message: "Sorry, file couldn't be uploaded.",
           filename: req.file.originalname,
         };
-      res.end(JSON.stringify(response));
+        res.end(JSON.stringify(response));
       } else {
         response = {
           message: "File uploaded successfully",
@@ -250,9 +247,9 @@ app.post("/image_upload_for_email_body", upload.single("file"), (req, res) => {
 
         fs.renameSync(
           file,
-          storage_path +  "10000001_" + Date.now() + path.extname(file)
+          storage_path + "10000001_" + Date.now() + path.extname(file)
         );
-        
+
         res.redirect("/email-builder");
       }
     });
@@ -332,6 +329,7 @@ app.get("/", authController.isLoggedIn, (req, res) => {
       if (err) {
         console.log(err);
       } else {
+        console.log(result.length)
         name = result[0].firstname + " " + result[0].lastname;
         email = result[0].email;
         c_name = result[0].companyname;
@@ -349,8 +347,46 @@ app.get("/", authController.isLoggedIn, (req, res) => {
   );
 });
 
-app.get("/forms", authController.isLoggedIn, (req, res) => {
-  res.sendFile(`${SRCPATH}/forms.html`);
+app.post('/:user_key/:form_id/form_response', urlencodedparser, async function (req, res, next) {
+
+  var sql_group = 'SELECT `group_key` FROM `forms` WHERE `form_id` = ' + req.params.form_id;
+  con.query(sql_group, function (err, result) {
+    if (err) throw err;
+    console.log("result ", result);
+
+    group_keys = result[0].group_key;
+
+    const values = [
+      form_id = req.params.form_id,
+      user_key = req.params.user_key,
+      group_key = group_keys,
+      fname = req.body.fname,
+      lname = req.body.lname,
+      Email = req.body.email,
+      Mobno = req.body.mob_no,
+      Company = req.body.company_name,
+      City = req.body.city,
+      State = req.body.state,
+      ZIP = req.body.zip,
+      Country = req.body.country
+    ]
+    console.log(values);
+    var sql =
+      'INSERT INTO `form_response`(`form_id`,`user_key`, `group_id`, `Fname`, `Lname`, `Email`, `Mobno`, `Company`, `City`, `State`, `ZIP`, `Country`) VALUES (?)';
+
+
+
+    con.query(sql, [values], function (err, result) {
+      if (err) throw err;
+      console.log("Number of records inserted: " + result.affectedRows);
+      // res.send("success");
+      res.sendStatus(200);
+    });
+
+  });
+
+
+
 });
 
 app.get("/sites", authController.isLoggedIn, (req, res) => {
