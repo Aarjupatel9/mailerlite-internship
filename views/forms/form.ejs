@@ -13,6 +13,9 @@
                 background-color: rgb(211, 211, 211);
             }
         </style>
+        <script>
+            domain = '<%=user_details.WEB_HOST %>';
+        </script>
 </head>
 
 <body>
@@ -144,8 +147,8 @@
                         <div class="card d-flex flex-row m-3">
                             <div id="create_form_image">
                                 <img class="img-thumbnail float-start rounded"
-                                    src="http://localhost:8080/static/formbuilder_image.png" alt="form image"
-                                    style="width:400px;height:300px;" draggable="false">
+                                    src="http://<%=user_details.WEB_HOST%>:8080/static/formbuilder_image.png"
+                                    alt="form image" style="width:400px;height:300px;" draggable="false">
                             </div>
                             <div class="pl-2 rounded">
                                 <p class="mt-2"> Collecting email addresses just got easier, thanks to custom subscriber

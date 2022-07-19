@@ -143,15 +143,15 @@
                                             class="btn btn-success col">copy</a>
                                     </div>
                                     <input id="form_url" style="font-size: 20px; padding-left: 5px; min-width: 100%;"
-                                        value="http://localhost:8080/form/<%= data[0].form_id%>/Share" class="rounded"
-                                        type="text" name="form_link" id="form_link" readonly>
+                                        value="http://<%=user_details.WEB_HOST%>:8080/form/<%= data[0].form_id%>/Share"
+                                        class="rounded" type="text" name="form_link" id="form_link" readonly>
                                 </div>
                                 <div class="box" style="border: 1px solid black;">
                                     <div class="row mb-2">
                                         <div class="mb-1 col-6">Groups</div>
                                         <form style="display:flex ; justify-content:right ;" class="mb-1 col-6"
                                             method="post"
-                                            action="http://localhost:8080/form/<%= data[0].form_id%>/group_edit">
+                                            action="http://<%=user_details.WEB_HOST%>:8080/form/<%= data[0].form_id%>/group_edit">
                                             <button type="submit" class="btn btn-success">Edit groups</button>
                                         </form>
                                     </div>
@@ -209,7 +209,8 @@
             data = '<%= data[0].formSchema%>';
             form_id = '<%=data[0].form_id%>';
             user = '<%= user_details.user_key %>'
-            console.log(form_id, user)
+            domain = '<%=user_details.WEB_HOST%>'
+            console.log(form_id, user, domain)
             form_data = data.replace(/&#34;/g, "\"");
         </script>
         <script src="/javascripts/overview.js"></script>

@@ -102,8 +102,9 @@
     <script>
         data = '<%= data %>';
         form_id = '<%= form_id %>';
-        user = '<%= user %>'
-        console.log(form_id, user)
+        user = '<%= user %>';
+        domain = '<%= WEB_HOST %>';
+        console.log(form_id, user, domain)
         form_data = data.replace(/&#34;/g, "\"");
         // console.log(form_data);
     </script>
